@@ -1,0 +1,12 @@
+# This is the Jenkins ci variant of the .github/labeler.yml
+
+"__EXCLUDE__":
+  - "**/VERSION"
+  - "**/*.rst"
+
+"CI-run-twister":
+  - any:
+      - "!.github/**/*"
+      - "!CODEOWNERS"
+      - "!LICENSE"
+      - "!VERSION"

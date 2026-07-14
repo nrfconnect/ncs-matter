@@ -1,0 +1,12 @@
+ci_samples_matter:
+    files:
+        - samples/
+        - subsys/
+        - cmake/
+        - dts/
+        - zephyr/
+        - west.yml
+
+ci_matter_ncs_deps:
+    files:
+        - west.yml

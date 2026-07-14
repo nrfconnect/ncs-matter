@@ -1,0 +1,9 @@
+# Meta and documentation files that do not require Twister.
+.github/**
+CODEOWNERS
+LICENSE
+README.md
+VERSION
+**/*.rst
+**/README*
+Jenkinsfile

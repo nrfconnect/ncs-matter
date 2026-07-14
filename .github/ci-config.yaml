@@ -1,0 +1,38 @@
+---
+jenkins_dir: jenkins
+
+docker:
+    registry: docker-dtr.nordicsemi.no
+    basic: sw-production/ncs-basic:2.7.0
+    build: sw-production/ncs-matter:4.6.1
+
+agent:
+    build: build-ncs || build-az || build-ci
+
+timeout:
+    all:
+        time: 4
+        unit: HOURS
+    load:
+        time: 15
+        unit: MINUTES
+    build:
+        time: 2
+        unit: HOURS
+
+repo:
+    git_url: https://github.com/nrfconnect/ncs-matter.git
+    branch: main
+    subdir: .
+    job_key: NCS-MATTER
+
+downstream:
+    build_job: latest/ncs-matter-build/main
+
+twister:
+    tag: ci_samples_matter
+    testsuite_root: samples
+    quarantine: jenkins/scripts/quarantine.yaml
+    subsets: 4
+    tests_per_builder: 200
+    testcase_roots_threshold: 15

@@ -8,6 +8,11 @@ __pycache__/
 # build
 /build*
 /samples/**/build*
+twister-out*
+_test_plan_partial.json
+.testplan
+testplan.json
+west_old.yml
 
 # docs
 /docs/_build*
