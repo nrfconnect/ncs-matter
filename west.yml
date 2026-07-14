@@ -1,0 +1,19 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+manifest:
+  remotes:
+    - name: ncs
+      url-base: https://github.com/nrfconnect
+
+  projects:
+    - name: nrf
+      remote: ncs
+      repo-path: sdk-nrf
+      revision: v3.4.0
+      import: true
+    - name: matter
+      remote: ncs
+      path: modules/lib/matter
+      repo-path: sdk-connectedhomeip
+      revision: v3.4.0

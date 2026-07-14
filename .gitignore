@@ -1,0 +1,14 @@
+# editors
+.vscode
+
+# python
+.venv
+__pycache__/
+
+# build
+/build*
+/samples/**/build*
+
+# docs
+/docs/_build*
+/docs/venv
