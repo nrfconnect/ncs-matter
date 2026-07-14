@@ -1,0 +1,11 @@
+build:
+  cmake: .
+  kconfig: Kconfig
+  sysbuild-kconfig: sysbuild/Kconfig.sysbuild
+  sysbuild-cmake: sysbuild
+  settings:
+    dts_root: .
+    snippet_root: .
+
+samples:
+  - samples
