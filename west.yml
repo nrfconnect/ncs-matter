@@ -1,0 +1,36 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+manifest:
+  remotes:
+    - name: ncs
+      url-base: https://github.com/nrfconnect
+
+  projects:
+    - name: nrf
+      remote: ncs
+      repo-path: sdk-nrf
+      revision: v3.4.0
+      import: true
+    - name: matter
+      remote: ncs
+      path: modules/lib/matter
+      repo-path: sdk-connectedhomeip
+      revision: v3.4.0
+      submodules:
+        - name: nlio
+          path: third_party/nlio/repo
+        - name: nlassert
+          path: third_party/nlassert/repo
+        - name: pigweed
+          path: third_party/pigweed/repo
+        - name: jsoncpp
+          path: third_party/jsoncpp/repo
+      userdata:
+        ncs:
+          upstream-url: https://github.com/project-chip/connectedhomeip
+          upstream-sha: 181b0cb14ff007ec912f2ba6627e05dfb066c008
+          compare-by-default: false
+
+  self:
+    path: ncs-matter
