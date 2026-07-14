@@ -17,3 +17,6 @@ manifest:
       path: modules/lib/matter
       repo-path: sdk-connectedhomeip
       revision: v3.4.0
+
+  self:
+    path: ncs-matter
