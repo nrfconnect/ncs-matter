@@ -11,7 +11,7 @@
 #include <zephyr/retention/retention.h>
 
 #include <lib/support/CodeUtils.h>
-#include <ystem/SystemError.h>
+#include <system/SystemError.h>
 
 using namespace Nrf;
 using namespace chip;
