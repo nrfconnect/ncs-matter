@@ -2,4 +2,4 @@
 
 def pipeline = new ncs.sdk_matter.Main()
 
-pipeline.run_pipeline()
+pipeline.run("matter")
