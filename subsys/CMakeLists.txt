@@ -34,7 +34,7 @@ endif()
 
 if(CONFIG_CHIP_DFU_OVER_BT_SMP)
     target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/dfu/smp/dfu_over_smp.cpp)
-    zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
+    target_link_libraries(app PRIVATE MCUBOOT_BOOTUTIL)
 endif()
 
 if(CONFIG_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS)
