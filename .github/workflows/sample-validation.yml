@@ -1,0 +1,66 @@
+name: Matter Sample Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'v*-branch'
+
+    paths:
+      - 'samples/**'
+      - 'applications/**'
+      - 'scripts/matter_sample_checker/**'
+      - 'scripts/zap_samples.yml'
+      - '.github/workflows/sample-validation.yml'
+      - 'west.yml'
+
+permissions:
+  contents: read
+
+env:
+  WEST_PATH_CACHE: ${{ github.workspace }}/west-path-cache
+
+jobs:
+  matter-sample-validation:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          path: ncs-matter
+
+      - name: Set up Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
+        with:
+          python-version: 3.12
+          cache: pip
+          cache-dependency-path: |
+            ncs-matter/scripts/requirements.txt
+            ncs-matter/scripts/requirements-base.txt
+            ncs-matter/scripts/requirements-build.txt
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget python3-pip git
+          pip install -r ncs-matter/scripts/requirements.txt
+
+      - name: Restore west module path cache
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: west-path-cache
+          key: west-path-cache-${{ hashFiles('ncs-matter/west.yml') }}
+          restore-keys: |
+            west-path-cache-
+
+      - name: Prepare west workspace
+        run: |
+          rm -rf .west
+          west init -l ncs-matter --mf west.yml
+          west update -n -o=--depth=1 --path-cache "${WEST_PATH_CACHE}"
+
+      - name: validate Matter samples and documentation
+        run: |
+          python ncs-matter/scripts/matter_sample_checker/matter_sample_checker.py \
+            --samples-zap-yaml ncs-matter/scripts/zap_samples.yml \
+            --base ncs-matter
