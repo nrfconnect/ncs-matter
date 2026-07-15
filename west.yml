@@ -34,3 +34,4 @@ manifest:
 
   self:
     path: ncs-matter
+    west-commands: scripts/west/west-commands.yml

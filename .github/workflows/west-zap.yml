@@ -1,0 +1,77 @@
+name: West ZAP command unit tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/west-zap.yml'
+      - 'scripts/west/**'
+      - 'scripts/zap_samples.yml'
+      - 'scripts/requirements-extra.txt'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ncs-matter-west-zap-${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+env:
+  WEST_PATH_CACHE: ${{ github.workspace }}/west-path-cache
+  NCS_MATTER_ROOT: ${{ github.workspace }}/ncs-matter
+
+jobs:
+  west_zap_tests:
+    name: west zap unit tests
+    runs-on: ubuntu-24.04
+    container: ghcr.io/nrfconnect/sdk-nrf-toolchain:v3.4.0
+    defaults:
+      run:
+        # Bash is required to source zephyr-env.sh inside the container.
+        shell: bash
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4
+        with:
+          fetch-depth: 1
+          path: ncs-matter
+
+      - name: Restore west module path cache
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: west-path-cache
+          key: west-path-cache-${{ hashFiles('ncs-matter/west.yml') }}
+          restore-keys: |
+            west-path-cache-
+
+      - name: Restore pip cache
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: ~/.cache/pip
+          key: pip-ncs-matter-west-zap-${{ hashFiles('ncs-matter/west.yml') }}
+
+      - name: Prepare west project
+        run: |
+          rm -rf .west
+          west --version
+          west init -l ncs-matter --mf west.yml
+          west update -n -o=--depth=1 --path-cache "${WEST_PATH_CACHE}"
+          test -f modules/lib/matter/third_party/pigweed/repo/pw_env_setup/py/pw_env_setup/cipd_setup/pigweed.json
+
+      - name: Install Python dependencies
+        run: |
+          pip3 install -r ncs-matter/scripts/requirements-extra.txt
+          pip3 install -r modules/lib/matter/scripts/setup/requirements.nrfconnect.txt
+
+      - name: Use ncs-matter west scripts and tests
+        run: |
+          # Keep Matter SDK paths for templates/generate.py, but run the west
+          # command implementation and unit-test fixtures from ncs-matter only.
+          rm -rf modules/lib/matter/scripts/west
+          ln -s "${NCS_MATTER_ROOT}/scripts/west" modules/lib/matter/scripts/west
+
+      - name: Run west ZAP unit tests
+        run: |
+          source zephyr/zephyr-env.sh
+          python3 modules/lib/matter/scripts/west/tests/zap_tests.py
