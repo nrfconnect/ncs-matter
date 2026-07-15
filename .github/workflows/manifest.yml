@@ -1,0 +1,55 @@
+name: Manifest
+
+on:
+  pull_request_target:
+    branches:
+      - main
+      - 'v*-branch'
+    paths:
+      - 'west.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  manifest:
+    runs-on: ubuntu-24.04
+    name: Manifest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          path: ncs-matter
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Cache pip
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip
+
+      - name: west setup
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        working-directory: ncs-matter
+        run: |
+          pip3 install west
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          west init -l . || true
+
+      - name: Manifest
+        uses: zephyrproject-rtos/action-manifest@700ecf53942aba4433c070e5e58193f75c8eddde # v2.0.0
+        with:
+          github-token: ${{ secrets.NCS_NORDICBUILDER_ACTION_TOKEN }}
+          manifest-path: 'west.yml'
+          checkout-path: 'ncs-matter'
+          use-tree-checkout: 'true'
+          west-import-flag: 'self'
+          check-impostor-commits: 'true'
+          label-prefix: 'manifest-'
+          verbosity-level: '1'
+          labels: 'manifest'
+          dnm-labels: 'DNM'
