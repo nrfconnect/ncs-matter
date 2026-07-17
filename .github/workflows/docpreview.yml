@@ -85,7 +85,7 @@ jobs:
           echo "Output directory: $OUTDIR"
 
           # Unzip the documentation archive
-          unzip legacy-ncs-matter-edge-ai*.zip -d "$OUTDIR"
+          unzip legacy-ncs-matter*.zip -d "$OUTDIR"
 
           find "$OUTDIR" -type l -delete
 
