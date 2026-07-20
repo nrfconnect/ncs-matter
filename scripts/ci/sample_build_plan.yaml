@@ -18,12 +18,12 @@ always_build:
       - nrf54lm20dk/nrf54lm20b/cpuapp
 
 # Changes to these paths trigger a full integration build of all samples.
-full_build_paths:
-  - west.yml
-  - .github/**
-  - CMakeLists.txt
-  - Kconfig
-  - Kconfig.*
+# full_build_paths:
+#   - west.yml
+#   - .github/**
+#   - CMakeLists.txt
+#   - Kconfig
+#   - Kconfig.*
 
 # Map changed paths to one or more samples/variants/platforms.
 path_triggers:
