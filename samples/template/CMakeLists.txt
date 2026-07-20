@@ -8,8 +8,9 @@ cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 
-project(matter-template)
+project(matter-template)# NORDIC SDK APP START
 
+# Include all source files that are located in the Matter common directory.
 include(${ZEPHYR_NCS_MATTER_MODULE_DIR}/cmake/sample.cmake)
 ncs_get_zap_parent_dir(ZAP_PARENT_DIR)
 
@@ -24,3 +25,4 @@ target_sources(app PRIVATE
 )
 
 ncs_configure_data_model()
+# NORDIC SDK APP END
