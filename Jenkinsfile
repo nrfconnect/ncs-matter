@@ -1,4 +1,4 @@
-@Library('CI_LIB@ci-matter-test') _
+@Library('CI_LIB@improve_smarthome') _
 
 def pipeline = new ncs.sdk_smart_home.Main()
 
