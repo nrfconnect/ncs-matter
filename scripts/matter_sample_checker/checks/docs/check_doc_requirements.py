@@ -30,7 +30,7 @@ CONFIGURATION PARAMETERS:
 VALIDATION STEPS:
 -----------------
 1. Build Configuration Validation:
-   - Analyzes sample.yaml files for all Matter samples and applications
+   - Analyzes sample.yaml files for all Matter samples under workspace.samples_roots
    - Extracts and validates build types (debug, release, internal, wifi_thread_switched)
    - Verifies that critical samples have required build configurations
 
@@ -40,8 +40,8 @@ VALIDATION STEPS:
    - Compares partition sizes with documentation tables
 
 3. Flash partition DTSI validation:
-   - Scans ``samples/matter/**/*.overlay`` for ``#include <samples/matter/*_partitions.dtsi>``
-     to map each board target to its partition DTSI file under ``dts/samples/matter/``
+   - Scans sample overlay files for ``#include <*_partitions.dtsi>``
+     to map each board target to its partition DTSI file under workspace.partition_dtsi_dir
    - Loads ``Reference Matter memory layouts`` from memory_layouts.yaml
    - Compares offset/size for each partition node against the documentation
 
@@ -61,12 +61,14 @@ from pathlib import Path
 
 import yaml
 from internal.checker import MatterSampleTestCase
-
-MATTER_PARTITION_DTSI_DIR = Path('dts') / 'samples' / 'matter'
-DIAGNOSTIC_LOGS_RAM_SECTION_TITLE = 'Diagnostic logs RAM memory requirements'
-OVERLAY_PARTITION_INCLUDE_RE = re.compile(
-    r'#include\s+<samples/matter/([^>]+_partitions\.dtsi)>', re.MULTILINE
+from internal.utils.utils import (
+    get_doc_root,
+    get_workspace_config,
+    get_workspace_root,
+    resolve_workspace_path,
 )
+
+DIAGNOSTIC_LOGS_RAM_SECTION_TITLE = 'Diagnostic logs RAM memory requirements'
 REG_ASSIGN_RE = re.compile(r'reg\s*=\s*<([^>]+)>', re.MULTILINE)
 DT_SIZE_K_RE = re.compile(r'DT_SIZE_K\s*\(\s*([0-9]+)\s*\)')
 
@@ -311,45 +313,62 @@ class CheckDocRequirementsTestCase(MatterSampleTestCase):
         return "Hardware requirements documentation check"
 
     def _requirements_data_path(self, key: str) -> str | None:
-        """Relative path under nrf_path for a documentation.requirements.* config section."""
+        """Relative path under doc_root for a documentation.requirements.* config section."""
         section = self._requirements_hw_doc_cfg().get(key)
         if isinstance(section, dict):
             path = section.get('path')
             return str(path) if path else None
         return None
 
-    def _sdk_nrf_path(self) -> Path:
-        """NRF SDK tree for snippets, Matter samples, and partition DTSI files."""
-        base = self.config.nrf_path
-        if (base / 'samples' / 'matter').is_dir():
-            return base
-        sibling = base.parent / 'nrf'
-        if sibling.is_dir() and (sibling / 'samples' / 'matter').is_dir():
-            return sibling
-        return base
+    def _requirements_data_optional(self, key: str) -> bool:
+        section = self._requirements_hw_doc_cfg().get(key)
+        if isinstance(section, dict):
+            return bool(section.get('optional'))
+        return False
+
+    def _doc_root(self) -> Path:
+        return get_doc_root(self.config.nrf_path, self.config.config_file)
+
+    def _workspace_root(self) -> Path:
+        return get_workspace_root(self.config.nrf_path)
+
+    def _workspace_config(self) -> dict:
+        return get_workspace_config(self.config.config_file)
+
+    def _samples_scan_roots(self) -> list[Path]:
+        roots: list[Path] = []
+        for root_rel in self._workspace_config().get('samples_roots', ['samples']):
+            root = resolve_workspace_path(self.config.nrf_path, root_rel)
+            if root.is_dir():
+                roots.append(root)
+        return roots
+
+    def _partition_dtsi_dir(self) -> Path:
+        rel = self._workspace_config().get('partition_dtsi_dir', 'dts')
+        return self._workspace_root() / rel
+
+    def _overlay_partition_include_re(self) -> re.Pattern[str]:
+        pattern = self._workspace_config().get(
+            'overlay_partition_include_pattern',
+            r'#include\s+<samples/matter/([^>]+_partitions\.dtsi)>',
+        )
+        return re.compile(pattern, re.MULTILINE)
 
     def _resolve_diagnostic_logs_snippet_dir(self) -> Path | None:
-        """Resolve diagnostic-log overlay directory for ncs-matter or nrf layouts."""
+        """Resolve diagnostic-log overlay directory under the ncs-matter workspace."""
         snippet_rel = self._requirements_data_path('diagnostic_logs_snippet')
         if not snippet_rel:
             return None
+
+        workspace_root = self._workspace_root()
         candidates = [
-            self.config.nrf_path / snippet_rel,
-            self.config.nrf_path / 'snippets/diagnostic-logs/boards',
-            self.config.nrf_path / 'snippets/matter/matter-diagnostic-logs/boards',
-            self._sdk_nrf_path() / snippet_rel,
-            self._sdk_nrf_path() / 'snippets/diagnostic-logs/boards',
-            self._sdk_nrf_path() / 'snippets/matter/matter-diagnostic-logs/boards',
+            workspace_root / snippet_rel,
+            workspace_root / 'snippets/diagnostic-logs/boards',
         ]
-        seen: set[Path] = set()
         for candidate in candidates:
-            resolved = candidate.resolve()
-            if resolved in seen:
-                continue
-            seen.add(resolved)
             if candidate.is_dir():
                 return candidate
-        return self.config.nrf_path / snippet_rel
+        return workspace_root / snippet_rel
 
     def prepare(self):
         """Prepare the check by reading documentation data files from config."""
@@ -370,17 +389,20 @@ class CheckDocRequirementsTestCase(MatterSampleTestCase):
                 self.issue(f"Missing documentation.requirements.{key}.path in config")
                 continue
             try:
-                with open(self.config.nrf_path / rel_path, encoding='utf-8') as f:
+                with open(self._doc_root() / rel_path, encoding='utf-8') as f:
                     setattr(self, attr, yaml.safe_load(f))
             except Exception as e:
-                self.issue(f"Error reading {key} file {rel_path}: {e}")
+                if self._requirements_data_optional(key):
+                    self.warning(f"Optional {key} file not available ({rel_path}): {e}")
+                else:
+                    self.issue(f"Error reading {key} file {rel_path}: {e}")
 
         diag_rel = self._requirements_data_path('diagnostic_ram')
         if not diag_rel:
             self.issue("Missing documentation.requirements.diagnostic_ram.path in config")
         else:
             try:
-                with open(self.config.nrf_path / diag_rel, encoding='utf-8') as f:
+                with open(self._doc_root() / diag_rel, encoding='utf-8') as f:
                     self.diagnostic_ram_content = f.read()
             except Exception as e:
                 self.issue(f"Error reading diagnostic_ram file {diag_rel}: {e}")
@@ -439,15 +461,13 @@ class CheckDocRequirementsTestCase(MatterSampleTestCase):
         tabs_count = self.diagnostic_ram_content.count('.. tab::')
         self.debug(f"Found {tables_count} tables and {tabs_count} tabs")
 
-        # Get sample and application information
-        samples_path = self._sdk_nrf_path() / "samples" / "matter"
-        apps_path = self._sdk_nrf_path() / "applications"
-
-        samples_info = self._analyze_matter_samples(samples_path)
-        apps_info = self._analyze_matter_applications(apps_path)
+        # Get sample information from configured workspace roots
+        samples_info = {}
+        for samples_path in self._samples_scan_roots():
+            samples_info.update(self._analyze_matter_samples(samples_path))
 
         # Validate build configurations
-        self._validate_build_configurations(samples_info, apps_info)
+        self._validate_build_configurations(samples_info)
 
         # Validate diagnostic logs
         self._validate_diagnostic_logs()
@@ -490,36 +510,6 @@ class CheckDocRequirementsTestCase(MatterSampleTestCase):
 
         return samples_info
 
-    def _analyze_matter_applications(self, apps_path: Path) -> dict:
-        """Quick analysis of Matter applications"""
-        apps_info = {}
-        app_names = ['matter_weather_station', 'matter_bridge']
-
-        for app_name in app_names:
-            app_path = apps_path / app_name
-            sample_yaml = app_path / "sample.yaml"
-
-            if not sample_yaml.exists():
-                continue
-
-            try:
-                with open(sample_yaml) as f:
-                    config = yaml.safe_load(f)
-
-                build_types = set()
-                if 'tests' in config:
-                    for test_name in config['tests']:
-                        build_type = self._extract_build_type_from_name(test_name)
-                        if build_type:
-                            build_types.add(build_type)
-
-                apps_info[app_name] = {'build_types': build_types}
-
-            except Exception:
-                continue
-
-        return apps_info
-
     def _extract_build_type_from_name(self, test_name: str) -> str:
         """Extract build type from test name"""
         test_name_lower = test_name.lower()
@@ -535,11 +525,9 @@ class CheckDocRequirementsTestCase(MatterSampleTestCase):
 
         return ""
 
-    def _validate_build_configurations(self, samples: dict, apps: dict) -> None:
+    def _validate_build_configurations(self, samples: dict) -> None:
         """Validate build configurations with detailed tracking"""
-        all_projects = {**samples, **apps}
-
-        for project_name, project_info in all_projects.items():
+        for project_name, project_info in samples.items():
             available_builds = project_info.get('build_types', set())
 
             # Check for missing critical build types
@@ -574,7 +562,7 @@ class CheckDocRequirementsTestCase(MatterSampleTestCase):
         if not diag_logs_path or not diag_logs_path.exists():
             self.issue(
                 "Diagnostic logs snippet directory not found "
-                f"(tried under {self.config.nrf_path} and {self._sdk_nrf_path()})"
+                f"(expected under {self._workspace_root()})"
             )
             return
 
@@ -697,33 +685,39 @@ class CheckDocRequirementsTestCase(MatterSampleTestCase):
     def _build_board_to_partition_dtsi_map(self) -> dict[str, str]:
         """
         Map board target (overlay stem) -> Matter partition DTSI filename by scanning
-        ``samples/matter/**.overlay`` for ``#include <samples/matter/*_partitions.dtsi>``.
+        ``samples/matter/**.overlay`` for ``#include <*_partitions.dtsi>``.
         """
         if self._board_to_partition_dtsi_cache is not None:
             return self._board_to_partition_dtsi_cache
-        matter_root = self._sdk_nrf_path() / 'samples' / 'matter'
         board_to_dtsi: dict[str, str] = {}
-        if not matter_root.is_dir():
-            self._board_to_partition_dtsi_cache = board_to_dtsi
-            return board_to_dtsi
-        for overlay_path in matter_root.rglob('*.overlay'):
-            try:
-                text = overlay_path.read_text(encoding='utf-8', errors='replace')
-            except OSError:
+        overlay_include_re = self._overlay_partition_include_re()
+        scan_roots = self._samples_scan_roots()
+
+        for matter_root in scan_roots:
+            if not matter_root.is_dir():
                 continue
-            incs = OVERLAY_PARTITION_INCLUDE_RE.findall(text)
-            if not incs:
-                continue
-            board_id = overlay_path.name.replace('.overlay', '')
-            dtsi_name = incs[0]
-            if board_id in board_to_dtsi and board_to_dtsi[board_id] != dtsi_name:
-                self.warning(
-                    f"Matter partition DTSI include conflict for board {board_id!r}: "
-                    f"{board_to_dtsi[board_id]!r} vs {dtsi_name!r} "
-                    f"(from {overlay_path.relative_to(self._sdk_nrf_path())}) — using first"
-                )
-            else:
-                board_to_dtsi[board_id] = dtsi_name
+            for overlay_path in matter_root.rglob('*.overlay'):
+                try:
+                    text = overlay_path.read_text(encoding='utf-8', errors='replace')
+                except OSError:
+                    continue
+                incs = overlay_include_re.findall(text)
+                if not incs:
+                    continue
+                board_id = overlay_path.name.replace('.overlay', '')
+                dtsi_name = incs[0]
+                if board_id in board_to_dtsi and board_to_dtsi[board_id] != dtsi_name:
+                    try:
+                        rel_overlay = overlay_path.relative_to(self.config.nrf_path)
+                    except ValueError:
+                        rel_overlay = overlay_path.relative_to(matter_root)
+                    self.warning(
+                        f"Matter partition DTSI include conflict for board {board_id!r}: "
+                        f"{board_to_dtsi[board_id]!r} vs {dtsi_name!r} "
+                        f"(from {rel_overlay}) — using first"
+                    )
+                else:
+                    board_to_dtsi[board_id] = dtsi_name
         self._board_to_partition_dtsi_cache = board_to_dtsi
         return board_to_dtsi
 
@@ -810,7 +804,7 @@ class CheckDocRequirementsTestCase(MatterSampleTestCase):
             return
 
         board_to_dtsi = self._build_board_to_partition_dtsi_map()
-        dtsi_dir = self._sdk_nrf_path() / MATTER_PARTITION_DTSI_DIR
+        dtsi_dir = self._partition_dtsi_dir()
         self._log_board_partition_dtsi_map(board_to_dtsi)
 
         seen_pairs: set[tuple[str, str]] = set()

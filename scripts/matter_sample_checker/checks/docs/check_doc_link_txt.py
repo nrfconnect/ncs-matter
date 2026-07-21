@@ -64,29 +64,45 @@ NOTES:
 import re
 
 from internal.checker import MatterSampleTestCase
-from internal.utils.utils import get_latest_matter_sha, get_matter_sha_link
+from internal.utils.utils import get_doc_root, get_latest_matter_sha, get_matter_sha_link
 
 
 class CheckDocLinkTxtTestCase(MatterSampleTestCase):
     def __init__(self):
         super().__init__()
         self.file_path = None
+        self.optional = False
+        self.skip_check = False
         self.content = ""
 
     def name(self) -> str:
         return "Documentation links.txt check"
 
     def prepare(self):
-        self.file_path = self.config.config_file.get("documentation").get("link_txt").get("path")
-        with open(self.config.nrf_path / self.file_path) as f:
-            self.content = f.read()
+        link_cfg = self.config.config_file.get("documentation").get("link_txt")
+        self.file_path = link_cfg.get("path")
+        self.optional = bool(link_cfg.get("optional"))
+        doc_root = get_doc_root(self.config.nrf_path, self.config.config_file)
+        try:
+            with open(doc_root / self.file_path) as f:
+                self.content = f.read()
+        except Exception as e:
+            if self.optional:
+                self.skip_check = True
+                self.info(f"Optional links file not available ({self.file_path}): {e}")
+                return
+            raise
 
     def check(self):
+        if self.skip_check:
+            return
         try:
-            current_sha = get_latest_matter_sha(self.config.nrf_path)
+            current_sha = get_latest_matter_sha(self.config.nrf_path, self.config.config_file)
             self.debug(f"Latest Matter merge SHA (sync reference): {current_sha}")
 
-            sha_link = get_matter_sha_link(self.config.nrf_path, current_sha)
+            sha_link = get_matter_sha_link(
+                self.config.nrf_path, current_sha, self.config.config_file
+            )
             if sha_link and sha_link != "Unknown":
                 self.debug(f"{sha_link}")
 
@@ -97,7 +113,13 @@ class CheckDocLinkTxtTestCase(MatterSampleTestCase):
             matches_set = set(matches)
 
             # Split: classification, reporting, mapping, reporting, no deep nesting
-            outdated_shas = [sha for sha in matches_set if sha != current_sha]
+            outdated_shas = [
+                sha
+                for sha in matches_set
+                if sha != current_sha
+                and not current_sha.startswith(sha)
+                and not sha.startswith(current_sha)
+            ]
             for sha in matches_set:
                 if sha == current_sha:
                     count = matches.count(sha)

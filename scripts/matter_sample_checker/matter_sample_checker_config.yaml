@@ -6,6 +6,21 @@
 # NCS Matter Sample Checker Configuration
 # This file contains all the patterns, file lists, and rules used by the checker
 
+# Workspace layout for the ncs-matter add-on repository.
+# Paths below are relative to the base directory passed with -b (add-on root).
+workspace:
+  doc_root: "."
+  matter_module_path: "../modules/lib/matter"
+  template_sample_path: "samples/template"
+  samples_roots:
+    - "samples"
+  partition_dtsi_dir: "dts"
+  overlay_partition_include_pattern: '#include\\s+<samples/matter/([^>]+_partitions\\.dtsi)>'
+  optional_addon_patterns:
+    - nrf21540dk
+    - nrf21540ek
+    - shield
+
 # Exclusion patterns for various checks
 exclusions:
   # Directories to exclude from all checks
@@ -39,19 +54,23 @@ exclusions:
 # Documentation checking configuration
 ###################################################
 documentation:
-  # Files to check for documentation issues
+  # Files to check for documentation issues (relative to workspace.doc_root)
   index:
-    path: "docs/index.rst"
+    path: "docs/matter/index.rst"
     matter_pattern: "Matter specification version (\\d+\\.\\d+\\.\\d+) \
       and.*Matter SDK version.*?(\\d+\\.\\d+\\.\\d+\\.\\d+)"
-    line_pattern: "|NCS| |release| allows you"
+    line_pattern: "|addon| |release| allows you"
+    table_toggle_title: "nRF Connect SDK, Matter specification, and Matter SDK versions"
+    require_latest_entry: false
   requirements:
     memory_layouts:
-      path: "docs/getting_started/data/memory_layouts.yaml"
+      path: "docs/matter/getting_started/data/memory_layouts.yaml"
+      optional: true
     memory_usage:
-      path: "docs/getting_started/data/memory_usage.yaml"
+      path: "docs/matter/getting_started/data/memory_usage.yaml"
+      optional: true
     diagnostic_ram:
-      path: "docs/getting_started/hw_requirements.rst"
+      path: "docs/matter/getting_started/hw_requirements.rst"
     diagnostic_logs_snippet:
       path: "snippets/diagnostic-logs/boards"
     skip_mappings:
@@ -86,7 +105,8 @@ documentation:
     # RST tab titles to skip when comparing flash tables to partition DTSI files
     flash_doc_tabs_skip_dtsi_compare:
   link_txt:
-    path: "docs/links.txt"
+    path: "doc/links.txt"
+    optional: true
 
 ###################################################
 # Expected file structure for Matter samples
@@ -99,7 +119,6 @@ file_structure:
     - "README.rst"
     - "Kconfig"
     - "Kconfig.sysbuild"
-    - "sysbuild.conf"
     - "src/main.cpp"
     - "src/app_task.cpp"
     - "src/app_task.h"
@@ -223,9 +242,7 @@ validation:
     - "CONFIG_CHIP_DEVICE_PRODUCT_NAME"
 
   # Required sysbuild configurations
-  required_sysbuild_configs:
-    - "SB_CONFIG_PARTITION_MANAGER=n"
-
+  required_sysbuild_configs: []
   # Key configurations that should match between files
   consistency_checks:
     matter_configs:

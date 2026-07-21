@@ -77,6 +77,7 @@ NOTES:
 import re
 
 from internal.checker import MatterSampleTestCase
+from internal.utils.utils import get_doc_root
 
 
 class CheckDocIndexTestCase(MatterSampleTestCase):
@@ -85,6 +86,8 @@ class CheckDocIndexTestCase(MatterSampleTestCase):
         self.file_path = None
         self.version_pattern = None
         self.line_pattern = None
+        self.table_toggle_title = None
+        self.require_latest_entry = True
         self.content = ""
         self.line_spec_version = None
         self.line_sdk_version = None
@@ -93,15 +96,18 @@ class CheckDocIndexTestCase(MatterSampleTestCase):
         return "Check Matter SDK version and table coherence in index.rst"
 
     def prepare(self):
-        self.file_path = self.config.config_file.get("documentation").get("index").get("path")
-        self.version_pattern = (
-            self.config.config_file.get("documentation").get("index").get("matter_pattern")
+        index_cfg = self.config.config_file.get("documentation").get("index")
+        self.file_path = index_cfg.get("path")
+        self.version_pattern = index_cfg.get("matter_pattern")
+        self.line_pattern = index_cfg.get("line_pattern")
+        self.table_toggle_title = index_cfg.get(
+            "table_toggle_title",
+            "nRF Connect SDK, Matter specification, and Matter SDK versions",
         )
-        self.line_pattern = (
-            self.config.config_file.get("documentation").get("index").get("line_pattern")
-        )
+        self.require_latest_entry = index_cfg.get("require_latest_entry", True)
         try:
-            with open(self.config.nrf_path / self.file_path) as f:
+            doc_root = get_doc_root(self.config.nrf_path, self.config.config_file)
+            with open(doc_root / self.file_path) as f:
                 self.content = f.read()
         except Exception as e:
             self.issue(f"Error reading file: {e}")
@@ -203,9 +209,7 @@ class CheckDocIndexTestCase(MatterSampleTestCase):
         self.debug("Parsing Matter version table...")
 
         # Find the table using the toggle section
-        toggle_start = content.find(
-            ".. toggle:: nRF Connect SDK, Matter specification, and Matter SDK versions"
-        )
+        toggle_start = content.find(f".. toggle:: {self.table_toggle_title}")
         if toggle_start == -1:
             self.issue("Version table not found")
             return
@@ -280,7 +284,7 @@ class CheckDocIndexTestCase(MatterSampleTestCase):
         if latest_info:
             self._display_entry_info("(latest)", latest_info)
             all_issues.extend(self._validate_versions("(latest)", latest_info))
-        else:
+        elif self.require_latest_entry:
             self.issue("Could not find (latest) entry in table")
             all_issues.append("(latest) entry not found in version table")
 
