@@ -31,8 +31,8 @@ def main():
         allow_abbrev=False,
         epilog="""
 Examples:
-  python matter_sample_checker.py /path/to/ncs/nrf/samples/matter/template
-  python matter_sample_checker.py /path/to/ncs/nrf/samples/matter/light_bulb
+  python matter_sample_checker.py /path/to/ncs-matter/samples/template
+  python matter_sample_checker.py /path/to/ncs-matter/samples/light_bulb
   python matter_sample_checker.py  # Use current directory (year checking skipped by default)
   python matter_sample_checker.py --year  # Enable year checking for current year
   python matter_sample_checker.py --year 2024  # Check for 2024 copyright year
@@ -45,8 +45,8 @@ Examples:
 copy-paste checking
   python matter_sample_checker.py -a "light bulb" "door lock" -v  # Allow multiple names with \
 verbose output
-  python matter_sample_checker.py --samples-zap-yaml zap_samples.yml --base /path/to/ncs/nrf
-  python matter_sample_checker.py -s zap_samples.yml -b /path/to/ncs/nrf -y 2024
+  python matter_sample_checker.py --samples-zap-yaml zap_samples.yml --base /path/to/ncs-matter
+  python matter_sample_checker.py -s zap_samples.yml -b /path/to/ncs-matter -y 2024
         """,
     )
     parser.add_argument(
@@ -65,10 +65,10 @@ verbose output
     )
     parser.add_argument(
         '--base',
-        '-n',
+        '-b',
         type=str,
-        help='Base directory for resolving sdk-nrf path. If not specified, \
-                        paths are resolved using ZEPHYR_BASE/../nrf',
+        help='Base directory for resolving sample and workspace paths. If not specified, \
+                        uses the ncs-matter repository root containing this script',
     )
     parser.add_argument(
         '--verbose', '-v', action='store_true', help='Show verbose output during checks'
@@ -102,13 +102,20 @@ verbose output
     args = parser.parse_args()
 
     if not args.base:
-        zephyr_base = os.environ.get("ZEPHYR_BASE")
-        if not zephyr_base:
-            print("Error: ZEPHYR_BASE environment variable is not set.")
-            sys.exit(1)
-        nrf_base = (Path(zephyr_base) / ".." / "nrf").resolve()
+        script_repo_root = Path(__file__).resolve().parent.parent.parent
+        if (script_repo_root / 'west.yml').exists() and (script_repo_root / 'samples').is_dir():
+            nrf_base = script_repo_root
+        else:
+            zephyr_base = os.environ.get("ZEPHYR_BASE")
+            if not zephyr_base:
+                print("Error: --base not specified and ncs-matter repository root could not be inferred.")
+                sys.exit(1)
+            nrf_base = Path(zephyr_base).resolve().parent / "ncs-matter"
+            if not nrf_base.is_dir():
+                print(f"Error: Could not infer ncs-matter workspace base: {nrf_base}")
+                sys.exit(1)
     else:
-        nrf_base = Path(args.base)
+        nrf_base = Path(args.base).resolve()
 
     # Determine expected years based on --year argument
     expected_years = []

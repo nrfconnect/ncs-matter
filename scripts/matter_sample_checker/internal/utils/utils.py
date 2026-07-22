@@ -81,34 +81,80 @@ def find_config_files(directory: Path, config: dict[str, Any]) -> list[Path]:
     return sorted(config_files)
 
 
-def find_template_directory(sample_path: Path) -> Path | None:
-    """Find the matter template directory."""
-    # Use the discover_matter_samples logic to find the matter directory
-    current = sample_path
+def get_workspace_config(config: dict[str, Any] | None) -> dict[str, Any]:
+    """Return the workspace section from checker configuration."""
+    if not config:
+        return {}
+    workspace = config.get('workspace')
+    return workspace if isinstance(workspace, dict) else {}
+
+
+def resolve_workspace_path(base: Path, rel_path: str) -> Path:
+    """Resolve a path relative to the workspace base directory."""
+    return (base / rel_path).resolve()
+
+
+def get_doc_root(base: Path, config: dict[str, Any] | None = None) -> Path:
+    """Return the documentation root directory relative to the workspace base."""
+    workspace = get_workspace_config(config)
+    doc_root_rel = workspace.get('doc_root', '.')
+    return resolve_workspace_path(base, doc_root_rel)
+
+
+def get_workspace_root(base: Path) -> Path:
+    """Return the ncs-matter workspace root directory."""
+    return base.resolve()
+
+
+def get_matter_module_path(base: Path, config: dict[str, Any] | None = None) -> Path:
+    """Return the connectedhomeip / Matter module path in the west workspace."""
+    workspace = get_workspace_config(config)
+    matter_module_rel = workspace.get('matter_module_path', '../modules/lib/matter')
+    return resolve_workspace_path(base, matter_module_rel)
+
+
+def _is_sample_directory(path: Path, exclude_dirs: set[str]) -> bool:
+    return (
+        path.is_dir()
+        and path.name not in exclude_dirs
+        and not path.name.startswith('.')
+        and ((path / 'sample.yaml').exists() or (path / 'CMakeLists.txt').exists())
+    )
+
+
+def find_template_directory(
+    sample_path: Path, base: Path | None = None, config: dict[str, Any] | None = None
+) -> Path | None:
+    """Find the Matter template sample directory for the current workspace layout."""
+    workspace = get_workspace_config(config)
+    template_rel = workspace.get('template_sample_path')
+    if template_rel and base is not None:
+        template_dir = resolve_workspace_path(base, template_rel)
+        if template_dir.is_dir() and (template_dir / 'sample.yaml').exists():
+            return template_dir
+
+    current = sample_path.resolve()
     while current != current.parent:
-        if current.name == 'matter' and (current.parent / 'matter').exists():
-            matter_dir = current
-            break
-        if (current / 'samples' / 'matter').exists():
-            matter_dir = current / 'samples' / 'matter'
-            break
+        for template_dir in (
+            current / 'samples' / 'template',
+            current / 'samples' / 'matter' / 'template',
+            current / 'template' if current.name in {'matter', 'samples'} else None,
+        ):
+            if template_dir and template_dir.is_dir() and (template_dir / 'sample.yaml').exists():
+                return template_dir
         current = current.parent
 
-    if current == current.parent:
-        # Fallback: try some common paths
-        possible_paths = [
-            Path('/home/arbl/ncs/nrf/samples/matter'),
-            sample_path.parent,  # If we're already in a matter samples dir
-        ]
-        for path in possible_paths:
-            if path.exists() and path.is_dir():
-                matter_dir = path
-                break
-        else:
-            return None
+    if base is not None:
+        for template_rel in ('samples/template', 'samples/matter/template'):
+            template_dir = resolve_workspace_path(base, template_rel)
+            if template_dir.is_dir() and (template_dir / 'sample.yaml').exists():
+                return template_dir
 
-    template_dir = matter_dir / 'template'
-    return template_dir if template_dir.exists() else None
+    sibling_template = sample_path.parent / 'template'
+    if sibling_template.is_dir() and (sibling_template / 'sample.yaml').exists():
+        return sibling_template
+
+    return None
 
 
 def parse_samples_zap_yaml(yaml_path, nrf_base=None):
@@ -148,20 +194,13 @@ def parse_samples_zap_yaml(yaml_path, nrf_base=None):
         if 'zap_file' in entry:
             zap_file = entry['zap_file']
             # Extract sample directory from zap_file path
-            # e.g., "samples/matter/light_bulb/src/default_zap/light_bulb.zap" ->
-            # "samples/matter/light_bulb"
-            # or "applications/matter_bridge/src/default_zap/bridge.zap" ->
-            # "applications/matter_bridge"
+            # e.g., "samples/light_bulb/src/default_zap/light_bulb.zap" -> "samples/light_bulb"
             parts = Path(zap_file).parts
 
-            # Find the sample/application root (parent of 'src')
+            # Find the sample root (parent of 'src')
             if 'src' in parts:
                 src_index = parts.index('src')
                 sample_rel_path = Path(*parts[:src_index])
-
-                # Skip if path contains 'common'
-                if 'common' in sample_rel_path.parts:
-                    continue
 
                 # Resolve the full path
                 if nrf_base:
@@ -188,48 +227,38 @@ def parse_samples_zap_yaml(yaml_path, nrf_base=None):
     return samples
 
 
-def discover_matter_samples(sample_path: Path) -> list[str]:
-    """Discover all Matter samples in the NCS tree."""
-    # Try to find the matter samples directory from the current sample path
-    matter_dir = None
+def discover_matter_samples(
+    sample_path: Path, base: Path | None = None, config: dict[str, Any] | None = None
+) -> list[str]:
+    """Discover all Matter sample directory names in the current workspace layout."""
+    workspace = get_workspace_config(config)
+    exclude_dirs = set(workspace.get('exclude_sample_dirs', []))
+    samples: list[str] = []
 
-    # Walk up from current sample to find ncs/nrf/samples/matter
-    current = sample_path
-    while current != current.parent:  # Stop at filesystem root
-        if current.name == 'matter' and (current.parent / 'matter').exists():
-            matter_dir = current
-            break
-        if (current / 'samples' / 'matter').exists():
-            matter_dir = current / 'samples' / 'matter'
-            break
+    if base is not None:
+        for root_rel in workspace.get('samples_roots', []):
+            root = resolve_workspace_path(base, root_rel)
+            if not root.is_dir():
+                continue
+            for item in root.iterdir():
+                if _is_sample_directory(item, exclude_dirs):
+                    samples.append(item.name)
+
+    if samples:
+        return sorted(set(samples))
+
+    current = sample_path.resolve()
+    while current != current.parent:
+        for matter_dir in (current / 'samples' / 'matter', current / 'samples'):
+            if matter_dir.is_dir():
+                for item in matter_dir.iterdir():
+                    if _is_sample_directory(item, exclude_dirs):
+                        samples.append(item.name)
+                if samples:
+                    return sorted(set(samples))
         current = current.parent
 
-    if not matter_dir:
-        # Fallback: try some common paths
-        possible_paths = [
-            Path('/home/arbl/ncs/nrf/samples/matter'),
-            sample_path.parent,  # If we're already in a matter samples dir
-        ]
-        for path in possible_paths:
-            if path.exists() and path.is_dir():
-                matter_dir = path
-                break
-
-    if not matter_dir:
-        return []
-
-    # Discover all sample directories (exclude 'common' as it's not a sample)
-    samples = []
-    for item in matter_dir.iterdir():
-        if (
-            item.is_dir()
-            and item.name != 'common'
-            and not item.name.startswith('.')
-            and ((item / 'sample.yaml').exists() or (item / 'CMakeLists.txt').exists())
-        ):
-            samples.append(item.name)
-
-    return samples
+    return sorted(set(samples))
 
 
 def find_line_comment_issues(content: str) -> list[tuple]:
@@ -344,11 +373,11 @@ def create_diff_report(diff_result: list[str]) -> str:
     return "\n".join(context_lines)
 
 
-def get_latest_matter_sha(nrf_root: Path) -> str:
+def get_latest_matter_sha(base: Path, config: dict[str, Any] | None = None) -> str:
     """
     Get latest merge commit SHA from Matter repository that represents synchronization with upstream
     """
-    matter_root = nrf_root / ".." / "modules" / "lib" / "matter"
+    matter_root = get_matter_module_path(base, config)
     if not matter_root.exists():
         return "Matter repo not found"
 
@@ -407,15 +436,15 @@ def get_latest_matter_sha(nrf_root: Path) -> str:
     return "Unknown"
 
 
-def get_matter_sha_link(nrf_root: Path, sha: str = None) -> str:
+def get_matter_sha_link(base: Path, sha: str = None, config: dict[str, Any] | None = None) -> str:
     """Get GitHub link for Matter repository commit"""
     if not sha:
-        sha = get_latest_matter_sha(nrf_root)
+        sha = get_latest_matter_sha(base, config)
 
     if not sha or sha == "Unknown" or sha.startswith("Error"):
         return "Unknown"
 
-    matter_root = nrf_root / ".." / "modules" / "lib" / "matter"
+    matter_root = get_matter_module_path(base, config)
     try:
         # Try to get full SHA for better link reliability
         full_sha_result = subprocess.run(

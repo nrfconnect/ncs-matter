@@ -7,13 +7,15 @@
 # Base dir related to ZEPHYR_BASE
 - base_dir: ../ncs-matter
 
-# applications
-- name: matter_bridge
-  zap_file: samples/matter_bridge/src/default_zap/bridge.zap
-- name: matter_bridge_on_off_plug
-  zap_file: samples/matter_bridge/src/onoff_plug_zap/bridge.zap
-- name: matter_weather_station
-  zap_file: samples/matter_weather_station/src/default_zap/weather-station.zap
+# bridge
+- name: bridge
+  zap_file: samples/bridge/src/default_zap/bridge.zap
+- name: bridge_on_off_plug
+  zap_file: samples/bridge/src/onoff_plug_zap/bridge.zap
+
+# weather station
+- name: weather_station
+  zap_file: samples/weather_station/src/default_zap/weather-station.zap
 
 # light bulb
 - name: light_bulb

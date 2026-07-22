@@ -122,7 +122,9 @@ class CompareWithTemplateTestCase(MatterSampleTestCase):
 
     def prepare(self):
         # Find template directory
-        self.template_dir = find_template_directory(self.config.sample_path)
+        self.template_dir = find_template_directory(
+            self.config.sample_path, self.config.nrf_path, self.config.config_file
+        )
 
         self.current_sample_yaml = self.config.sample_path / 'sample.yaml'
         self.template_sample_yaml = self.template_dir / 'sample.yaml'
@@ -221,8 +223,10 @@ class CompareWithTemplateTestCase(MatterSampleTestCase):
         """
         Returns the matched add-on pattern string if this rel_path is for an optional add-on.
         """
-
-        addon_patterns = ['nrf21540dk', 'nrf21540ek', 'shield']
+        workspace = self.config.config_file.get('workspace') or {}
+        addon_patterns = workspace.get(
+            'optional_addon_patterns', ['nrf21540dk', 'nrf21540ek', 'shield']
+        )
 
         s = str(rel_path).lower()
         for pattern in addon_patterns:

@@ -124,7 +124,9 @@ class CopyPasteTestCase(MatterSampleTestCase):
         # Names that can be excluded from the check
         self.allowed_names = self.config.allowed_names
         self.skip_names = self.config.config_file.get('copy_paste_detection').get('skip_names')
-        self.all_samples = discover_matter_samples(self.config.sample_path)
+        self.all_samples = discover_matter_samples(
+            self.config.sample_path, self.config.nrf_path, self.config.config_file
+        )
         self.minimum_word_length = self.config.config_file.get('copy_paste_detection').get(
             'min_word_length'
         )
