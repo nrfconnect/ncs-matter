@@ -1,0 +1,41 @@
+.. heading
+
+| Hardware platforms | PCA | Board name | Board target |
+
+.. nrf52840dk_nrf52840
+
+| `Developing with nRF52 Series`_ | PCA10056 | `nrf52840dk`_ | ``nrf52840dk/nrf52840`` |
+
+.. nrf5340dk_nrf5340_cpuapp
+
+| `Developing with nRF53 Series`_ | PCA10095 | `nrf5340dk`_ | ``nrf5340dk/nrf5340/cpuapp`` |
+
+.. nrf54l15dk_nrf54l15_cpuapp
+
+| `Developing with nRF54L Series`_ | PCA10156 | `nrf54l15dk`_ | ``nrf54l15dk/nrf54l15/cpuapp`` |
+
+.. nrf54l15dk_nrf54l15_cpuapp_ns
+
+| `Developing with nRF54L Series`_ | PCA10156 | `nrf54l15dk`_ | ``nrf54l15dk/nrf54l15/cpuapp/ns`` |
+
+.. nrf54l15dk_nrf54l10_cpuapp
+
+| `Developing with nRF54L Series`_ | PCA10156 | `nrf54l15dk`_ | ``nrf54l15dk/nrf54l10/cpuapp`` |
+
+.. nrf54lm20dk_nrf54lm20a_cpuapp
+
+| `Developing with nRF54L Series`_ | PCA10184 | `nrf54lm20dk`_ | ``nrf54lm20dk/nrf54lm20a/cpuapp`` |
+
+.. nrf54lm20dk_nrf54lm20b_cpuapp
+
+| `Developing with nRF54L Series`_ | PCA10184 | `nrf54lm20dk`_ | ``nrf54lm20dk/nrf54lm20b/cpuapp`` |
+
+.. nrf54l15tag_nrf54l15_cpuapp
+
+| `Developing with nRF54L Series`_ | PCA10156 | `nrf54l15dk`_ | ``nrf54l15tag/nrf54l15/cpuapp`` |
+
+.. nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns
+
+| `Developing with nRF54L Series`_ | PCA10156 | `nrf54l15dk`_ | ``nrf54l15dk/nrf54l15/cpuapp``    |
+|                                |          |                                         |                                   |
+|                                |          |                                         | ``nrf54l15dk/nrf54l15/cpuapp/ns`` |

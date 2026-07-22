@@ -1,0 +1,245 @@
+.. ### nRF Connect SDK documentation
+
+.. _`nRF Connect SDK`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/index.html
+.. _`Installing the nRF Connect SDK`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/installation/install_ncs.html
+.. _`Kconfig search`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/kconfig/index.html
+.. _`Developing with nRF54L Series`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/device_guides/nrf54l/index.html
+.. _`Repository application`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/create_application.html#repository_application
+.. _`Repository types`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/dev_model_and_contributions/code_base.html#repository_types
+.. _`Freestanding application`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/create_application.html#create-application-types-freestanding
+.. _`Configuring and building`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/config_and_build/index.html
+.. _`Sysbuild enabled by default`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/config_and_build/config_and_build_system.html#sysbuild_enabled_by_default
+.. _`Configuring sysbuild usage in west`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/config_and_build/sysbuild/sysbuild_configuring_west.html
+.. _`Testing and optimization`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/test_and_optimize.html
+.. _`Building an application`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/config_and_build/building.html
+.. _`Programming an application`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/programming.html
+.. _`chip-tool`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/matter/chip_tool_guide.html
+.. _`Matter nRF Connect releases`: https://github.com/nrfconnect/sdk-connectedhomeip/releases
+.. _`Thread tools`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/thread/tools.html
+.. _`Running OTBR using Docker`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/thread/tools.html#ug-thread-tools-tbr-docker
+.. _`nRF Sniffer for 802.15.4`: https://docs.nordicsemi.com/bundle/ug_sniffer_802154/page/UG/sniffer_802154/intro_802154.html
+.. _`nRF Thread Topology Monitor`: https://docs.nordicsemi.com/bundle/ug_nrf_ttm/page/UG/nrf_ttm/ttm_introduction.html
+.. _`Testing Matter in the NCS`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/matter/getting_started/testing/index.html
+.. _`Matter controller`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/matter/overview/network_topologies.html#ug-matter-configuring-controller
+.. _`Onboarding information formats`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/matter/overview/commissioning.html#ug-matter-network-topologies-commissioning-onboarding-formats
+.. _`Matter architecture`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/matter/overview/architecture.html
+.. _`Matter overview`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/matter/overview/index.html
+.. _`Matter`: https://csa-iot.org/all-solutions/matter/
+.. _`Connectivity Standards Alliance`: https://csa-iot.org
+.. _`Migration notes for nRF Connect SDK v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/releases_and_maturity/migration/migration_guide_2.6.html
+.. _`How to work with build configurations`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/ncs_configure_app.html
+.. _`Software maturity levels`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/releases_and_maturity/software_maturity.html
+
+.. ### NCS Zephyr documentation set
+
+.. _`nrf54l15dk`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/boards/nordic/nrf54l15dk/doc/index.html
+.. _`nrf54lm20dk`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/boards/nordic/nrf54lm20dk/doc/index.html
+
+.. ### Matter add-on external :ref: targets
+
+.. _app_approtect: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/ap_protect.html
+.. _ug_thread_tools: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/thread/tools.html
+.. _ug_thread_tools_tbr: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/thread/tools.html#ug-thread-tools-tbr
+.. _partition_manager: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/scripts/partition_manager/partition_manager.html
+.. _migration_partitions: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/releases_and_maturity/migration/migration_partitions.html
+.. _ncs_release_notes_340: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/releases_and_maturity/releases/release-notes-3.4.0.html
+.. _`Power optimization recommendations`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/test_and_optimize/optimizing/power_general.html
+.. _`Disable unused pins and peripherals`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/test_and_optimize/optimizing/power_general.html#disable-unused-pins-and-peripherals
+.. _`Enable Device Power Management module`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/test_and_optimize/optimizing/power_general.html#enable-device-power-management-module
+.. _`Configure radio transmitter power`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/test_and_optimize/optimizing/power_general.html#configure-radio-transmitter-power
+
+.. ### Matter documentation backtick links (from sdk-nrf links.txt)
+
+.. _Bluetooth LE Arbiter's header file: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/src/platform/Zephyr/BLEAdvertisingArbiter.h
+.. _Bluetooth SIG's Qualification Process: https://www.bluetooth.com/develop-with-bluetooth/qualify/
+.. _CHIP Certificate Tool source files: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5e2e5a02d6/src/tools
+.. _CONFIG_BT_CTLR_TX_PWR_MINUS: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_MINUS
+.. _CONFIG_BT_CTLR_TX_PWR_PLUS: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_PLUS
+.. _CSA Certified Products Database: https://csa-iot.org/csa-iot_products/
+.. _CSA Matter Resource Kit: https://community.csa-iot.org/page/matter-resource-kit
+.. _CSA Specifications Download Request: https://csa-iot.org/developer-resource/specifications-download-request/
+.. _CSA's Certification Team: https://csa-iot.org/contact-us/
+.. _CSA's Testing Providers: https://csa-iot.org/certification/testing-providers/
+.. _Connectivity Standards Alliance Certification Policy: https://csa-iot.org/wp-content/uploads/2021/12/07-4842-14-ptsc-certification-policy.pdf
+.. _Connectivity Standards Alliance Certification Web Tool: https://zigbeecertifiedproducts.knack.com/zigbee-certified#home/
+.. _Connectivity Standards Alliance members: https://csa-iot.org/members/
+.. _DCL Quick Start Guide: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/quickStartGuide.adoc
+.. _DevZone: https://devzone.nordicsemi.com/
+.. _Developing Matter 1.0 products with nRF Connect SDK: https://www.youtube.com/watch?v=9Ar13rMxGIk
+.. _Distributed Compliance Ledger: https://webui.dcl.csa-iot.org/
+.. _Electrical specification for nRF7002: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/elspec/doc/electrical_specification.html
+.. _Factory Data Provider: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/src/platform/nrfconnect/FactoryDataProvider.h
+.. _Factory data schema: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/scripts/tools/nrfconnect/nrfconnect_factory_data.schema
+.. _Fprotect: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/libraries/security/bootloader/fprotect.html
+.. _GN: https://gn.googlesource.com/gn/
+.. _GN website: https://gn.googlesource.com/gn/#getting-a-binary
+.. _Generate factory data script: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/scripts/tools/nrfconnect/generate_nrfconnect_chip_factory_data.py
+.. _Generate partition script: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/scripts/tools/nrfconnect/nrfconnect_generate_partition.py
+.. _ISO 8601 date format: https://www.iso.org/iso-8601-date-and-time-format.html
+.. _JSON Schema: https://json-schema.org/understanding-json-schema/reference
+.. _JSON Schema Validator: https://www.jsonschemavalidator.net
+.. _Join Bluetooth SIG: https://www.bluetooth.com/develop-with-bluetooth/join/
+.. _Join CSA: https://csa-iot.org/become-member/
+.. _Join Wi-Fi Alliance: https://www.wi-fi.org/membership
+.. _LogModule enumeration: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/src/lib/support/logging/Constants.h
+.. _Matter homepage: https://buildwithmatter.com/
+.. _Matter Attestation Form: https://groups.csa-iot.org/wg/members-all/document/folder/2255
+.. _Matter Attestation of Security template: https://groups.csa-iot.org/wg/members-all/document/27432
+.. _Matter Cluster Editor app: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-matter-cluster-editor/index.html
+.. _Matter Fundamentals course: https://academy.nordicsemi.com/courses/matter-fundamentals/
+.. _Matter GitHub repository: https://github.com/project-chip/connectedhomeip
+.. _Matter Quick Start app: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-matter-quickstart/index.html
+.. _Matter SDK version: https://github.com/project-chip/connectedhomeip/releases
+.. _Matter Simple Setup: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-getting-started.html
+.. _Matter Simple Setup for Thread Overview: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-for-thread-overview.html
+.. _Matter factory data Kconfig options: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CHIP_FACTORY_DATA
+.. _Matter nRF Connect Kconfig: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/config/nrfconnect/chip-module/Kconfig
+.. _Matter nRF Connect SDK Platform Certificate_1_4_2: https://csa-iot.org/csa_product/nrf-connect-sdk/
+.. _Matter nRF Connect SDK Platform Certificate_1_5_0: https://csa-iot.org/csa_product/nrf-connect-sdk-with-nrf52-nrf53-and-nrf54l-series-socs/
+.. _Matter nRF Connect platform source files: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5e2e5a02d6/src/platform/nrfconnect
+.. _Matter nRF Connect scripts: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5e2e5a02d6/scripts/tools/nrfconnect
+.. _Nordic Developer Academy: https://academy.nordicsemi.com/
+.. _Online Power Profiler for Matter over Thread: https://devzone.nordicsemi.com/power/w/opp/16/online-power-profiler-for-matter-over-thread
+.. _PHP JSON Schema: https://github.com/swaggest/php-json-schema
+.. _PICS Tool: https://picstool.csa-iot.org/
+.. _Platform Security Architecture (PSA): https://www.psacertified.org/what-is-psa-certified/
+.. _SIGMA: https://link.springer.com/chapter/10.1007/978-3-540-45146-4_24
+.. _SPAKE2+: https://datatracker.ietf.org/doc/rfc9383/
+.. _SPAKE2+ Python Tool page: https://project-chip.github.io/connectedhomeip-doc/scripts/tools/spake2p/README.html
+.. _Testing the nRF Connect platform with Apple, Google and Samsung ecosystems: https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/matter-testing-nrf-connect-sdk-platform-with-apple-google-and-samsung-ecosystems-218911247#mcetoc_1gkq24ojdf
+.. _Testing with Apple Devices: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
+.. _Thread Group's certification information: https://www.threadgroup.org/What-is-Thread/Certification
+.. _Understanding Frustration-Free Setup: https://developer.amazon.com/docs/frustration-free-setup/understanding-ffs.html
+.. _Works with Google Home: https://developers.home.google.com/matter/certification#wwgh_certification
+.. _X.509: https://www.itu.int/rec/T-REC-X.509-201910-I/en
+.. _ZCL Advanced Platform: https://github.com/project-chip/zap
+.. _ZCL Advanced Platform releases: https://github.com/project-chip/zap/releases
+.. _`chip-tool guide`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/matter/chip_tool_guide.html
+.. _dedicated Matter fork: https://github.com/nrfconnect/sdk-connectedhomeip
+.. _nRF Connect for Desktop: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Connect-for-desktop
+.. _nRF Door Lock and Access Control Add-on: https://nrfconnectdocs.nordicsemi.com/addons/door_lock_and_access_control/latest/index.html
+.. _nRF Util: https://docs.nordicsemi.com/bundle/nrfutil/page/README.html
+.. _nRF52840 Compatibility Matrix: https://docs.nordicsemi.com/bundle/comp_matrix_nrf52840/page/COMP/nrf52840/nrf52840_comp_matrix.html
+.. _nRF5340 Compatibility Matrix: https://docs.nordicsemi.com/bundle/comp_matrix_nrf5340/page/COMP/nrf5340/nrf5340_comp_matrix.html
+.. _nRF54L15 Compatibility Matrix: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l15/page/COMP/nrf54l15/nrf54l15_nrf_connect_sdk.html
+.. _other controller setups: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5e2e5a02d6/src/controller
+.. _zcbor: https://github.com/NordicSemiconductor/zcbor
+
+.. ### Matter module/platform doc links (sdk-connectedhomeip)
+
+
+.. _Amazon Alexa integration with Matter_: https://developer.amazon.com/en-US/docs/alexa/smarthome/matter-support.html
+.. _Apple Home integration with Matter_: https://www.apple.com/home-app/accessories/
+.. _Application memory: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/test_and_optimize/optimizing/memory.html
+.. _Application output files: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/config_and_build/output_build_files.html
+.. _Application versioning: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/build/version/index.html
+.. _Approtect: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/ap_protect.html
+.. _Bluetooth qualification: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/bt/bt_qualification/index.html
+.. _Bluetooth services: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/libraries/bluetooth/index.html
+.. _CRACEN KMU overview: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/device_guides/kmu_guides/kmu_cracen_overview.html
+.. _Configuring Thread in the nRF Connect SDK: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/thread/configuring.html
+.. _Cryptography architecture: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/crypto/crypto_architecture.html
+.. _Cryptography implementation standards: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/crypto/crypto_architecture.html
+.. _DFU multi-image: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/libraries/dfu/dfu_multi_image.html
+.. _DFU target: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/libraries/dfu/dfu_target.html
+.. _Developing with Front-End Modules: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/device_guides/fem/index.html
+.. _Developing with nRF52 Series: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/device_guides/nrf52/index.html
+.. _Developing with nRF53 Series: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/device_guides/nrf53/index.html
+.. _Developing with nRF70 Series: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/device_guides/nrf70/index.html
+.. _External flash for bootloader: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_partitioning.html
+.. _Flash protection: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/libraries/security/bootloader/fprotect.html
+.. _Google Home integration with Matter_: https://developers.home.google.com/matter
+.. _Hardware unique key: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/libraries/security/hw_unique_key.html
+.. _Immutable MCUboot: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_adding_sysbuild.html
+.. _Immutable MCUboot keys: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_adding_sysbuild.html
+.. _KMU hardware peripheral: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/device_guides/kmu_guides/kmu_cracen_overview.html
+.. _KMU key usage schemes: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/device_guides/kmu_guides/kmu_psa_crypto_api_prog_model.html
+.. _KMU slots: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/device_guides/kmu_guides/kmu_cracen_overview.html
+.. _Key storage KMU: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/key_storage.html
+.. _Logging: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/services/logging/index.html
+.. _MCUboot downgrade protection: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_downgrade_protection.html
+.. _MCUboot image compression: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/bootloaders_dfu/mcuboot_image_compression.html
+.. _MPSL FEM output support: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/device_guides/fem/fem_nRF21540_optional_properties.html
+.. _Matter SDK's Logging header_: https://github.com/nrfconnect/sdk-connectedhomeip/blob/v3.4.0/src/lib/support/logging/CHIPLogging.h
+.. _Matter Simple Setup for Wi-Fi Overview_: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-for-wifi-overview.html
+.. _Matter weather station sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/applications/matter_weather_station/README.html
+.. _Matter add-on index: matter/index.html
+.. _Matter bridge sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/applications/matter_bridge/README.html
+.. _Matter closure sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/closure/README.html
+.. _Matter contact sensor sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/contact_sensor/README.html
+.. _Matter diagnostic logs snippet: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/matter_diagnostic_logs_snippet.html
+.. _Matter light bulb sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/light_bulb/README.html
+.. _Matter light switch sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/light_switch/README.html
+.. _Matter lock sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/lock/README.html
+.. _Matter manufacturer specific sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/manufacturer_specific/README.html
+.. _Matter samples: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter.html
+.. _Matter smoke CO alarm sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/smoke_co_alarm/README.html
+.. _Matter temperature sensor sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/temperature_sensor/README.html
+.. _Matter template sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/template/README.html
+.. _Matter thermostat sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/thermostat/README.html
+.. _Matter window covering sample: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter/window_covering/README.html
+.. _Multiprotocol Service Layer: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/libraries/mpsl/index.html
+.. _Multiprotocol support: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/multiprotocol/index.html
+.. _Non-Volatile Storage (NVS): https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/services/storage/nvs/nvs.html
+.. _Nordic UART Service (NUS): https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/libraries/bluetooth/services/nus.html
+.. _OpenThread stack architecture: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/thread/overview/architectures.html
+.. _PSA Crypto API: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/crypto/driver_config.html
+.. _Partition Manager: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/scripts/partition_manager/partition_manager.html
+.. _Programming board names: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/app_dev/board_names.html
+.. _RAM power-down: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/libraries/others/ram_pwrdn.html
+.. _Samsung SmartThings integration with Matter_: https://support.smartthings.com/hc/en-us/articles/11219700390804-SmartThings-x-Matter-Integration-
+.. _Secure storage in the nRF Connect SDK: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/secure_storage.html
+.. _Security: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security.html
+.. _Settings: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/services/storage/settings/index.html
+.. _Simple Management Protocol: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/libraries/bluetooth/services/dfu_smp.html
+.. _Software maturity levels: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/releases_and_maturity/software_maturity.html
+.. _TF-M Crypto Service: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/tfm/tfm_supported_services.html
+.. _TF-M encrypted ITS: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/tfm/tfm_services.html
+.. _TF-M partition alignment: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/tfm/tfm_partitioning.html
+.. _TF-M security by separation: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/tfm/processing_environments.html
+.. _TF-M supported services: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/tfm/tfm_supported_services.html
+.. _Thread Border Router: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/thread/tools.html#ug-thread-tools-tbr-docker
+.. _Thread certification: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/thread/certification.html
+.. _Thread device types: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/thread/overview/commissioning.html#thread_ot_device_types
+.. _Thread message pool configuration: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/thread/configuring.html#thread_configuring_messagepool
+.. _Thread protocol: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/thread/index.html
+.. _Trusted storage: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/libraries/security/trusted_storage.html
+.. _Using MCUboot in nRF Connect SDK: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/mcuboot/readme-ncs.html
+.. _West tool: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/develop/west/index.html
+.. _Wi-Fi MAC layer: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/wifi/wifi.html#wifi_mac_layer
+.. _Wi-Fi certification: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/protocols/wifi/wifi_certification.html
+.. _ZMS (Zephyr Memory Storage): https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/services/storage/zms/zms.html
+.. _Zephyr environment variables: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/develop/env_vars.html
+.. _nRF security drivers: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/security/crypto/drivers.html
+.. _Matter threads table: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/samples/matter.html#matter_threads_table
+.. _Matter software update guide: https://github.com/nrfconnect/sdk-connectedhomeip/blob/master/docs/platforms/nrf/nrfconnect_examples_software_update.md
+.. _Matter nRF Connect platform overview: https://github.com/nrfconnect/sdk-connectedhomeip/blob/master/docs/platforms/nrf/nrfconnect_platform_overview.md
+.. _Matter factory data configuration guide: https://github.com/nrfconnect/sdk-connectedhomeip/blob/master/docs/platforms/nrf/nrfconnect_factory_data_configuration.md
+.. _Matter CLI examples guide: https://github.com/nrfconnect/sdk-connectedhomeip/blob/master/docs/platforms/nrf/nrfconnect_examples_cli.md
+.. _Matter access control guide: https://github.com/nrfconnect/sdk-connectedhomeip/blob/master/docs/guides/access-control-guide.md
+.. _Join Thread Group: https://www.threadgroup.org/What-is-Thread/Join
+.. _Matter Resource Kit: https://community.csa-iot.org/page/matter-resource-kit
+.. _Bluetooth SIG's Assigned Numbers: https://www.bluetooth.com/specifications/assigned-numbers/
+.. _nRF54L15 SoC Compatibility Matrix: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l15/page/COMP/nrf54l15/nrf54l15_nrf_connect_sdk.html
+.. _nrf52840dk: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/boards/nordic/nrf52840dk/doc/index.html
+.. _nrf5340dk: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/boards/nordic/nrf5340dk/doc/index.html
+.. _thingy53: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/zephyr/boards/nordic/thingy53/doc/index.html
+.. _Matter add-on repository: https://github.com/nrfconnect/ncs-matter
+.. _`Testing Matter in the nRF Connect SDK`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/matter/getting_started/testing/index.html
+.. _`Manual installation gn`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/matter/getting_started/tools.html#gn-tool
+.. _`Configuring device identification`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/matter/getting_started/advanced_kconfigs.html#matter-device-identification
+.. _`Device Attestation within commissioning`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/matter/end_product/attestation.html#ug-matter-device-attestation-commissioning-info
+.. _`Testing Device Attestation during development`: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/matter/end_product/attestation.html#ug-matter-device-attestation-testing-da
+
+.. _Release notes for the nRF Connect SDK: https://docs.nordicsemi.com/bundle/ncs-|ncs_version|/page/nrf/releases_and_maturity/release_notes.html
+.. _Matter add-on: https://github.com/nrfconnect/ncs-matter
+.. _Matter Core Specification: https://csa-iot.org/developer-resource/specifications-download-request/
+
+.. ### Link aliases without trailing underscore
+
+.. _Apple Home integration with Matter: https://www.apple.com/home-app/accessories/
+.. _Google Home integration with Matter: https://developers.home.google.com/matter
+.. _Samsung SmartThings integration with Matter: https://support.smartthings.com/hc/en-us/articles/11219700390804-SmartThings-x-Matter-Integration-
+.. _Amazon Alexa integration with Matter: https://developer.amazon.com/en-US/docs/alexa/smarthome/matter-support.html
+.. _Matter Simple Setup for Wi-Fi Overview: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-for-wifi-overview.html
+.. _Matter SDK's Logging header: https://github.com/nrfconnect/sdk-connectedhomeip/blob/v3.4.0/src/lib/support/logging/CHIPLogging.h

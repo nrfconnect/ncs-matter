@@ -1,0 +1,40 @@
+.. ### Versions
+
+.. |ncs_version| replace:: 3.4.0
+.. |addon_version| replace:: 1.0.0
+
+.. |NCS| replace:: nRF Connect SDK
+.. |addon| replace:: Matter add-on
+.. |nRFVSC| replace:: nRF Connect for VS Code extension
+
+.. |matter_intro| replace:: `Matter`_ (formerly Project Connected Home over IP or Project CHIP) is an open-source application layer that aims at creating a unified communication standard across smart home devices, mobile applications, and cloud services.
+.. |matter_controller_def| replace:: The Matter controller is a node in the Matter network and a role within the :ref:`ug_matter_gs_testing` development environment.
+.. |matter_controller_def_nolink| replace:: The Matter controller is a node in the Matter network and a role within the Matter development environment.
+.. |matter_chip_tool_pc_default_line| replace:: CHIP Tool for Linux or macOS is the default implementation of the :ref:`Matter controller <ug_matter_configuring_controller>` role, recommended for the nRF Connect platform.
+.. |matter_cd_definition| replace:: a cryptographic document created by the CSA for each device type, used to confirm that a given type of device was certified
+.. |open_terminal_window_with_environment| replace:: Start the toolchain environment in a terminal window. See `Installing the nRF Connect SDK`_ for details.
+
+
+.. |matter_gn_required_note| replace:: Matter requires the GN tool.
+   If you are updating from the |NCS| version earlier than v1.5.0, see the :ref:`Manual installation gn <manual_installation_gn>`.
+.. |matter_unique_discriminator_note| replace:: If you are working with multiple devices, set a unique discriminator for each one, or commission them one at a time.
+   See :ref:`ug_matter_configuring_device_identification` for more information.
+
+.. |matter_factory_reset| replace:: To restore the device settings and state to factory defaults, press the **Button 0** for six seconds to initiate the factory reset of the device.
+.. |matter_ble_advertising_auto| replace:: Before starting the commissioning procedure, make sure that the device is discoverable over Bluetooth LE.
+                                           The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (one hour by default).
+                                           If the Bluetooth LE advertising times out, enable it again.
+.. |matter_cd_info_note_for_samples| replace:: This data payload also includes test Device Attestation, with test Certification Declaration, Product ID, and Vendor ID.
+   These are used for :ref:`ug_matter_device_attestation_commissioning_info`, and you can generate your own test Certification Declaration when you :ref:`ug_matter_device_attestation_testing_da`.
+
+.. ### sdk-nrf sources
+
+.. |sysbuild_autoenabled_ncs| replace:: When building `Repository application`_ applications in the |addon| which is an `SDK repository <Repository types_>`_, building with sysbuild is `enabled by default <Sysbuild enabled by default_>`_.
+   If you work with out-of-tree `Freestanding application`_ applications, you need to manually pass the ``--sysbuild`` parameter to every build command or `configure west to always use it <Configuring sysbuild usage in west_>`_.
+.. |config| replace:: See `Configuring and building`_ in the |NCS| documentation for information about how to permanently or temporarily change the configuration.
+.. |kconfig_search| replace::
+   For details about the Kconfig options mentioned here, see the `Kconfig search`_ in the |NCS| documentation.
+.. |connect_kit| replace:: Connect the kit to the computer using a USB cable.
+   The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+.. |connect_terminal_ANSI| replace:: Connect to the kit with a terminal emulator (for example, nRF Connect Serial Terminal).
+   See `Testing and optimization`_ in the |NCS| documentation for the required settings and steps.
