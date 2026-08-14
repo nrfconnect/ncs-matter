@@ -32,7 +32,7 @@ bool IsValidIntent(IntentEnum intent)
 }
 
 #ifdef CONFIG_LOG
-const char *GetIntentStr(IntentEnum intent)
+[[maybe_unused]] const char *GetIntentStr(IntentEnum intent)
 {
 	switch (intent) {
 	case IntentEnum::kEndUserSupport:
