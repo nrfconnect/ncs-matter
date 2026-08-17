@@ -1,0 +1,57 @@
+name: SDK sync PR Copilot analysis
+
+on:
+  workflow_run:
+    workflows: ["SDK sync PR build"]
+    types: [completed]
+    branches:
+      - sdk-nrf
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: read
+
+jobs:
+  copilot-twister-analysis:
+    if: |
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.repository.full_name == github.repository &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Set up Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scripts/sdk_sync/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r scripts/sdk_sync/requirements.txt
+
+      - name: Verify trusted SDK sync workflow run
+        id: verify
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/sdk_sync/verify_sync_pr_run.py --from-event
+
+      - name: Download Twister analysis artifact
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ steps.verify.outputs.workflow_run_id }}
+          name: sdk-sync-twister-analysis
+          path: sdk-sync-twister-analysis
+
+      - name: Trigger Copilot Twister analysis
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.NCS_NORDICBUILDER_ACTION_TOKEN }}
+          PR_NUMBER: ${{ steps.verify.outputs.pr_number }}
+          WORKFLOW_RUN_ID: ${{ steps.verify.outputs.workflow_run_id }}
+          WORKFLOW_RUN_URL: ${{ steps.verify.outputs.workflow_run_url }}
+        run: python scripts/sdk_sync/trigger_copilot_analysis.py --artifact-dir sdk-sync-twister-analysis --from-env

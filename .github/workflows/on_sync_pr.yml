@@ -1,0 +1,120 @@
+name: SDK sync PR build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - sdk-nrf
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: ncs-matter-sdk-sync-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_COMPILERCHECK: content
+  CCACHE_MAXSIZE: 2G
+  CCACHE_SLOPPINESS: file_macro,time_macros,include_file_mtime,include_file_ctime
+  WEST_PATH_CACHE: ${{ github.workspace }}/west-path-cache
+
+jobs:
+  template-twister:
+    if: |
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'sdk-sync/test' &&
+      github.event.pull_request.base.ref == 'sdk-nrf'
+    runs-on: ubuntu-24.04
+    container: ghcr.io/nrfconnect/sdk-nrf-toolchain:v3.4.0
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          path: ncs-matter
+
+      - name: Restore west module path cache
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: west-path-cache
+          key: west-path-cache-${{ hashFiles('ncs-matter/west.yml') }}
+          restore-keys: |
+            west-path-cache-
+
+      - name: Restore ccache
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: .ccache
+          key: ccache-ncs-matter-${{ hashFiles('ncs-matter/west.yml') }}-${{ github.base_ref }}
+          restore-keys: |
+            ccache-ncs-matter-${{ hashFiles('ncs-matter/west.yml') }}-
+            ccache-ncs-matter-
+
+      - name: Restore pip cache
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: ~/.cache/pip
+          key: pip-ncs-matter-${{ hashFiles('ncs-matter/west.yml') }}
+
+      - name: Prepare west workspace
+        run: |
+          rm -rf .west
+          west --version
+          west init -l ncs-matter --mf west.yml
+          west update -n -o=--depth=1 --path-cache "${WEST_PATH_CACHE}"
+
+      - name: Install Python deps for Matter
+        run: |
+          pip3 install -r nrf/scripts/requirements-extra.txt
+          pip3 install -r modules/lib/matter/scripts/setup/requirements.nrfconnect.txt
+
+      - name: Set up ccache
+        run: |
+          mkdir -p "${CCACHE_DIR}"
+          ccache -z
+          ccache -s
+
+      - name: Twister build Matter template sample
+        id: twister
+        run: |
+          set -o pipefail
+          source zephyr/zephyr-env.sh
+          zephyr/scripts/twister \
+            --inline-logs \
+            --build-only \
+            -N \
+            --verbose \
+            -T ncs-matter/samples/template \
+            --scenario sample.matter.template.debug \
+            --all 2>&1 | tee twister-console.log
+
+      - name: Collect Twister analysis artifact
+        if: always()
+        run: |
+          mkdir -p sdk-sync-twister-analysis
+          echo "${{ github.event.pull_request.number }}" > sdk-sync-twister-analysis/pr_number.txt
+          echo "${{ job.status }}" > sdk-sync-twister-analysis/workflow_conclusion.txt
+          cp -f twister-console.log sdk-sync-twister-analysis/ 2>/dev/null || true
+          if [ -d twister-out ]; then
+            cp -f twister-out/twister.log sdk-sync-twister-analysis/ 2>/dev/null || true
+            cp -f twister-out/twister.json sdk-sync-twister-analysis/ 2>/dev/null || true
+          fi
+
+      - name: Upload Twister analysis artifact
+        if: always()
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4
+        with:
+          name: sdk-sync-twister-analysis
+          path: sdk-sync-twister-analysis/
+          if-no-files-found: error
+
+      - name: Print ccache statistics
+        if: always()
+        run: ccache -s

@@ -1,0 +1,64 @@
+name: SDK Sync
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sdk-sync:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ secrets.NCS_NORDICBUILDER_ACTION_TOKEN }}
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set state file path
+        run: echo "STATE_FILE=${RUNNER_TEMP}/sdk_sync_state.json" >> "$GITHUB_ENV"
+
+      - name: Set up Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: scripts/sdk_sync/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r scripts/sdk_sync/requirements.txt
+
+      - name: Configure git credentials
+        run: |
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          git config --global user.email "sdk-sync-bot@users.noreply.github.com"
+          git config --global user.name "sdk-sync-bot"
+
+      - name: Synchronize sdk-nrf with main
+        run: python scripts/sdk_sync/sync_integration_branch.py --main-branch main --integration-branch sdk-nrf
+
+      - name: Synchronize sdk-connectedhomeip sdk-nrf with master
+        run: python scripts/sdk_sync/sync_chip_branch.py
+
+      - name: Collect upstream revision report
+        run: python scripts/sdk_sync/chip_sync_report.py --state-file "${STATE_FILE}"
+
+      - name: Prepare test branch from sdk-nrf
+        run: python scripts/sdk_sync/prepare_pr.py --command prepare-branch --source-branch sdk-nrf --state-file "${STATE_FILE}"
+
+      - name: Update west.yml on test branch
+        run: |
+          git checkout sdk-sync/test
+          python scripts/sdk_sync/update_manifest.py --state-file "${STATE_FILE}" --branch sdk-sync/test
+
+      - name: Open sync pull request
+        run: python scripts/sdk_sync/prepare_pr.py --command open-pr --base-branch sdk-nrf --state-file "${STATE_FILE}"
+
+      - name: Post sync summary comment
+        run: python scripts/sdk_sync/build_report.py --state-file "${STATE_FILE}"
