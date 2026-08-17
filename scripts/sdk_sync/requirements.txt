@@ -1,0 +1,2 @@
+# Python dependencies for scripts/sdk_sync (weekly SDK sync workflow).
+requests
