@@ -1,0 +1,25 @@
+name: Load add-on config
+description: Load SDK_SYNC_* variables from .github/addon.env into GITHUB_ENV
+
+inputs:
+  config-file:
+    description: Path to addon.env relative to the workspace root
+    required: false
+    default: .github/addon.env
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        set -euo pipefail
+        CONFIG_FILE="${{ inputs.config-file }}"
+        if [ ! -f "${CONFIG_FILE}" ]; then
+          echo "::error::Missing ${CONFIG_FILE}" >&2
+          exit 1
+        fi
+        grep -E '^SDK_SYNC_[A-Za-z0-9_]+=' "${CONFIG_FILE}" >> "$GITHUB_ENV"
+        if ! grep -q '^SDK_SYNC_PROJECTS=' "${CONFIG_FILE}"; then
+          echo "::error::Missing SDK_SYNC_PROJECTS in ${CONFIG_FILE}" >&2
+          exit 1
+        fi

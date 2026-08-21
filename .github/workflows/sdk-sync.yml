@@ -1,0 +1,203 @@
+name: SDK Sync
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  push:
+    branches:
+      - sync_workflows
+  workflow_dispatch:
+    inputs:
+      revisions:
+        description: 'Optional revision overrides (name=sha,name=sha)'
+        required: false
+        type: string
+      force_pr:
+        description: 'Open sync PR even when all builds pass'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ncs-matter-sdk-sync
+  cancel-in-progress: true
+
+env:
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_COMPILERCHECK: content
+  CCACHE_MAXSIZE: 2G
+  CCACHE_SLOPPINESS: file_macro,time_macros,include_file_mtime,include_file_ctime
+  WEST_PATH_CACHE: ${{ github.workspace }}/west-path-cache
+  STATE_FILE: ${{ github.workspace }}/sdk_sync_state.json
+
+jobs:
+  sync-and-build:
+    runs-on: ubuntu-24.04
+    container: ghcr.io/nrfconnect/sdk-nrf-toolchain:v3.4.0
+    defaults:
+      run:
+        shell: bash
+    outputs:
+      failed: ${{ steps.twister.outputs.failed }}
+    env:
+      GH_TOKEN: ${{ secrets.NCS_NORDICBUILDER_ACTION_TOKEN }}
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+          path: ncs-matter
+          persist-credentials: false
+
+      - name: Load add-on config
+        uses: ./ncs-matter/.github/actions/load-addon-config
+        with:
+          config-file: ncs-matter/.github/addon.env
+
+      - name: Configure git safe directory
+        run: git config --global --add safe.directory "${{ github.workspace }}/ncs-matter"
+
+      - name: Install Python dependencies
+        run: pip3 install -r ncs-matter/scripts/sdk_sync/requirements.txt
+
+      - name: Configure git credentials
+        run: |
+          git -C ncs-matter remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          git config --global user.email "pylon@nordicsemi.no"
+          git config --global user.name "Nordic Builder"
+
+      - name: Rebase configured manifest projects
+        run: python ncs-matter/scripts/sdk_sync/sdk_sync.py rebase
+
+      - name: Resolve manifest revisions
+        run: |
+          python ncs-matter/scripts/sdk_sync/sdk_sync.py resolve \
+            --state-file "${STATE_FILE}" \
+            --revisions "${{ github.event.inputs.revisions }}"
+
+      - name: Restore west module path cache
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: west-path-cache
+          key: west-path-cache-${{ hashFiles('ncs-matter/west.yml') }}
+          restore-keys: |
+            west-path-cache-
+
+      - name: Restore ccache
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: .ccache
+          key: ccache-ncs-matter-${{ hashFiles('ncs-matter/west.yml') }}-${{ github.ref_name }}
+          restore-keys: |
+            ccache-ncs-matter-${{ hashFiles('ncs-matter/west.yml') }}-
+            ccache-ncs-matter-
+
+      - name: Restore pip cache
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: ~/.cache/pip
+          key: pip-ncs-matter-${{ hashFiles('ncs-matter/west.yml') }}
+
+      - name: Patch west.yml for local build
+        run: |
+          python ncs-matter/scripts/sdk_sync/sdk_sync.py patch \
+            --state-file "${STATE_FILE}" \
+            --west-yml ncs-matter/west.yml
+
+      - name: Prepare west workspace
+        run: |
+          rm -rf .west
+          west init -l ncs-matter --mf west.yml
+          west update -n -o=--depth=1 --path-cache "${WEST_PATH_CACHE}"
+
+      - name: Install Python deps for Matter
+        run: |
+          pip3 install -r nrf/scripts/requirements-extra.txt
+          pip3 install -r modules/lib/matter/scripts/setup/requirements.nrfconnect.txt
+
+      - name: Set up ccache
+        run: |
+          mkdir -p "${CCACHE_DIR}"
+          ccache -z
+
+      - name: Run Twister
+        id: twister
+        run: |
+          source zephyr/zephyr-env.sh
+          TWISTER_ARGS=(
+            --inline-logs --build-only -N --verbose
+            -T "ncs-matter/${SDK_SYNC_TWISTER_PATH}"
+            --scenario "${SDK_SYNC_TWISTER_SCENARIO}"
+          )
+          if [ "${SDK_SYNC_TWISTER_ALL}" = "true" ]; then
+            TWISTER_ARGS+=(--all)
+          else
+            TWISTER_ARGS+=(--integration)
+          fi
+          set +e
+          zephyr/scripts/twister "${TWISTER_ARGS[@]}"
+          TWISTER_RC=$?
+          set -e
+          if [ "${TWISTER_RC}" -ne 0 ]; then
+            echo "failed=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "failed=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Upload sync state
+        if: always()
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4
+        with:
+          name: sdk-sync-state
+          path: ${{ env.STATE_FILE }}
+          if-no-files-found: warn
+
+      - name: Print ccache statistics
+        if: always()
+        run: ccache -s
+
+  open-pr-on-failure:
+    needs: sync-and-build
+    if: |
+      needs.sync-and-build.outputs.failed == 'true' ||
+      github.event.inputs.force_pr == 'true'
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ secrets.NCS_NORDICBUILDER_ACTION_TOKEN }}
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Load add-on config
+        uses: ./.github/actions/load-addon-config
+
+      - name: Download sync state
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: sdk-sync-state
+          path: ${{ github.workspace }}
+
+      - name: Install Python dependencies
+        run: pip3 install -r scripts/sdk_sync/requirements.txt
+
+      - name: Configure git credentials
+        run: |
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          git config --global user.email "pylon@nordicsemi.no"
+          git config --global user.name "Nordic Builder"
+
+      - name: Synchronize integration branch with main
+        run: python scripts/sdk_sync/sdk_sync.py sync-integration
+
+      - name: Push west.yml to sync test branch
+        run: python scripts/sdk_sync/sdk_sync.py push --state-file "${STATE_FILE}"
+
+      - name: Open sync pull request
+        run: python scripts/sdk_sync/sdk_sync.py open-pr --state-file "${STATE_FILE}"
