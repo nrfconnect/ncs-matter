@@ -98,15 +98,17 @@ void TemperatureSensor::ExternalTemperatureMeasurementReadHandler(
 	const chip::app::Clusters::Binding::TableEntry &binding, OperationalDeviceProxy *deviceProxy,
 	Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
-	auto onSuccess = [](const ConcreteDataAttributePath &, const auto &dataResponse) {
+	auto onSuccess = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
+				 const ConcreteDataAttributePath &attributePath, const auto &dataResponse) {
 		ChipLogProgress(NotSpecified, "Read Temperature Sensor attribute succeeded");
 
-		VerifyOrReturn(!dataResponse.IsNull(), LOG_ERR("Device invalid"));
+		VerifyOrReturn(!(dataResponse.IsNull()), LOG_ERR("Device invalid");
+			       Platform::Delete<Nrf::Matter::BindingHandler::BindingData>(dataPointer););
 
 		int16_t responseValue = dataResponse.Value();
 
 		TempSensorManager::Instance().SetOutdoorTemperature(responseValue);
-		BindingHandler::OnInvokeCommandSucces();
+		BindingHandler::OnInvokeCommandSucces(dataPointer);
 	};
 
 	auto onFailure = [](const ConcreteDataAttributePath *attributePath, CHIP_ERROR error) {

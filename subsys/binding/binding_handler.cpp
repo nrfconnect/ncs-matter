@@ -31,37 +31,50 @@ void BindingHandler::RunBoundClusterAction(BindingData *bindingData)
 	VerifyOrReturn(err == CHIP_NO_ERROR, LOG_ERR("ScheduleWork failed: %" CHIP_ERROR_FORMAT, err.Format()));
 }
 
-void BindingHandler::OnInvokeCommandSucces()
+void BindingHandler::OnInvokeCommandSucces(BindingData *bindingData)
 {
+	VerifyOrReturn(bindingData != nullptr, LOG_ERR("Invalid binding data"));
 	LOG_DBG("Binding command applied successfully!");
+
+	Platform::Delete<BindingData>(bindingData);
 }
 
-void BindingHandler::OnInvokeCommandFailure(BindingData &bindingData, CHIP_ERROR Error)
+void BindingHandler::OnInvokeCommandFailure(BindingData *bindingData, CHIP_ERROR Error)
 {
-	if (Error == CHIP_ERROR_TIMEOUT && !bindingData.CaseSessionRecovered) {
+	VerifyOrReturn(bindingData != nullptr, LOG_ERR("Invalid binding data"));
+
+	if (Error == CHIP_ERROR_TIMEOUT && !bindingData->CaseSessionRecovered) {
 		LOG_INF("Response timeout for invoked command, trying to recover CASE session.");
 
 		/* The binding manager takes the ownership of the context passed to
-		 * NotifyBoundClusterChanged and releases it using DeviceContextReleaseHandler, so a new
-		 * object must be allocated instead of reusing the one owned by the invoke callback.
+		 * NotifyBoundClusterChanged and releases it using DeviceContextReleaseHandler, so the
+		 * recovery requires a separate object instead of the one owned by the invoke callback.
 		 */
 		BindingData *recoveryData = Platform::New<BindingData>();
-		VerifyOrReturn(recoveryData != nullptr, LOG_ERR("Cannot allocate binding data for CASE recovery"));
-		*recoveryData = bindingData;
 
-		/* Set flag to not try recover session multiple times. */
-		recoveryData->CaseSessionRecovered = true;
+		if (recoveryData != nullptr) {
+			*recoveryData = *bindingData;
 
-		/* Establish new CASE session and retrasmit command that was not applied. */
-		CHIP_ERROR error = Binding::Manager::GetInstance().NotifyBoundClusterChanged(
-			recoveryData->EndpointId, recoveryData->ClusterId, static_cast<void *>(recoveryData));
+			/* Set flag to not try recover session multiple times. */
+			recoveryData->CaseSessionRecovered = true;
 
-		if (CHIP_NO_ERROR != error) {
-			LOG_ERR("NotifyBoundClusterChanged failed due to: %" CHIP_ERROR_FORMAT, error.Format());
+			/* Establish new CASE session and retrasmit command that was not applied. */
+			CHIP_ERROR error = Binding::Manager::GetInstance().NotifyBoundClusterChanged(
+				recoveryData->EndpointId, recoveryData->ClusterId,
+				static_cast<void *>(recoveryData));
+
+			if (CHIP_NO_ERROR != error) {
+				LOG_ERR("NotifyBoundClusterChanged failed due to: %" CHIP_ERROR_FORMAT,
+					error.Format());
+			}
+		} else {
+			LOG_ERR("Cannot allocate binding data for CASE session recovery");
 		}
 	} else {
 		LOG_ERR("Binding command was not applied! Reason: %" CHIP_ERROR_FORMAT, Error.Format());
 	}
+
+	Platform::Delete<BindingData>(bindingData);
 }
 
 void BindingHandler::DeviceChangedCallback(const Binding::TableEntry &binding, OperationalDeviceProxy *deviceProxy,

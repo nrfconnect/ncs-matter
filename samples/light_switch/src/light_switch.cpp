@@ -112,12 +112,15 @@ void LightSwitch::OnOffProcessCommand(CommandId commandId, const Binding::TableE
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;
 
-	auto onSuccess = [](const ConcreteCommandPath &, const StatusIB &, const auto &) {
-		Nrf::Matter::BindingHandler::OnInvokeCommandSucces();
+	auto onSuccess = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
+				 const ConcreteCommandPath &commandPath, const StatusIB &status,
+				 const auto &dataResponse) {
+		Nrf::Matter::BindingHandler::OnInvokeCommandSucces(dataPointer);
 	};
 
-	auto onFailure = [dataRef = bindingData](CHIP_ERROR aError) mutable {
-		Nrf::Matter::BindingHandler::OnInvokeCommandFailure(dataRef, aError);
+	auto onFailure = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
+				 CHIP_ERROR aError) mutable {
+		Nrf::Matter::BindingHandler::OnInvokeCommandFailure(dataPointer, aError);
 	};
 
 	if (device) {
@@ -178,12 +181,15 @@ void LightSwitch::LevelControlProcessCommand(CommandId commandId, const Binding:
 					     OperationalDeviceProxy *device,
 					     Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
-	auto onSuccess = [](const ConcreteCommandPath &, const StatusIB &, const auto &) {
-		Nrf::Matter::BindingHandler::OnInvokeCommandSucces();
+	auto onSuccess = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
+				 const ConcreteCommandPath &commandPath, const StatusIB &status,
+				 const auto &dataResponse) {
+		Nrf::Matter::BindingHandler::OnInvokeCommandSucces(dataPointer);
 	};
 
-	auto onFailure = [dataRef = bindingData](CHIP_ERROR aError) mutable {
-		Nrf::Matter::BindingHandler::OnInvokeCommandFailure(dataRef, aError);
+	auto onFailure = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
+				 CHIP_ERROR aError) mutable {
+		Nrf::Matter::BindingHandler::OnInvokeCommandFailure(dataPointer, aError);
 	};
 
 	CHIP_ERROR ret = CHIP_NO_ERROR;
