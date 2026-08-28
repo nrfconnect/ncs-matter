@@ -34,14 +34,13 @@ void ProcessCommand(const Binding::TableEntry &aBinding, OperationalDeviceProxy 
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;
 
-	auto onSuccess = [dataRef = Platform::New<Nrf::Matter::BindingHandler::BindingData>(aData)](
-				 const ConcreteCommandPath &commandPath, const StatusIB &status,
-				 const auto &dataResponse) { Matter::BindingHandler::OnInvokeCommandSucces(dataRef); };
+	auto onSuccess = [](const ConcreteCommandPath &, const StatusIB &, const auto &) {
+		Matter::BindingHandler::OnInvokeCommandSucces();
+	};
 
-	auto onFailure =
-		[dataRef = Platform::New<Nrf::Matter::BindingHandler::BindingData>(aData)](CHIP_ERROR aError) mutable {
-			Matter::BindingHandler::OnInvokeCommandFailure(dataRef, aError);
-		};
+	auto onFailure = [dataRef = aData](CHIP_ERROR aError) mutable {
+		Matter::BindingHandler::OnInvokeCommandFailure(dataRef, aError);
+	};
 
 	if (aDevice) {
 		/* We are validating connection is ready once here instead of multiple times in each case statement

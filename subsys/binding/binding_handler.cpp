@@ -31,41 +31,35 @@ void BindingHandler::RunBoundClusterAction(BindingData *bindingData)
 	VerifyOrReturn(err == CHIP_NO_ERROR, LOG_ERR("ScheduleWork failed: %" CHIP_ERROR_FORMAT, err.Format()));
 }
 
-void BindingHandler::OnInvokeCommandSucces(BindingData *bindingData)
+void BindingHandler::OnInvokeCommandSucces()
 {
-	VerifyOrReturn(bindingData != nullptr, LOG_ERR("Invalid binding data"));
 	LOG_DBG("Binding command applied successfully!");
-
-	/* If session was recovered and communication works, reset flag to the initial state. */
-	if (bindingData->CaseSessionRecovered) {
-		bindingData->CaseSessionRecovered = false;
-	}
-	Platform::Delete<BindingData>(bindingData);
 }
 
-void BindingHandler::OnInvokeCommandFailure(BindingData *bindingData, CHIP_ERROR Error)
+void BindingHandler::OnInvokeCommandFailure(BindingData &bindingData, CHIP_ERROR Error)
 {
-	CHIP_ERROR error;
-	VerifyOrDie(bindingData != nullptr);
-
-	if (Error == CHIP_ERROR_TIMEOUT && !bindingData->CaseSessionRecovered) {
+	if (Error == CHIP_ERROR_TIMEOUT && !bindingData.CaseSessionRecovered) {
 		LOG_INF("Response timeout for invoked command, trying to recover CASE session.");
-		CHIP_ERROR err = DeviceLayer::PlatformMgr().ScheduleWork(DeviceWorkerHandler,
-									 reinterpret_cast<intptr_t>(bindingData));
-		VerifyOrReturn(err == CHIP_NO_ERROR, LOG_ERR("ScheduleWork failed: %" CHIP_ERROR_FORMAT, err.Format()));
+
+		/* The binding manager takes the ownership of the context passed to
+		 * NotifyBoundClusterChanged and releases it using DeviceContextReleaseHandler, so a new
+		 * object must be allocated instead of reusing the one owned by the invoke callback.
+		 */
+		BindingData *recoveryData = Platform::New<BindingData>();
+		VerifyOrReturn(recoveryData != nullptr, LOG_ERR("Cannot allocate binding data for CASE recovery"));
+		*recoveryData = bindingData;
 
 		/* Set flag to not try recover session multiple times. */
-		bindingData->CaseSessionRecovered = true;
+		recoveryData->CaseSessionRecovered = true;
 
 		/* Establish new CASE session and retrasmit command that was not applied. */
-		error = Binding::Manager::GetInstance().NotifyBoundClusterChanged(
-			bindingData->EndpointId, bindingData->ClusterId, static_cast<void *>(bindingData));
+		CHIP_ERROR error = Binding::Manager::GetInstance().NotifyBoundClusterChanged(
+			recoveryData->EndpointId, recoveryData->ClusterId, static_cast<void *>(recoveryData));
 
 		if (CHIP_NO_ERROR != error) {
 			LOG_ERR("NotifyBoundClusterChanged failed due to: %" CHIP_ERROR_FORMAT, error.Format());
 		}
 	} else {
-		Platform::Delete<BindingData>(bindingData);
 		LOG_ERR("Binding command was not applied! Reason: %" CHIP_ERROR_FORMAT, Error.Format());
 	}
 }
@@ -165,6 +159,7 @@ void BindingHandler::DeviceWorkerHandler(intptr_t context)
 		}
 	} else {
 		LOG_INF("NO DEVICE BOUND");
+		Platform::Delete(data);
 	}
 }
 
