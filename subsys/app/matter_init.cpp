@@ -61,6 +61,7 @@
 #include <app/clusters/network-commissioning/network-commissioning.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
 #include <data-model-providers/codegen/Instance.h>
+#include <platform/nrfconnect/ConfigurationManagerImpl.h>
 #include <platform/nrfconnect/ExternalFlashManager.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 
@@ -428,6 +429,10 @@ namespace Nrf::Matter
 CHIP_ERROR PrepareServer(const InitData &initData)
 {
 	sLocalInitData = initData;
+
+	/* Use the nRF Connect ConfigurationManager instead of the generic Zephyr one. It must be
+	   selected before InitChipStack(), which initializes the configuration manager. */
+	SetConfigurationMgr(&ConfigurationManagerImplNrf::GetDefaultInstance());
 
 	/* Before we schedule anything to execute in the CHIP thread, the platform memory
 	   and the stack itself must be initialized first. */
