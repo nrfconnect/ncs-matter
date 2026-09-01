@@ -11,7 +11,42 @@ manifest:
       remote: ncs
       repo-path: sdk-nrf
       revision: v3.4.0
-      import: true
+      import:
+        # Import only NCS and Zephyr modules required to build Matter samples.
+        # Please keep this list sorted alphabetically.
+        name-allowlist:
+          # NCS projects
+          - bme68x
+          - bsec
+          - coremark
+          - doc-internal
+          - dragoon
+          - find-my
+          - hostap
+          - libmodem
+          - matter
+          - mbedtls
+          - mcuboot
+          - nrf-802154
+          - nrf_wifi
+          - nrfxlib
+          - oberon-psa-crypto
+          - openthread
+          - psa-arch-tests
+          - qcbor
+          - t_cose
+          - trusted-firmware-m
+          - zephyr
+          # Zephyr modules (imported via nrf/west.yml zephyr name-allowlist)
+          - cmsis
+          - cmsis_6
+          - hal_nordic
+          - libmetal
+          - lz4
+          - open-amp
+          - picolibc
+          - tf-psa-crypto
+          - zcbor
     - name: matter
       remote: ncs
       path: modules/lib/matter
