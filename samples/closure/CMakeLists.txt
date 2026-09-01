@@ -7,7 +7,7 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
+include(${CMAKE_CURRENT_LIST_DIR}/../../cmake/find_zephyr.cmake)
 
 project(matter-closure)
 

@@ -229,15 +229,22 @@ CHIP_ERROR InitNetworkingStack()
 
 	return CHIP_NO_ERROR;
 }
+#elif defined(CONFIG_ARCH_POSIX)
+
+CHIP_ERROR InitNetworkingStack()
+{
+	/* native_sim: operational IP via host BSD sockets; no Thread/Wi-Fi driver. */
+	return CHIP_NO_ERROR;
+}
 #else
 #error "No valid networking backend selected");
 #endif /* CONFIG_OPENTHREAD */
 
 #define VerifyInitResultOrReturn(ec, msg)                                                                              \
-	VerifyOrReturn(ec == CHIP_NO_ERROR, LOG_ERR(msg " [Error: %d]", sInitResult.Format()))
+	VerifyOrReturn(ec == CHIP_NO_ERROR, LOG_ERR(msg " [Error: %" CHIP_ERROR_FORMAT "]", ec.Format()))
 
 #define VerifyInitResultOrReturnError(ec, msg)                                                                         \
-	VerifyOrReturnError(ec == CHIP_NO_ERROR, ec, LOG_ERR(msg " [Error: %d]", sInitResult.Format()))
+	VerifyOrReturnError(ec == CHIP_NO_ERROR, ec, LOG_ERR(msg " [Error: %" CHIP_ERROR_FORMAT "]", ec.Format()))
 
 void DoInitChipServer(intptr_t /* unused */)
 {
@@ -339,7 +346,9 @@ void DoInitChipServer(intptr_t /* unused */)
 #endif
 
 #ifdef CONFIG_CHIP_CRYPTO_PSA
+#if !defined(CONFIG_MATTER_PERSISTENT_STORAGE_OPERATIONAL_KEYS)
 	sLocalInitData.mServerInitParams->operationalKeystore = sLocalInitData.mOperationalKeyStore;
+#endif
 #endif
 
 /* Set KMUKeyAllocator for devices that supports KMU */
@@ -401,7 +410,11 @@ void DoInitChipServer(intptr_t /* unused */)
 #endif
 
 	ConfigurationMgr().LogDeviceConfig();
+#if defined(CONFIG_BT)
 	PrintOnboardingCodes(RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
+#else
+	PrintOnboardingCodes(RendezvousInformationFlags(chip::RendezvousInformationFlag::kOnNetwork));
+#endif
 	Nrf::Matter::AppFabricTableDelegate::Init();
 
 	if (sLocalInitData.mPostServerInitClbk) {

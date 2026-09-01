@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include "../../../subsys/app/chip_project_config_native_sim.h"
+
 #ifdef CONFIG_CHIP_FACTORY_DATA
 /* Store Certification Declaration */
 #define CHIP_DEVICE_CONFIG_CERTIFICATION_DECLARATION                                                                   \

@@ -6,4 +6,6 @@
 
 #pragma once
 
+#include "../../../subsys/app/chip_project_config_native_sim.h"
+
 #define CHIP_CONFIG_CONTROLLER_MAX_ACTIVE_DEVICES 2

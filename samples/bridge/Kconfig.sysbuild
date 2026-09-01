@@ -14,7 +14,7 @@ config NETCORE_IPC_RADIO_BT_HCI_IPC
 
 #### Bootloader
 choice BOOTLOADER
-	default BOOTLOADER_MCUBOOT
+	default BOOTLOADER_MCUBOOT if !BOARD_NATIVE_SIM
 endchoice
 
 # Enable IEEE802.15.4 serialization to network core
@@ -56,6 +56,6 @@ endif # BOOTLOADER_MCUBOOT
 
 #### Enable generating factory data
 config MATTER_ADD_ON_FACTORY_DATA_GENERATE
-	default y
+	default y if !BOARD_NATIVE_SIM
 
 source "share/sysbuild/Kconfig"

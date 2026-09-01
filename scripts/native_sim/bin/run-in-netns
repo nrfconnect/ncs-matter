@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+# Create an isolated Linux network namespace for native_sim Matter runs.
+#
+# Usage:
+#   run-in-netns --setup-only
+#   run-in-netns --teardown
+#   run-in-netns --info
+#   run-in-netns -- <command> [args...]
+#
+# Example:
+#   cd ncs-matter/samples/light_bulb/build/light_bulb/zephyr
+#   sudo ../../../../../scripts/native_sim/bin/run-in-netns -- \
+#       ./zephyr.exe -flash=light_bulb_native_sim.bin -attach_uart
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../lib/netns.sh
+source "${SCRIPT_DIR}/../lib/netns.sh"
+
+usage() {
+	cat <<EOF
+Usage: $(basename "$0") [--name NETNS] [--setup-only | --teardown | --info] [--] [command [args...]]
+
+Options:
+  --name NETNS    Network namespace name (default: matter-app)
+  --setup-only    Create namespace and veth pair, then exit
+  --teardown      Delete namespace and host veth
+  --info          Print namespace layout
+  --              Run command inside namespace (default if command given)
+
+Environment overrides: NETNS_NAME, VETH_APP, VETH_HOST, APP_IPV4, HOST_IPV4, APP_IPV6_LL
+EOF
+}
+
+main() {
+	local mode="exec"
+
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+		--name)
+			shift
+			NETNS_NAME="${1:?--name requires value}"
+			;;
+		--setup-only)
+			mode="setup"
+			;;
+		--teardown)
+			mode="teardown"
+			;;
+		--info)
+			mode="info"
+			;;
+		-h | --help)
+			usage
+			exit 0
+			;;
+		--)
+			shift
+			break
+			;;
+		-*)
+			echo "run-in-netns: unknown option: $1" >&2
+			usage >&2
+			exit 2
+			;;
+		*)
+			break
+			;;
+		esac
+		shift
+	done
+
+	case "${mode}" in
+	setup)
+		netns_setup
+		netns_print_info
+		;;
+	teardown)
+		netns_teardown
+		;;
+	info)
+		netns_print_info
+		;;
+	exec)
+		if [[ $# -eq 0 ]]; then
+			usage >&2
+			exit 2
+		fi
+		netns_setup
+		trap netns_teardown EXIT INT TERM
+		netns_print_info
+		netns_exec "$@"
+		;;
+	esac
+}
+
+main "$@"

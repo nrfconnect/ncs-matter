@@ -194,3 +194,15 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
+
+  sample.matter.bridge.native_sim:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - native_sim/native/64
+    platform_allow:
+      - native_sim/native/64
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_NONE=y
+      - SB_CONFIG_MATTER_ADD_ON_FACTORY_DATA_GENERATE=n
+      - bridge_SNIPPET=native-sim

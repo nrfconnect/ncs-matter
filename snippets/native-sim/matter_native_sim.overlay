@@ -1,0 +1,15 @@
+/*
+ * Optional GPIO labels when DK/PWM are disabled on native_sim Matter samples.
+ *
+ * Enlarge storage for Matter fabric/settings (ZMS backend, 42 KiB partition).
+ */
+
+/ {
+	aliases {
+		pwm-led1 = &led0;
+	};
+};
+
+&storage_partition {
+	reg = <0x000fc000 DT_SIZE_K(42)>;
+};

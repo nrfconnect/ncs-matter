@@ -17,3 +17,4 @@ See each snippet for more detailed information and usage instructions:
 
    matter_debug_snippet
    matter_diagnostic_logs_snippet
+   matter_native_sim_snippet

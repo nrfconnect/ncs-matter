@@ -67,3 +67,15 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
+
+  sample.matter.thermostat.native_sim:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - native_sim/native/64
+    platform_allow:
+      - native_sim/native/64
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_NONE=y
+      - SB_CONFIG_MATTER_ADD_ON_FACTORY_DATA_GENERATE=n
+      - thermostat_SNIPPET=native-sim

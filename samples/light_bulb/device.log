@@ -1,0 +1,79 @@
+*** Booting My Application v1.0.0-aee732ec97bd ***
+*** Using nRF Connect SDK v3.4.0-99553055607b ***
+*** Using Zephyr OS v4.4.0-bf801e4e3d19 ***
+[00:00:00.000,000] [0m<inf> chip: [DL]CHIP task running[0m
+[00:00:00.000,000] [0m<inf> app: Init CHIP stack[0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]Initializing session resumption storage...[0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]Initializing subscription resumption storage...[0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]Server initializing...[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [FP]Initializing FabricTable from persistent storage[0m
+[00:00:00.000,000] [0m<inf> chip: [TS]Last Known Good Time: 2023-10-14T01:16:48[0m
+[00:00:00.000,000] [0m<inf> chip: [FP]Fabric index 0x1 was retrieved from storage. Compressed FabricId 0xD6DCF37C5A5472EB, FabricId 0x0000000000000001, NodeId 0x0000000000000001, VendorId 0xFFF1[0m
+[00:00:00.000,000] [0m<inf> chip: [DMG]AccessControl: initializing[0m
+[00:00:00.000,000] [0m<inf> chip: [DMG]Examples::AccessControlDelegate::Init[0m
+[00:00:00.000,000] [0m<inf> chip: [DMG]AccessControl: setting[0m
+[00:00:00.000,000] [0m<inf> chip: [DMG]DefaultAclStorage: initializing[0m
+[00:00:00.000,000] [0m<inf> chip: [DMG]DefaultAclStorage: 1 entries loaded[0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]WARNING: mTestEventTriggerDelegate is null[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [IN]UDP::Init bind&listen port=5540[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [IN]UDP::Init bound to port=5540[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [IN]TransportMgr initialized[0m
+[00:00:00.000,000] [0m<inf> chip: [ZCL]Using ZAP configuration...[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DMG]Failed to read stored attribute (1, 0x0000_0006, 0x0000_0000: a0[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DMG]Failed to read stored attribute (1, 0x0000_0006, 0x0000_4003: a0[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DMG]Failed to read stored attribute (1, 0x0000_0008, 0x0000_4000: a0[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DL]Boot reason: 1[0m
+[00:00:00.000,000] [0m<inf> chip: [ZCL]Endpoint 1 On/off already set to new value[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DMG]Endpoint 1, Cluster 0x0000_0008 update version to 5c03cc03[0m
+[00:00:00.000,000] [0m<inf> chip: [ZCL]Cluster LevelControl: attribute CurrentLevel set to 1[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [EVL]LogEvent event number: 0x0000000000030000 priority: 2, endpoint id:  0x0 cluster id: 0x0000_0033 event id: 0x3 Sys timestamp: 0x0000000000000001[0m
+[00:00:00.000,000] [0m<inf> chip: [DMG]AccessControlCluster: initializing[0m
+[00:00:00.000,000] [0m<inf> chip: [DIS]Updating services using commissioning mode 0[0m
+[00:00:00.000,000] [0m<inf> chip: [DIS]CHIP minimal mDNS started advertising.[0m
+[00:00:00.000,000] [1;31m<err> chip: [DIS]Failed to get primary mac address of device. Generating a random one.[0m
+[00:00:00.000,000] [0m<inf> chip: [DIS]Advertise operational node D6DCF37C5A5472EB-0000000000000001[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DIS]Responding with _matter._tcp.local[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DIS]Responding with D6DCF37C5A5472EB-0000000000000001._matter._tcp.local[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DIS]Responding with D6DCF37C5A5472EB-0000000000000001._matter._tcp.local[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DIS]Responding with D28D227253BE.local[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DIS]Responding with _ID6DCF37C5A5472EB._sub._matter._tcp.local[0m
+[00:00:00.000,000] [0m<inf> chip: [DIS]CHIP minimal mDNS configured as 'Operational device'; instance name: D6DCF37C5A5472EB-0000000000000001.[0m
+[00:00:00.000,000] [0m<inf> chip: [DIS]mDNS service published: _matter._tcp[0m
+[00:00:00.000,000] [0m<inf> chip: [IN]CASE Server enabling CASE session setups[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [IN]SecureSession[0x4e0b30]: Allocated Type:2 LSID:51468[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [SC]Allocated SecureSession (0x4e0b30) - waiting for Sigma1 msg[0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]Joining Multicast groups[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [ZCL]Emitting StartUp event[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [EVL]LogEvent event number: 0x0000000000030001 priority: 2, endpoint id:  0x0 cluster id: 0x0000_0028 event id: 0x0 Sys timestamp: 0x0000000000000002[0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]Server initialization complete[0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]Server Listening...[0m
+[00:00:00.000,000] [0m<inf> chip: [DL]Device Configuration:[0m
+[00:00:00.000,000] [0m<inf> chip: [DL]  Serial Number: 11223344556677889900[0m
+[00:00:00.000,000] [0m<inf> chip: [DL]  Vendor Id: 65521 (0xFFF1)[0m
+[00:00:00.000,000] [0m<inf> chip: [DL]  Product Id: 32773 (0x8005)[0m
+[00:00:00.000,000] [0m<inf> chip: [DL]  Product Name: Matter Light Bulb[0m
+[00:00:00.000,000] [0m<inf> chip: [DL]  Hardware Version: 0[0m
+[00:00:00.000,000] [0m<inf> chip: [DL]  Setup Pin Code (0 for UNKNOWN/ERROR): 20202021[0m
+[00:00:00.000,000] [0m<inf> chip: [DL]  Setup Discriminator (0xFFFF for UNKNOWN/ERROR): 3840 (0xF00)[0m
+[00:00:00.000,000] [0m<inf> chip: [DL]  Manufacturing Date: (not set)[0m
+[00:00:00.000,000] [0m<inf> chip: [DL]  Device Type: 65535 (0xFFFF)[0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]SetupQRCode: [MT:6FCJ1AFN00KA0648G00][0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]Copy/paste the below URL in a browser to see the QR Code:[0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]https://project-chip.github.io/connectedhomeip/qrcode.html?data=MT%3A6FCJ1AFN00KA0648G00[0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]Manual pairing code: [34970112332][0m
+[00:00:00.000,000] [0m<inf> chip: [SVR]Thread Network Diagnostics cluster customized (disabled attributes omitted from attribute list)[0m
+[00:00:00.000,000] [0m<inf> chip: [DIS]Updating services using commissioning mode 0[0m
+[00:00:00.000,000] [0m<inf> chip: [DIS]CHIP minimal mDNS started advertising.[0m
+[00:00:00.000,000] [0m<inf> chip: [DIS]Advertise operational node D6DCF37C5A5472EB-0000000000000001[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DIS]Responding with _matter._tcp.local[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DIS]Responding with D6DCF37C5A5472EB-0000000000000001._matter._tcp.local[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DIS]Responding with D6DCF37C5A5472EB-0000000000000001._matter._tcp.local[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DIS]Responding with D28D227253BE.local[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DIS]Responding with _ID6DCF37C5A5472EB._sub._matter._tcp.local[0m
+[00:00:00.000,000] [0m<inf> chip: [DIS]CHIP minimal mDNS configured as 'Operational device'; instance name: D6DCF37C5A5472EB-0000000000000001.[0m
+[00:00:00.000,000] [0m<inf> chip: [DIS]mDNS service published: _matter._tcp[0m
+[00:00:00.000,000] [0m<dbg> chip: LogV: [DMG]Endpoint 1, Cluster 0x0000_0008 update version to 5c03cc04[0m
+[00:00:00.000,000] [0m<inf> chip: [ZCL]Cluster LevelControl: attribute CurrentLevel set to 0[0m
+[00:00:00.000,000] [0m<inf> chip: [IM]No subscriptions to resume[0m
+[00:00:00.000,000] [0m<inf> chip: [SWU]Stopping the watchdog timer[0m
+[00:00:00.000,000] [0m<inf> chip: [SWU]Starting the periodic query timer, timeout: 86400 seconds[0m

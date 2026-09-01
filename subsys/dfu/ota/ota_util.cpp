@@ -14,7 +14,9 @@
 #include <app/clusters/ota-requestor/DefaultOTARequestorStorage.h>
 #include <app/server/Server.h>
 #include <platform/CHIPDeviceLayer.h>
+#if defined(CONFIG_ARCH_POSIX) || CONFIG_BOOTLOADER_MCUBOOT
 #include <zephyr/dfu/mcuboot.h>
+#endif
 #endif
 
 #include <lib/support/logging/CHIPLogging.h>
@@ -29,6 +31,15 @@ DefaultOTARequestorStorage sOTARequestorStorage;
 DefaultOTARequestorDriver sOTARequestorDriver;
 chip::BDXDownloader sBDXDownloader;
 chip::DefaultOTARequestor sOTARequestor;
+
+void BindImageProcessorToDownloader(OTAImageProcessorBaseImpl &imageProcessor)
+{
+#if defined(CONFIG_ARCH_POSIX)
+	TEMPORARY_RETURN_IGNORED imageProcessor.Init(&sBDXDownloader);
+#else
+	imageProcessor.SetOTADownloader(&sBDXDownloader);
+#endif
+}
 } /* namespace */
 #endif
 
@@ -36,23 +47,25 @@ namespace Nrf::Matter
 {
 
 #if CONFIG_CHIP_OTA_REQUESTOR
-/* compile-time factory method */
-OTAImageProcessorImpl &GetOTAImageProcessor()
+OTAImageProcessorBaseImpl &GetOTAImageProcessor()
 {
-#if CONFIG_PM_DEVICE && CONFIG_NORDIC_QSPI_NOR
+#if defined(CONFIG_ARCH_POSIX)
+	return chip::OTAImageProcessorImpl::GetDefaultInstance();
+#elif CONFIG_PM_DEVICE && CONFIG_NORDIC_QSPI_NOR
 	static OTAImageProcessorBaseImpl sOTAImageProcessor(&ExternalFlashManager::GetInstance());
+	return sOTAImageProcessor;
 #else
 	static OTAImageProcessorBaseImpl sOTAImageProcessor;
-#endif
 	return sOTAImageProcessor;
+#endif
 }
 
 void InitBasicOTARequestor()
 {
 	VerifyOrReturn(GetRequestorInstance() == nullptr);
 
-	OTAImageProcessorImpl &imageProcessor = GetOTAImageProcessor();
-	imageProcessor.SetOTADownloader(&sBDXDownloader);
+	OTAImageProcessorBaseImpl &imageProcessor = GetOTAImageProcessor();
+	BindImageProcessorToDownloader(imageProcessor);
 	sBDXDownloader.SetImageProcessorDelegate(&imageProcessor);
 	sOTARequestorStorage.Init(Server::GetInstance().GetPersistentStorage());
 	TEMPORARY_RETURN_IGNORED sOTARequestor.Init(Server::GetInstance(), sOTARequestorStorage, sOTARequestorDriver,
@@ -64,27 +77,26 @@ void InitBasicOTARequestor()
 
 void OtaConfirmNewImage()
 {
-#if CONFIG_BOOTLOADER_MCUBOOT
+#if defined(CONFIG_ARCH_POSIX) || CONFIG_BOOTLOADER_MCUBOOT
 #ifndef CONFIG_SOC_SERIES_NRF53
-	/* Check if the image is run in the REVERT mode and eventually
-	confirm it to prevent reverting on the next boot.
-	On nRF53 target there is not way to verify current swap type
-	because we use permanent swap so we can skip it. */
 	VerifyOrReturn(mcuboot_swap_type() == BOOT_SWAP_TYPE_REVERT);
 #endif
 
-	OTAImageProcessorImpl &imageProcessor = GetOTAImageProcessor();
 	if (!boot_is_img_confirmed()) {
 		CHIP_ERROR err = System::MapErrorZephyr(boot_write_img_confirmed());
+
 		if (CHIP_NO_ERROR == err) {
+#if !defined(CONFIG_ARCH_POSIX)
+			OTAImageProcessorBaseImpl &imageProcessor = GetOTAImageProcessor();
 			imageProcessor.SetImageConfirmed();
+#endif
 			ChipLogProgress(SoftwareUpdate, "New firmware image confirmed");
 		} else {
 			ChipLogError(SoftwareUpdate,
 				     "Failed to confirm firmware image, it will be reverted on the next boot");
 		}
 	}
-#endif /* CONFIG_BOOTLOADER_MCUBOOT */
+#endif
 }
 
 #endif
