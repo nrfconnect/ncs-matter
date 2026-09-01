@@ -5,6 +5,9 @@
 # as the module CMake entry point (see zephyr/module.yml).
 
 if(CONFIG_CHIP)
+	# Pigweed GN stub (must exist before chip-gn runs).
+	include(${ZEPHYR_NCS_MATTER_MODULE_DIR}/cmake/pigweed_environment.cmake)
+
 	# Enable GNU STD support.
 	include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/app/enable-gnu-std.cmake)
 

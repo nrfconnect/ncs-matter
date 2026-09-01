@@ -1,0 +1,14 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+#
+# Stub for Pigweed GN integration in ncs-matter builds.
+#
+# Pigweed imports //build_overrides/pigweed_environment.gni unconditionally.
+# Upstream Matter normally generates this file via bootstrap.sh; ncs-matter
+# installs this stub into the Matter module tree instead.
+#
+# For nrfconnect/Zephyr firmware builds an empty declare_args block is
+# sufficient because the Zephyr toolchain is used, not Pigweed CIPD LLVM.
+
+declare_args() {
+}
