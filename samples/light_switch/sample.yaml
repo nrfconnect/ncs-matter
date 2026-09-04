@@ -80,3 +80,13 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
+
+  sample.matter.light_switch.native_sim:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - native_sim/native/64
+    platform_allow:
+      - native_sim/native/64
+    extra_args:
+      - light_switch_SNIPPET=native-sim

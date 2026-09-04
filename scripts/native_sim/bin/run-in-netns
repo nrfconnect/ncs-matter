@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+# Create an isolated Linux network namespace for native_sim Matter runs.
+#
+# Usage:
+#   run-in-netns
+#   run-in-netns --exe /path/to/zephyr.exe
+#   run-in-netns --exe /path/to/build/<app>/zephyr
+#   run-in-netns --setup-only
+#   run-in-netns --teardown
+#   run-in-netns --info
+#   run-in-netns -- <command> [args...]
+#
+# With no command, run from an ncs-matter sample directory (e.g. samples/template):
+#   sudo ../../scripts/native_sim/bin/run-in-netns
+#
+# That ensures the matter-app netns exists and runs:
+#   <pwd>/build/<sample>/zephyr/zephyr.exe
+#     -flash=<pwd>/build/<sample>/zephyr/<sample>_native_sim.bin -attach_uart
+#
+# Example (explicit command):
+#   cd ncs-matter/samples/light_bulb
+#   sudo ../../scripts/native_sim/bin/run-in-netns -- \
+#       ./build/light_bulb/zephyr/zephyr.exe \
+#       -flash=./build/light_bulb/zephyr/light_bulb_native_sim.bin -attach_uart
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../lib/netns.sh
+source "${SCRIPT_DIR}/../lib/netns.sh"
+
+usage() {
+	cat <<EOF
+Usage: $(basename "$0") [--name NETNS] [--exe PATH] [--setup-only | --teardown | --info] [--] [command [args...]]
+
+Options:
+  --name NETNS    Network namespace name (default: matter-app)
+  --exe PATH      zephyr.exe or its containing zephyr/ directory (default: auto from pwd)
+  --setup-only    Create namespace and veth pair, then exit
+  --teardown      Delete namespace and host veth
+  --info          Print namespace layout
+  --              Run command inside namespace (default if command given)
+
+With no command, ensures the netns exists and runs the native_sim binary for the
+current sample directory (<pwd>/build/<sample>/zephyr/zephyr.exe).
+
+Environment overrides: NETNS_NAME, VETH_APP, VETH_HOST, APP_IPV4, HOST_IPV4, APP_IPV6_LL
+EOF
+}
+
+resolve_sample_paths() {
+	local sample_dir sample_name
+
+	sample_dir="$(pwd)"
+	sample_name="$(basename "${sample_dir}")"
+	SAMPLE_ZEPHYR_DIR="${sample_dir}/build/${sample_name}/zephyr"
+	SAMPLE_FLASH_FILE="${SAMPLE_ZEPHYR_DIR}/${sample_name}_native_sim.bin"
+	SAMPLE_DEFAULT_EXE="${SAMPLE_ZEPHYR_DIR}/zephyr.exe"
+}
+
+resolve_exe_path() {
+	local exe_arg="${1:-}"
+
+	if [[ -z "${exe_arg}" ]]; then
+		echo "${SAMPLE_DEFAULT_EXE}"
+		return 0
+	fi
+
+	if [[ -d "${exe_arg}" ]]; then
+		echo "${exe_arg%/}/zephyr.exe"
+		return 0
+	fi
+
+	if [[ -f "${exe_arg}" ]]; then
+		echo "${exe_arg}"
+		return 0
+	fi
+
+	echo "run-in-netns: --exe path not found: ${exe_arg}" >&2
+	exit 2
+}
+
+run_default_native_sim() {
+	local exe_path="${1:-}"
+
+	resolve_sample_paths
+	exe_path="$(resolve_exe_path "${exe_path}")"
+
+	if [[ ! -f "${exe_path}" ]]; then
+		echo "run-in-netns: zephyr.exe not found: ${exe_path}" >&2
+		echo "run-in-netns: build the sample for native_sim/native/64 first" >&2
+		exit 2
+	fi
+
+	netns_ensure
+	netns_print_info
+	echo "run-in-netns: executing ${exe_path}" >&2
+	netns_exec "${exe_path}" \
+		-flash="${SAMPLE_FLASH_FILE}" \
+		-attach_uart
+}
+
+main() {
+	local mode="exec"
+	local exe_path=""
+
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+		--name)
+			shift
+			NETNS_NAME="${1:?--name requires value}"
+			;;
+		--exe)
+			shift
+			exe_path="${1:?--exe requires value}"
+			;;
+		--setup-only)
+			mode="setup"
+			;;
+		--teardown)
+			mode="teardown"
+			;;
+		--info)
+			mode="info"
+			;;
+		-h | --help)
+			usage
+			exit 0
+			;;
+		--)
+			shift
+			break
+			;;
+		-*)
+			echo "run-in-netns: unknown option: $1" >&2
+			usage >&2
+			exit 2
+			;;
+		*)
+			break
+			;;
+		esac
+		shift
+	done
+
+	case "${mode}" in
+	setup)
+		netns_setup
+		netns_print_info
+		;;
+	teardown)
+		netns_teardown
+		;;
+	info)
+		netns_print_info
+		;;
+	exec)
+		if [[ $# -eq 0 ]]; then
+			run_default_native_sim "${exe_path}"
+		else
+			netns_ensure
+			netns_print_info
+			netns_exec "$@"
+		fi
+		;;
+	esac
+}
+
+main "$@"

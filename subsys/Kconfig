@@ -109,6 +109,23 @@ config MATTER_ZAP_FILE_PATH
 	  Absolute path to location under which ZAP file is located.
 	  It shall contain the file name and .zap extension.
 
+# PlatformManagerImpl.cpp skips add_entropy_source() when this is set.
+# PSA add_entropy_source() returns UNSUPPORTED; native_sim has no CONFIG_NRF_SECURITY.
+config MBEDTLS_ENTROPY_POLL_ZEPHYR
+	bool
+	default y if ARCH_POSIX && CHIP_CRYPTO_PSA
+
+# PSAOperationalKeystore needs persistent PSA key slots (ITS/secure storage).
+# native_sim has neither — use PersistentStorageOperationalKeystore (ZMS) instead.
+config MATTER_PERSISTENT_STORAGE_OPERATIONAL_KEYS
+	bool
+	default y if ARCH_POSIX && CHIP_CRYPTO_PSA
+	depends on CHIP_CRYPTO_PSA
+	help
+	  On ARCH_POSIX (native_sim), store operational fabric keys in the settings
+	  backend instead of PSA persistent key lifetime. Avoids PSA_ERROR_NOT_SUPPORTED
+	  during CommissioningComplete (SendComplete).
+
 config MATTER_CERTIFICATION
 	bool "Patches for Matter platform certification"
 	help

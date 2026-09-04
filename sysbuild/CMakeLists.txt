@@ -4,10 +4,13 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+include(${CMAKE_CURRENT_LIST_DIR}/native_sim.cmake)
+
 #########################################################
 # Actions to be performed before the CMake is run       #
 #########################################################
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
+  matter_native_sim_sysbuild_pre_cmake()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 #########################################################
@@ -17,7 +20,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
 
     if(SB_CONFIG_ZEPHYR_CONNECTEDHOMEIP_MODULE AND SB_CONFIG_MATTER_ADD_ON)
     set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP y)
-    if(SB_CONFIG_MATTER_ADD_ON_OTA)
+    if(BOARD MATCHES "native_sim")
+      # native-sim snippet owns app-side OTA and host profile Kconfig.
+    elseif(SB_CONFIG_MATTER_ADD_ON_OTA)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP_OTA_REQUESTOR y)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP_OTA_IMAGE_BUILD y)
     else()
@@ -40,14 +45,16 @@ endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_image_cmake)
 # Actions to be performed after the CMake is run        #
 #########################################################
 function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
+  matter_native_sim_sysbuild_post_cmake()
+
   # Matter related configurations
   if(SB_CONFIG_ZEPHYR_CONNECTEDHOMEIP_MODULE AND SB_CONFIG_MATTER_ADD_ON)
-    if(SB_CONFIG_MATTER_ADD_ON_FACTORY_DATA_GENERATE)
+    if(SB_CONFIG_MATTER_ADD_ON_FACTORY_DATA_GENERATE AND NOT BOARD MATCHES "native_sim")
       include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data.cmake)
       nrfconnect_generate_factory_data()
     endif()
 
-    if(SB_CONFIG_MATTER_ADD_ON_OTA AND SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
+    if(SB_CONFIG_MATTER_ADD_ON_OTA AND SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD AND NOT BOARD MATCHES "native_sim")
       include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/zephyr/ota-image_sysbuild.cmake)
       chip_ota_image(chip-ota-image
         INPUT_FILES ${CMAKE_BINARY_DIR}/dfu_multi_image.bin

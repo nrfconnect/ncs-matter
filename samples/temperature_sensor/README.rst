@@ -136,6 +136,12 @@ Building and running
 
 |matter_ble_advertising_auto|
 
+Advanced building options
+=========================
+
+.. include:: /includes/building_and_running/advanced/intro.txt
+.. include:: /includes/building_and_running/advanced/native_sim.txt
+
 Testing
 *******
 

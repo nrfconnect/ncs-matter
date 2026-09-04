@@ -6,10 +6,13 @@
 
 #pragma once
 
-#ifdef CONFIG_WIFI_NRF70
+#if defined(CONFIG_ARCH_POSIX)
+#include <platform/Zephyr/OTAImageProcessorImpl.h>
+using OTAImageProcessorBaseImpl = chip::OTAImageProcessorImpl;
+#elif defined(CONFIG_WIFI_NRF70)
 #include <platform/nrfconnect/OTAImageProcessorImplWiFi.h>
 using OTAImageProcessorBaseImpl = chip::DeviceLayer::OTAImageProcessorImplWiFi;
 #else
 #include <platform/nrfconnect/OTAImageProcessorImpl.h>
 using OTAImageProcessorBaseImpl = chip::DeviceLayer::OTAImageProcessorImpl;
-#endif /* CONFIG_WIFI_NRF70 */
+#endif

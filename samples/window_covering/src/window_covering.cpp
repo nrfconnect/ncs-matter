@@ -5,9 +5,10 @@
  */
 
 #include "window_covering.h"
-#include "pwm/pwm_device.h"
 
-#include <dk_buttons_and_leds.h>
+#if defined(CONFIG_PWM)
+#include "pwm/pwm_device.h"
+#endif
 
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <lib/support/logging/CHIPLogging.h>
@@ -21,19 +22,23 @@ using namespace ::chip;
 using namespace ::chip::DeviceLayer;
 using namespace chip::app::Clusters::WindowCovering;
 
+#if defined(CONFIG_PWM)
 static const struct pwm_dt_spec sLiftPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
 static const struct pwm_dt_spec sTiltPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led2));
+#endif
 
 static constexpr uint32_t sMoveTimeoutMs{ 200 };
 
 WindowCovering::WindowCovering()
 {
+#if defined(CONFIG_PWM)
 	if (mLiftIndicator.Init(&sLiftPwmDevice, 0, 255) != 0) {
 		LOG_ERR("Cannot initialize the lift indicator");
 	}
 	if (mTiltIndicator.Init(&sTiltPwmDevice, 0, 255) != 0) {
 		LOG_ERR("Cannot initialize the tilt indicator");
 	}
+#endif
 }
 
 void WindowCovering::DriveCurrentLiftPosition(intptr_t)
@@ -254,16 +259,22 @@ void WindowCovering::PositionLEDUpdate(MoveType aMoveType)
 
 void WindowCovering::SetBrightness(MoveType aMoveType, uint16_t aPosition)
 {
+#if defined(CONFIG_PWM)
 	uint8_t brightness = PositionToBrightness(aPosition, aMoveType);
 	if (aMoveType == MoveType::LIFT) {
 		mLiftIndicator.InitiateAction(Nrf::PWMDevice::LEVEL_ACTION, 0, &brightness);
 	} else if (aMoveType == MoveType::TILT) {
 		mTiltIndicator.InitiateAction(Nrf::PWMDevice::LEVEL_ACTION, 0, &brightness);
 	}
+#else
+	ARG_UNUSED(aMoveType);
+	ARG_UNUSED(aPosition);
+#endif
 }
 
 uint8_t WindowCovering::PositionToBrightness(uint16_t aPosition, MoveType aMoveType)
 {
+#if defined(CONFIG_PWM)
 	AbsoluteLimits pwmLimits{};
 
 	if (aMoveType == MoveType::LIFT) {
@@ -275,6 +286,11 @@ uint8_t WindowCovering::PositionToBrightness(uint16_t aPosition, MoveType aMoveT
 	}
 
 	return Percent100thsToValue(pwmLimits, aPosition);
+#else
+	ARG_UNUSED(aPosition);
+	ARG_UNUSED(aMoveType);
+	return 0;
+#endif
 }
 
 void WindowCovering::SchedulePostAttributeChange(chip::EndpointId aEndpoint, chip::AttributeId aAttributeId)

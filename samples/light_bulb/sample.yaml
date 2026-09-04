@@ -161,3 +161,13 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+
+  sample.matter.light_bulb.native_sim:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - native_sim/native/64
+    platform_allow:
+      - native_sim/native/64
+    extra_args:
+      - light_bulb_SNIPPET=native-sim

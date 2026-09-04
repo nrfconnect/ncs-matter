@@ -95,6 +95,7 @@ Advanced building options
 
 .. include:: /includes/building_and_running/advanced/building_nrf54lm20dk_7002eb2.txt
 .. include:: /includes/building_and_running/advanced/wifi_flash.txt
+.. include:: /includes/building_and_running/advanced/native_sim.txt
 
 Testing
 *******

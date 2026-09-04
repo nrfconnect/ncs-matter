@@ -45,3 +45,13 @@ tests:
     integration_platforms:
       - thingy53/nrf5340/cpuapp
       - nrf54l15tag/nrf54l15/cpuapp
+
+  sample.matter.weather_station.native_sim:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - native_sim/native/64
+    platform_allow:
+      - native_sim/native/64
+    extra_args:
+      - weather_station_SNIPPET=native-sim

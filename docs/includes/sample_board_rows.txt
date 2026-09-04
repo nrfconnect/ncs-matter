@@ -43,3 +43,7 @@
 | `Developing with nRF54L Series`_ | PCA10156 | `nrf54l15dk`_ | ``nrf54l15dk/nrf54l15/cpuapp``    |
 |                                |          |                                         |                                   |
 |                                |          |                                         | ``nrf54l15dk/nrf54l15/cpuapp/ns`` |
+
+.. native_sim_native_64
+
+| Native Simulator | | native_sim | ``native_sim/native/64`` |

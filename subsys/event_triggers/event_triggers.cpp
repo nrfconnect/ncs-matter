@@ -6,6 +6,7 @@
 
 #include "event_triggers.h"
 
+#include <inttypes.h>
 #include <zephyr/logging/log.h>
 
 /* Server used only for getting the ICDManager instance */
@@ -45,13 +46,13 @@ CHIP_ERROR TestEventTrigger::RegisterICDTestEventTriggers()
 CHIP_ERROR TestEventTrigger::RegisterTestEventTrigger(EventTriggerId id, EventTrigger trigger)
 {
 	/* Verify that the event trigger ID is a valid event trigger ID and does not contain the value part. */
-	VerifyOrDieWithMsg((id & kEventTriggerMask) == id, Zcl, "Invalid event trigger ID: 0x%llx", id);
+	VerifyOrDieWithMsg((id & kEventTriggerMask) == id, Zcl, "Invalid event trigger ID: 0x%" PRIx64, id);
 
 	VerifyOrReturnError(trigger.Callback != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
 	VerifyOrReturnError(!mTriggersMap.Contains(id), CHIP_ERROR_INVALID_ARGUMENT);
 	VerifyOrReturnError(mTriggersMap.Insert(id, std::move(trigger)), CHIP_ERROR_NO_MEMORY);
 
-	LOG_DBG("Registered new test event: 0x%llx", id);
+	LOG_DBG("Registered new test event: 0x%" PRIx64, id);
 
 	return CHIP_NO_ERROR;
 }
@@ -59,9 +60,9 @@ CHIP_ERROR TestEventTrigger::RegisterTestEventTrigger(EventTriggerId id, EventTr
 void TestEventTrigger::UnregisterTestEventTrigger(EventTriggerId id)
 {
 	if (mTriggersMap.Erase(id)) {
-		LOG_DBG("Unregistered test event: 0x%llx", id);
+		LOG_DBG("Unregistered test event: 0x%" PRIx64, id);
 	} else {
-		LOG_WRN("Cannot unregister test event: 0x%llx", id);
+		LOG_WRN("Cannot unregister test event: 0x%" PRIx64, id);
 	}
 }
 

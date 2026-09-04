@@ -1,0 +1,33 @@
+Building and running on native_sim
+-----------------------------------
+
+.. toggle::
+
+   You can build and run this |matter_type| on your host machine using the ``native_sim`` board, without any development kit.
+   This is useful for quick testing of application and cluster logic, but is not a substitute for testing on real hardware.
+
+   To build and run |matter_type| follow the steps:
+
+   #. Build for ``native_sim/native/64`` and use the dedicated snippet:
+
+      .. code-block:: console
+
+         west build -p -b native_sim/native/64 -- -DSNIPPET=native-sim
+
+   #. Run the resulting binary in an isolated network namespace, so that it does not probe every network interface on the host, using :file:`scripts/native_sim/bin/run-in-netns`:
+
+
+         sudo ../../scripts/native_sim/bin/run-in-netns
+
+   Boot logs and the ``uart:~$`` shell prompt both appear on this same terminal.
+   From this point you can use :ref:`ug_matter_gs_tools_chip` to work with the simulated device.
+
+   You can prepare the firmware to separate logs from the simulated device and UART console by setting the :kconfig:option:`CONFIG_UART_NATIVE_PTY_0_ON_OWN_PTY` to ``y``, and :kconfig:option:`CONFIG_UART_NATIVE_PTY_0_ON_STDINOUT` to ``n``.
+
+   For example:
+
+   .. code-block:: console
+
+      west build -p -b native_sim/native/64 -- -DSNIPPET=native-sim -DCONFIG_UART_NATIVE_PTY_0_ON_STDINOUT=n -DCONFIG_UART_NATIVE_PTY_0_ON_OWN_PTY=y
+
+   To learn more about the ``native-sim`` snippet see the :ref:`ug_matter_native_sim_snippet` user guide.

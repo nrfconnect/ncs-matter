@@ -1,0 +1,14 @@
+/* Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		pwm-led1 = &led0;
+	};
+};
+
+&storage_partition {
+	reg = <0x000fc000 DT_SIZE_K(42)>;
+};
