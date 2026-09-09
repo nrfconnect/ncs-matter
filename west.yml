@@ -10,7 +10,7 @@ manifest:
     - name: nrf
       remote: ncs
       repo-path: sdk-nrf
-      revision: v3.4.0
+      revision: 883b171ad54ce2f7054355aa6d2dfa8bdd9f843e
       import: true
     - name: matter
       remote: ncs
