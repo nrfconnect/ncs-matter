@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/delete-node/ &slot0_partition;
 /delete-node/ &storage_partition;
 
 &cpuapp_rram {
@@ -17,15 +16,6 @@
 			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
 			reg = <0x0 DT_SIZE_K(52)>;
-		};
-
-		slot0_partition: partition@d000 {
-			compatible = "zephyr,mapped-partition";
-			label = "image-0";
-			reg = <0xd000 DT_SIZE_K(1396)>;
-			ranges = <0x0 0xd000 DT_SIZE_K(1396)>;
-			#address-cells = <1>;
-			#size-cells = <1>;
 		};
 
 		storage_partition: partition@16b000 {
