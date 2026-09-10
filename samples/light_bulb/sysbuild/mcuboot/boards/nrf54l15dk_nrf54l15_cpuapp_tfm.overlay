@@ -13,7 +13,7 @@
  */
 /delete-node/ &slot1_partition;
 
-#include <nrf54l15_cpuapp_tfm_base_partitions.dtsi>
+#include <nrf54l15_cpuapp_tfm_mcuboot_partitions.dtsi>
 
 / {
 	chosen {

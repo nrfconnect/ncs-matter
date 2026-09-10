@@ -29,31 +29,35 @@
 
 /* Cleanup the default partitioning for Application and TF-M */
 
+/delete-node/ &slot0_s_partition;
 /delete-node/ &slot0_ns_partition;
 /delete-node/ &tfm_its_partition;
 /delete-node/ &tfm_otp_partition;
 /delete-node/ &tfm_ps_partition;
 
-/* Specify secure and nonsecure partitions within the slot0_partition which is
- * defined in the tfm_base_partitions file.
- */
-
-&slot0_partition {
-	slot0_s_partition: partition@0 {
-		compatible = "zephyr,mapped-partition";
-		label = "image-0-secure";
-		reg = <0x0 DT_SIZE_K(128)>;
-	};
-
-	slot0_ns_partition: partition@20000 {
-		compatible = "zephyr,mapped-partition";
-		label = "image-0-nonsecure";
-		reg = <0x00020000 DT_SIZE_K(1268)>;
-	};
-};
-
 &cpuapp_rram {
 	partitions {
+		slot0_partition: partition@d000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0xd000 DT_SIZE_K(1396)>;
+			ranges = <0x0 0xd000 DT_SIZE_K(1396)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-secure";
+				reg = <0x0 DT_SIZE_K(128)>;
+			};
+
+			slot0_ns_partition: partition@20000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-nonsecure";
+				reg = <0x00020000 DT_SIZE_K(1268)>;
+			};
+		};
+
 		factory_data_partition: partition@16a000 {
 			compatible = "zephyr,mapped-partition";
 			label = "factory-data";

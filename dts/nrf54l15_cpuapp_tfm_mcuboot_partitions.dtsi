@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <nrf54l15_cpuapp_tfm_base_partitions.dtsi>
+
+/delete-node/ &slot0_partition;
+
+&cpuapp_rram {
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@d000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0xd000 DT_SIZE_K(1396)>;
+			ranges = <0x0 0xd000 DT_SIZE_K(1396)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+		};
+	};
+};
