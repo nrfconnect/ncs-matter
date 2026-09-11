@@ -10,13 +10,13 @@
 #include "board/board.h"
 
 #include <app/clusters/identify-server/IdentifyCluster.h>
+#include <app/server-cluster/ServerClusterInterfaceRegistry.h>
+#include <data-model-providers/codegen/CodegenDataModelProvider.h>
 #include <lib/support/TimerDelegate.h>
+#include <platform/DefaultTimerDelegate.h>
 
 #include <functional>
-#include <memory>
 #include <optional>
-
-struct Identify;
 
 namespace Nrf
 {
@@ -125,8 +125,9 @@ namespace Matter
 	private:
 		chip::EndpointId mEndpointId;
 		std::optional<IdentifyDelegateImplNrf> mNrfDelegate;
-		chip::app::Clusters::IdentifyDelegate * mCustomDelegate = nullptr;
-		std::unique_ptr<Identify> mIdentify;
+		chip::app::Clusters::IdentifyDelegate * mDelegate = nullptr;
+		chip::app::DefaultTimerDelegate mDefaultTimerDelegate;
+		chip::app::RegisteredServerCluster<chip::app::Clusters::IdentifyCluster> mIdentifyCluster;
 	};
 
 } // namespace Matter
