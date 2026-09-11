@@ -223,6 +223,8 @@ Building for the nRF7002 Wi-Fi expansion board
 
                west build -b thingy53/nrf5340/cpuapp -- -Dweather_station_SHIELD=nrf7002eb -DFILE_SUFFIX=release -DSB_CONFIG_WIFI_NRF70=y
 
+.. include:: /includes/building_and_running/advanced/native_sim.txt
+
 Testing
 *******
 

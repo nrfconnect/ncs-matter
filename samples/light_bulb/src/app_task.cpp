@@ -62,7 +62,11 @@ DeferredAttributePersistenceProvider gDeferredAttributePersister(gSimpleAttribut
 								 Span<DeferredAttribute>(&gCurrentLevelPersister, 1),
 								 System::Clock::Milliseconds32(5000));
 
+#ifdef CONFIG_DK_LIBRARY
 #define APPLICATION_BUTTON_MASK DK_BTN2_MSK
+#else
+#define APPLICATION_BUTTON_MASK 0
+#endif
 } /* namespace */
 
 void AppTask::LightingActionEventHandler(const LightingEvent &event)

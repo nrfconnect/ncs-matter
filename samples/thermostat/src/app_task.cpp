@@ -30,16 +30,20 @@ constexpr EndpointId kThermostatEndpointId = 1;
 
 Nrf::Matter::IdentifyCluster sIdentifyCluster(kThermostatEndpointId);
 
+#ifdef CONFIG_DK_LIBRARY
 #define TEMPERATURE_BUTTON_MASK DK_BTN2_MSK
+#endif
 } /* namespace */
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
+#ifdef CONFIG_DK_LIBRARY
 	if (TEMPERATURE_BUTTON_MASK & hasChanged) {
 		TemperatureButtonAction action = (TEMPERATURE_BUTTON_MASK & state) ? TemperatureButtonAction::Pushed :
 										     TemperatureButtonAction::Released;
 		Nrf::PostTask([action] { ThermostatHandler(action); });
 	}
+#endif
 }
 
 void AppTask::ThermostatHandler(const TemperatureButtonAction &action)

@@ -27,6 +27,12 @@ zephyr_linker_sources(SECTIONS ${MATTER_COMMONS_SRC_DIR}/clusters/cluster_init.l
 # Set specific sources that depend on Kconfigs
 if(CONFIG_CHIP_OTA_REQUESTOR)
     target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/dfu/ota/ota_util.cpp)
+    if(CONFIG_ARCH_POSIX)
+        target_sources(app PRIVATE
+            ${MATTER_COMMONS_SRC_DIR}/dfu/ota/ota_sim_state.cpp
+            ${MATTER_COMMONS_SRC_DIR}/dfu/ota/ota_sim_mcuboot_stub.cpp
+        )
+    endif()
 endif()
 
 if(CONFIG_PWM)
