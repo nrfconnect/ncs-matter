@@ -38,4 +38,15 @@ config MATTER_ADD_ON_OTA_IMAGE_FILE_NAME
 	help
 	  Provides the file name of the generated Matter OTA image in the build directory.
 
+config MATTER_NRF7002EB_INVERSED_PINOUT
+	bool "Use nRF7002EB pinout for nRF54LM20DK v0.5.1"
+	default y
+	depends on BOARD_NRF54LM20DK
+	depends on WIFI_NRF70
+	help
+	  On nRF54LM20DK revision 0.5.1 there are different pinout that force using
+	  UART20 for communication because UART30 pins are reserved for nRF7002EB.
+	  This configuration aligns the device tree settings to allow working with 0.5.1 nRF54LM20DK
+	  board revision.
+
 endif # MATTER_ADD_ON

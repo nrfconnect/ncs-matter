@@ -28,6 +28,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
     set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP n)
     endif()
 
+  if(SB_CONFIG_MATTER_NRF7002EB_INVERSED_PINOUT)
+    add_overlay_dts(${DEFAULT_IMAGE} ${ZEPHYR_NCS_MATTER_MODULE_DIR}/dts/nrf54lm20_0_5_1_nrf7002eb.dts)
+  endif()
+
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
 
 #########################################################
