@@ -2,6 +2,7 @@
 
 .. |ncs_version| replace:: 3.4.0
 .. |addon_version| replace:: 1.0.0
+.. |addon_preview_version| replace:: preview-thread-hdr
 
 .. |NCS| replace:: nRF Connect SDK
 .. |addon| replace:: Matter add-on
