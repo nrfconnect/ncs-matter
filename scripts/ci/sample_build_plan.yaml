@@ -7,10 +7,15 @@ version: 1
 #
 # Twister defaults used when generating a selective build plan.
 # scenario_prefix is prepended to each sample's scenario name (unless scenario already contains '.').
+#
+# west-allowlist points (relative to this file) at a YAML list of project names CI should
+# scope `west update` to (see west_allowlist.yaml). Empty/omitted means no scoping - CI updates
+# every project west.yml's own import pulls in, same as a local development workspace.
 twister:
   integration: true
   testcase_root: samples
   scenario_prefix: sample.matter.
+  west-allowlist: west_allowlist.yaml
 
 # Scenarios always included in PR builds (in addition to path trigger matches).
 # The scenarios here must reflect the integration scope of the project.
@@ -427,7 +432,7 @@ path_triggers:
 labels:
   ci-all-test:
     action: full_build
-  ci-disabled:
+  base-only:
     action: skip
 
 # Branch, tag, and scheduled builds run the full integration scope by default.

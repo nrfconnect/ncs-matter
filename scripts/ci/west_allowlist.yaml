@@ -1,0 +1,54 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+# CI-only west update scope for Matter samples.
+#
+# Names of the NCS and Zephyr projects `west update` needs to build and test the samples in
+# this repo. Referenced from sample_build_plan.yaml (twister.west-allowlist) and applied by
+# the sdk_smart_home CI pipeline via `west config manifest.project-filter`, so a full clone of
+# every module sdk-nrf's west.yml pulls in is skipped in CI without constraining local
+# development workspaces (west.yml itself keeps a plain `import: true`).
+#
+# Please keep this list sorted alphabetically within each group.
+#
+# Must include every project this manifest itself declares (nrf, matter) alongside the ones
+# pulled in through nrf's own import: manifest.project-filter applies to nrf's own import too,
+# so omitting nrf here would make nrf inactive and skip resolving its import entirely, along
+# with every project below that it pulls in.
+
+# Manifest-declared projects (west.yml's own top-level projects)
+- matter
+- nrf
+
+# NCS projects (pulled in through nrf's own import)
+- bme68x
+- bsec
+- coremark
+- doc-internal
+- dragoon
+- find-my
+- hostap
+- libmodem
+- mbedtls
+- mcuboot
+- nrf-802154
+- nrf_wifi
+- nrfxlib
+- oberon-psa-crypto
+- openthread
+- psa-arch-tests
+- qcbor
+- t_cose
+- trusted-firmware-m
+- zephyr
+
+# Zephyr modules (imported via nrf/west.yml zephyr name-allowlist)
+- cmsis
+- cmsis_6
+- hal_nordic
+- libmetal
+- lz4
+- open-amp
+- picolibc
+- tf-psa-crypto
+- zcbor
