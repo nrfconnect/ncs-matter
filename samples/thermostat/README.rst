@@ -141,6 +141,12 @@ Advanced building options
 
 .. include:: /includes/building_and_running/advanced/building_nrf54lm20dk_7002eb2.txt
 
+Advanced building options
+=========================
+
+.. include:: /includes/building_and_running/advanced/intro.txt
+.. include:: /includes/building_and_running/advanced/native_sim.txt
+
 Testing
 *******
 

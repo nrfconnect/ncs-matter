@@ -26,8 +26,13 @@ namespace
 {
 Nrf::Matter::IdentifyCluster sIdentifyCluster(WindowCovering::Endpoint());
 
+#ifdef CONFIG_DK_LIBRARY
 #define OPEN_BUTTON_MASK DK_BTN2_MSK
 #define CLOSE_BUTTON_MASK DK_BTN3_MSK
+#else
+#define OPEN_BUTTON_MASK 0
+#define CLOSE_BUTTON_MASK 0
+#endif
 } /* namespace */
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)

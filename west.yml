@@ -5,6 +5,8 @@ manifest:
   remotes:
     - name: ncs
       url-base: https://github.com/nrfconnect
+    - name: doublemis1
+      url-base: https://github.com/doublemis1
 
   projects:
     - name: nrf
@@ -13,10 +15,10 @@ manifest:
       revision: v3.4.0
       import: true
     - name: matter
-      remote: ncs
+      remote: doublemis1
       path: modules/lib/matter
       repo-path: sdk-connectedhomeip
-      revision: ncs-matter-v1.0.0
+      revision: feature/matter-native-sim
       submodules:
         - name: nlio
           path: third_party/nlio/repo

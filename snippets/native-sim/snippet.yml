@@ -1,0 +1,12 @@
+name: native-sim
+boards:
+  native_sim:
+    append:
+      EXTRA_CONF_FILE: matter_native_sim.conf
+      EXTRA_DTC_OVERLAY_FILE: matter_native_sim.overlay
+      SB_EXTRA_CONF_FILE: matter_native_sim_sysbuild.conf
+  native_sim/native/64:
+    append:
+      EXTRA_CONF_FILE: matter_native_sim.conf
+      EXTRA_DTC_OVERLAY_FILE: matter_native_sim.overlay
+      SB_EXTRA_CONF_FILE: matter_native_sim_sysbuild.conf
