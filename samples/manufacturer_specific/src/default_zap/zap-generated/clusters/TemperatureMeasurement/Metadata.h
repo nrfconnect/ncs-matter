@@ -20,7 +20,7 @@ namespace app
 		namespace TemperatureMeasurement
 		{
 
-			inline constexpr uint32_t kRevision = 4;
+			inline constexpr uint32_t kRevision = 6;
 
 			namespace Attributes
 			{

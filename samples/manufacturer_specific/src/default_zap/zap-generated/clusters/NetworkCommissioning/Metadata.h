@@ -20,7 +20,7 @@ namespace app
 		namespace NetworkCommissioning
 		{
 
-			inline constexpr uint32_t kRevision = 3;
+			inline constexpr uint32_t kRevision = 2;
 
 			namespace Attributes
 			{
@@ -157,13 +157,6 @@ namespace app
 							       BitFlags<DataModel::CommandQualityFlags>(),
 							       Access::Privilege::kAdminister);
 				} // namespace ReorderNetwork
-				namespace QueryIdentity
-				{
-					inline constexpr DataModel::AcceptedCommandEntry
-						kMetadataEntry(QueryIdentity::Id,
-							       BitFlags<DataModel::CommandQualityFlags>(),
-							       Access::Privilege::kAdminister);
-				} // namespace QueryIdentity
 
 			} // namespace Commands
 
