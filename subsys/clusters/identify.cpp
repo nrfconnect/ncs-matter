@@ -6,140 +6,56 @@
 
 #include "clusters/identify.h"
 
-#include <app/clusters/identify-server/identify-server.h>
+#include <app-common/zap-generated/ids/Clusters.h>
 #include <lib/support/CodeUtils.h>
-
-namespace
-{
-using chip::EndpointId;
-using chip::kInvalidEndpointId;
-using chip::app::Clusters::Identify::EffectIdentifierEnum;
-using chip::app::Clusters::Identify::EffectVariantEnum;
-
-struct IdentifyCallbackContext {
-	Nrf::Matter::IdentifyDelegateImplNrf * nrfDelegate = nullptr;
-	chip::app::Clusters::IdentifyDelegate * customDelegate = nullptr;
-};
-
-constexpr size_t kMaxIdentifyInstances = CHIP_DEVICE_CONFIG_DYNAMIC_ENDPOINT_COUNT + 8;
-
-struct IdentifyContextEntry {
-	EndpointId endpoint = kInvalidEndpointId;
-	IdentifyCallbackContext context{};
-};
-
-IdentifyContextEntry gIdentifyContexts[kMaxIdentifyInstances];
-
-IdentifyCallbackContext * FindContext(EndpointId endpoint)
-{
-	for (IdentifyContextEntry & entry : gIdentifyContexts) {
-		if (entry.endpoint == endpoint) {
-			return &entry.context;
-		}
-	}
-	return nullptr;
-}
-
-IdentifyCallbackContext * AllocateContext(EndpointId endpoint)
-{
-	for (IdentifyContextEntry & entry : gIdentifyContexts) {
-		if (entry.endpoint == kInvalidEndpointId) {
-			entry.endpoint = endpoint;
-			return &entry.context;
-		}
-	}
-	return nullptr;
-}
-
-void ReleaseContext(EndpointId endpoint)
-{
-	for (IdentifyContextEntry & entry : gIdentifyContexts) {
-		if (entry.endpoint == endpoint) {
-			entry.endpoint = kInvalidEndpointId;
-			entry.context  = {};
-			return;
-		}
-	}
-}
-
-void OnIdentifyStart(Identify * identify)
-{
-	EndpointId endpoint = identify->mCluster.Cluster().GetPaths()[0].mEndpointId;
-	IdentifyCallbackContext * context = FindContext(endpoint);
-	VerifyOrReturn(context != nullptr);
-
-	if (context->customDelegate != nullptr) {
-		context->customDelegate->OnIdentifyStart(identify->mCluster.Cluster());
-	} else if (context->nrfDelegate != nullptr) {
-		context->nrfDelegate->OnIdentifyStart(identify->mCluster.Cluster());
-	}
-}
-
-void OnIdentifyStop(Identify * identify)
-{
-	EndpointId endpoint = identify->mCluster.Cluster().GetPaths()[0].mEndpointId;
-	IdentifyCallbackContext * context = FindContext(endpoint);
-	VerifyOrReturn(context != nullptr);
-
-	if (context->customDelegate != nullptr) {
-		context->customDelegate->OnIdentifyStop(identify->mCluster.Cluster());
-	} else if (context->nrfDelegate != nullptr) {
-		context->nrfDelegate->OnIdentifyStop(identify->mCluster.Cluster());
-	}
-}
-
-void OnTriggerEffect(Identify * identify)
-{
-	EndpointId endpoint = identify->mCluster.Cluster().GetPaths()[0].mEndpointId;
-	IdentifyCallbackContext * context = FindContext(endpoint);
-	VerifyOrReturn(context != nullptr);
-
-	if (context->customDelegate != nullptr) {
-		context->customDelegate->OnTriggerEffect(identify->mCluster.Cluster());
-	} else if (context->nrfDelegate != nullptr) {
-		context->nrfDelegate->OnTriggerEffect(identify->mCluster.Cluster());
-	}
-}
-
-} // namespace
 
 namespace Nrf::Matter
 {
 
+namespace
+{
+void RegisterIdentifyCluster(chip::EndpointId endpoint,
+			     chip::app::RegisteredServerCluster<chip::app::Clusters::IdentifyCluster> & cluster)
+{
+	if (chip::app::CodegenDataModelProvider::Instance().Registry().Get(
+		    { endpoint, chip::app::Clusters::Identify::Id }) != nullptr) {
+		return;
+	}
+
+	CHIP_ERROR err = chip::app::CodegenDataModelProvider::Instance().Registry().Register(cluster.Registration());
+	VerifyOrDie(err == CHIP_NO_ERROR);
+}
+} // namespace
+
 IdentifyCluster::IdentifyCluster(chip::EndpointId endpoint, chip::app::Clusters::IdentifyDelegate &identifyDelegate,
 				 chip::TimerDelegate &timerDelegate,
 				 chip::app::Clusters::Identify::IdentifyTypeEnum identifyType)
-	: mEndpointId(endpoint), mCustomDelegate(&identifyDelegate)
+	: mEndpointId(endpoint),
+	  mDelegate(&identifyDelegate),
+	  mIdentifyCluster(chip::app::Clusters::IdentifyCluster::Config(endpoint, timerDelegate)
+				   .WithIdentifyType(identifyType)
+				   .WithDelegate(mDelegate))
 {
-	IdentifyCallbackContext * context = AllocateContext(endpoint);
-	VerifyOrDie(context != nullptr);
-	context->customDelegate = &identifyDelegate;
-
-	mIdentify = std::make_unique<Identify>(
-		endpoint, OnIdentifyStart, OnIdentifyStop, identifyType, OnTriggerEffect,
-		EffectIdentifierEnum::kBlink, EffectVariantEnum::kDefault, &timerDelegate);
+	RegisterIdentifyCluster(endpoint, mIdentifyCluster);
 }
 
 IdentifyCluster::IdentifyCluster(chip::EndpointId endpoint, bool isTriggerEffectEnabled,
 				 std::function<void()> customIdentifyStopCallback,
 				 chip::app::Clusters::Identify::IdentifyTypeEnum identifyType)
-	: mEndpointId(endpoint)
+	: mEndpointId(endpoint),
+	  mNrfDelegate(std::in_place, isTriggerEffectEnabled, customIdentifyStopCallback),
+	  mDelegate(&(*mNrfDelegate)),
+	  mIdentifyCluster(chip::app::Clusters::IdentifyCluster::Config(endpoint, mDefaultTimerDelegate)
+				   .WithIdentifyType(identifyType)
+				   .WithDelegate(mDelegate))
 {
-	mNrfDelegate.emplace(isTriggerEffectEnabled, customIdentifyStopCallback);
-
-	IdentifyCallbackContext * context = AllocateContext(endpoint);
-	VerifyOrDie(context != nullptr);
-	context->nrfDelegate = &(*mNrfDelegate);
-
-	Identify::onEffectIdentifierCb effectCb = isTriggerEffectEnabled ? OnTriggerEffect : nullptr;
-
-	mIdentify = std::make_unique<Identify>(endpoint, OnIdentifyStart, OnIdentifyStop, identifyType, effectCb);
+	RegisterIdentifyCluster(endpoint, mIdentifyCluster);
 }
 
 IdentifyCluster::~IdentifyCluster()
 {
-	mIdentify.reset();
-	ReleaseContext(mEndpointId);
+	RETURN_SAFELY_IGNORED chip::app::CodegenDataModelProvider::Instance().Registry().Unregister(
+		&mIdentifyCluster.Cluster());
 }
 
 } // namespace Nrf::Matter

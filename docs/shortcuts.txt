@@ -1,7 +1,7 @@
 .. ### Versions
 
 .. |ncs_version| replace:: 3.4.0
-.. |addon_version| replace:: 1.0.0
+.. |addon_version| replace:: 1.0.99
 
 .. |NCS| replace:: nRF Connect SDK
 .. |addon| replace:: Matter add-on
@@ -37,3 +37,4 @@
    The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 .. |connect_terminal_ANSI| replace:: Connect to the kit with a terminal emulator (for example, nRF Connect Serial Terminal).
    See `Testing and optimization`_ in the |NCS| documentation for the required settings and steps.
+.. |no_changes_yet_note| replace:: No changes since the latest |addon| release.

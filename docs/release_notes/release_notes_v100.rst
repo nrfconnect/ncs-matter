@@ -29,3 +29,15 @@ This release provides Matter samples and documentation migrated from the |NCS| M
 
 * Removed the ``Init`` function from the ``Nrf::Matter::IdentifyCluster`` class.
   To add the Identify Matter cluster to your application, declare a new ``Nrf::Matter::IdentifyCluster`` object in your :file:`AppTask.cpp` file and fill all required constructor arguments.
+
+Matter fork
+***********
+
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.6.0`` tag.
+
+* Integration of `Matter 1.6.0 <CSA press release for Matter 1.6_>`_:
+
+  * NFC-based commissioning - Allowing the full commissioning exchange over bi-directional NFC communication.
+  * Joint Fabric - Enabling multiple user-authorized controllers to co-administer a single shared Matter network, with devices accessible to all participating controllers.
+  * Thermostat suggestions - Providing a standardized way for ecosystems to submit time-bound recommended changes that thermostats evaluate against user-defined preferences and current context before acting.
+  * Core enhancements - Device capability and limits communication, security sensor event history, unmounted state for smoke and CO alarms, and partitioned certificate revocation lists.
