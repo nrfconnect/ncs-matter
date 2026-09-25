@@ -26,3 +26,4 @@ For additional context on other solutions, refer to the following resources:
    software_maturity
    release_notes
    known_issues
+   migration_guides

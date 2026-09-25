@@ -47,16 +47,12 @@ namespace app
 					enum class Fields : uint8_t {
 						kNetworkID = 0,
 						kConnected = 1,
-						kNetworkIdentifier = 2,
-						kClientIdentifier = 3,
 					};
 
 					struct Type {
 					public:
 						chip::ByteSpan networkID;
 						bool connected = static_cast<bool>(0);
-						Optional<DataModel::Nullable<chip::ByteSpan>> networkIdentifier;
-						Optional<DataModel::Nullable<chip::ByteSpan>> clientIdentifier;
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
 

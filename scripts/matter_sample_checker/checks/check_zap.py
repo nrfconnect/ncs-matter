@@ -114,9 +114,6 @@ class ZapTestCase(MatterSampleTestCase):
         # Read configuration from file
         zap_config = self.config.config_file.get('zap_files')
         zap_dir = self.config.sample_path / zap_config['zap_directory']
-        zap_generated_dir = (
-            zap_dir / zap_config['generated_directory'].split('/')[-1]
-        )  # Get last part
 
         # 1. Check if the zap_directory exists
         if not zap_dir.exists():
@@ -131,15 +128,21 @@ class ZapTestCase(MatterSampleTestCase):
             else:
                 self.debug(f"✓ Found {ext} file: {files[0].name}")
 
-        # 3. Check zap-generated directory and files
+        # 3. Optionally check zap-generated directory and files (legacy static mode)
+        if not zap_config.get('check_generated_files', False):
+            return
+
+        generated_directory = zap_config.get('generated_directory', 'zap-generated')
+        zap_generated_dir = zap_dir / generated_directory.split('/')[-1]
+
         if not zap_generated_dir.exists():
             self.issue(f"Missing {zap_config.get('generated_directory')}/ directory")
-        else:
-            expected_generated_files = zap_config.get('generated_files')
+            return
 
-            for file_name in expected_generated_files:
-                file_path = zap_generated_dir / file_name
-                if not file_path.exists():
-                    self.issue(f"Missing ZAP generated file: {file_name}")
-                else:
-                    self.debug(f"✓ Found ZAP generated: {file_name}")
+        expected_generated_files = zap_config.get('generated_files', [])
+        for file_name in expected_generated_files:
+            file_path = zap_generated_dir / file_name
+            if not file_path.exists():
+                self.issue(f"Missing ZAP generated file: {file_name}")
+            else:
+                self.debug(f"✓ Found ZAP generated: {file_name}")

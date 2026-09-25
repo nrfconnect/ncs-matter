@@ -17,11 +17,11 @@ namespace app
 			{
 
 				// Total number of client to server commands supported by the cluster
-				inline constexpr uint32_t kAcceptedCommandsCount = 7;
+				inline constexpr uint32_t kAcceptedCommandsCount = 6;
 
 				// Total number of server to client commands supported by the cluster (response
 				// commands)
-				inline constexpr uint32_t kGeneratedCommandsCount = 4;
+				inline constexpr uint32_t kGeneratedCommandsCount = 3;
 
 				namespace ScanNetworks
 				{
@@ -53,11 +53,6 @@ namespace app
 					inline constexpr CommandId Id = 0x00000008;
 				} // namespace ReorderNetwork
 
-				namespace QueryIdentity
-				{
-					inline constexpr CommandId Id = 0x00000009;
-				} // namespace QueryIdentity
-
 				namespace ScanNetworksResponse
 				{
 					inline constexpr CommandId Id = 0x00000001;
@@ -72,11 +67,6 @@ namespace app
 				{
 					inline constexpr CommandId Id = 0x00000007;
 				} // namespace ConnectNetworkResponse
-
-				namespace QueryIdentityResponse
-				{
-					inline constexpr CommandId Id = 0x0000000A;
-				} // namespace QueryIdentityResponse
 
 			} // namespace Commands
 		} // namespace NetworkCommissioning

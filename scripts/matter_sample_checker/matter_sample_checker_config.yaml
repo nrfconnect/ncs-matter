@@ -160,14 +160,10 @@ zap_files:
   required_extensions:
     - ".zap"
     - ".matter"
-  generated_directory: "src/default_zap/zap-generated"
-  generated_files:
-    - "access.h"
-    - "callback-stub.cpp"
-    - "gen_config.h"
-    - "endpoint_config.h"
-    - "IMClusterCommandHandler.cpp"
-    - "PluginApplicationCallbacks.h"
+  # ZAP-generated C++ files are no longer checked into samples by default.
+  # They are produced at build time (CONFIG_MATTER_ZAP_GENERATION_BUILD_TIME)
+  # or manually with west zap-generate (CONFIG_MATTER_ZAP_GENERATION_STATIC).
+  check_generated_files: false
 
 ###################################################
 # License checking configuration

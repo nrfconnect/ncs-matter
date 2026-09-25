@@ -74,7 +74,6 @@ namespace app
 				kWiFiNetworkInterface = 0x1,
 				kThreadNetworkInterface = 0x2,
 				kEthernetNetworkInterface = 0x4,
-				kPerDeviceCredentials = 0x8,
 			};
 
 			// Bitmap for ThreadCapabilitiesBitmap
@@ -93,7 +92,6 @@ namespace app
 				kWpaPersonal = 0x4,
 				kWpa2Personal = 0x8,
 				kWpa3Personal = 0x10,
-				kWpa3MatterPdc = 0x20,
 			};
 		} // namespace NetworkCommissioning
 	} // namespace Clusters
