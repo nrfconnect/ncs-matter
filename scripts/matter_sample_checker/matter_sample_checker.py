@@ -13,20 +13,27 @@ PM static files, ZAP files, and detects copy-paste mistakes.
 Usage: python matter_sample_checker.py <sample_directory_path>
 """
 
+from __future__ import annotations
+
 import argparse
-import os
 import sys
-from datetime import datetime
 from pathlib import Path
 
 from internal.check_discovery import CheckDiscovery
 from internal.checker import MatterSampleChecker
+from internal.cli_common import (
+    add_common_arguments,
+    checker_script_dir,
+    parse_expected_years,
+    resolve_config_path,
+    resolve_workspace_base,
+)
 from internal.utils.utils import load_config, parse_samples_zap_yaml
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(
-        description='Check Matter sample consistency',
+        description="Check Matter sample consistency",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         allow_abbrev=False,
         epilog="""
@@ -50,181 +57,97 @@ verbose output
         """,
     )
     parser.add_argument(
-        'sample_path',
-        nargs='?',
-        default='.',
-        help='Path to the Matter sample directory to check \
-                        (default: current directory). Ignored if --samples-zap-yaml is used.',
+        "sample_path",
+        nargs="?",
+        default=".",
+        help="Path to the Matter sample directory to check (default: current directory). "
+        "Ignored if --samples-zap-yaml is used.",
     )
     parser.add_argument(
-        '--samples-zap-yaml',
-        '-s',
+        "--samples-zap-yaml",
+        "-s",
         type=str,
-        help='Path to YAML file containing list of samples to check \
-                        (similar to zap_samples.yml format)',
+        help="Path to YAML file containing list of samples to check "
+        "(similar to zap_samples.yml format)",
     )
     parser.add_argument(
-        '--base',
-        '-b',
-        type=str,
-        help='Base directory for resolving sample and workspace paths. If not specified, \
-                        uses the ncs-matter repository root containing this script',
-    )
-    parser.add_argument(
-        '--verbose', '-v', action='store_true', help='Show verbose output during checks'
-    )
-    parser.add_argument(
-        '--year',
-        '-y',
+        "--year",
+        "-y",
         type=int,
-        nargs='*',
-        help='Enable copyright year checking. \
-                        If no years specified, checks current year. Can specify multiple years \
-                        (e.g., --year 2023 2024 2025). Default: skip year checking',
+        nargs="*",
+        help="Enable copyright year checking. If no years specified, checks current year. "
+        "Can specify multiple years (e.g., --year 2023 2024 2025). Default: skip year checking",
     )
     parser.add_argument(
-        '--config',
-        '-c',
+        "--allow-names",
+        "-a",
         type=str,
-        help='Path to custom configuration YAML file. \
-                        Default: matter_sample_checker_config.yaml in script directory',
-    )
-    parser.add_argument(
-        '--allow-names',
-        '-a',
-        type=str,
-        nargs='*',
+        nargs="*",
         default=[],
-        help='List of names/terms to allow during copy-paste error checking \
-                        (case-insensitive). Use quotes for multi-word names.',
+        help="List of names/terms to allow during copy-paste error checking (case-insensitive). "
+        "Use quotes for multi-word names.",
     )
-
+    add_common_arguments(parser)
     args = parser.parse_args()
 
-    if not args.base:
-        script_repo_root = Path(__file__).resolve().parent.parent.parent
-        if (script_repo_root / 'west.yml').exists() and (script_repo_root / 'samples').is_dir():
-            nrf_base = script_repo_root
-        else:
-            zephyr_base = os.environ.get("ZEPHYR_BASE")
-            if not zephyr_base:
-                print("Error: --base not specified and ncs-matter repository root could not be inferred.")
-                sys.exit(1)
-            nrf_base = Path(zephyr_base).resolve().parent / "ncs-matter"
-            if not nrf_base.is_dir():
-                print(f"Error: Could not infer ncs-matter workspace base: {nrf_base}")
-                sys.exit(1)
-    else:
-        nrf_base = Path(args.base).resolve()
-
-    # Determine expected years based on --year argument
-    expected_years = []
-    if args.year is not None:  # --year was provided
-        if len(args.year) == 0:  # --year with no arguments
-            expected_years = [datetime.now().year]
-        else:  # --year with specific years
-            expected_years = args.year
-    # If args.year is None (--year not provided), expected_years remains [] -> skip year checking
-
-    # Determine which samples to check
-    sample_paths = []
+    workspace_base = resolve_workspace_base(args.base)
+    expected_years = parse_expected_years(args.year)
 
     if args.samples_zap_yaml:
-        # Parse YAML file to get list of samples
         yaml_path = Path(args.samples_zap_yaml).resolve()
         if not yaml_path.exists():
-            print(f"Error: YAML file does not exist: {yaml_path}")
-            sys.exit(1)
+            print(f"Error: YAML file does not exist: {yaml_path}", file=sys.stderr)
+            return 1
 
-        sample_paths = parse_samples_zap_yaml(yaml_path, nrf_base)
-
+        sample_paths = parse_samples_zap_yaml(yaml_path, workspace_base)
         if not sample_paths:
-            print(f"Error: No valid samples found in YAML file: {yaml_path}")
-            sys.exit(1)
+            print(f"Error: No valid samples found in YAML file: {yaml_path}", file=sys.stderr)
+            return 1
 
         print(f"Found {len(sample_paths)} samples to check from {yaml_path}")
         if args.verbose:
             for sample in sample_paths:
                 print(f"  - {sample}")
     else:
-        # Single sample mode (original behavior)
         sample_path = Path(args.sample_path).resolve()
         if not sample_path.exists():
-            print(f"Error: Sample path does not exist: {sample_path}")
-            sys.exit(1)
-
+            print(f"Error: Sample path does not exist: {sample_path}", file=sys.stderr)
+            return 1
         if not sample_path.is_dir():
-            print(f"Error: Sample path is not a directory: {sample_path}")
-            sys.exit(1)
-
+            print(f"Error: Sample path is not a directory: {sample_path}", file=sys.stderr)
+            return 1
         sample_paths = [sample_path]
 
-    config_path = (
-        args.config if args.config else Path(__file__).parent / 'matter_sample_checker_config.yaml'
-    )
+    config_dict = load_config(str(resolve_config_path(args.config)))
 
-    # Load the configuration file
-    config_dict = load_config(str(config_path))
-
-    # Discover all checks in the checks directory
-    checks_dir = Path(__file__).parent / 'checks'
+    checks_dir = checker_script_dir() / "checks"
     check_discovery = CheckDiscovery(checks_dir)
     check_classes = check_discovery.discover_checks()
-    doc_check_classes = check_discovery.discover_doc_checks()
 
     if args.verbose:
         print(f"Discovered {len(check_classes)} sample checks:")
         for check_class in check_classes:
             print(f"  - {check_class.__name__}")
-        print(f"Discovered {len(doc_check_classes)} documentation checks:")
-        for check_class in doc_check_classes:
-            print(f"  - {check_class.__name__}")
 
-    # Run the checker on all samples
-    all_reports = []
+    all_reports: list[str] = []
     total_issues = 0
 
-    # Run documentation checks once (independent of samples)
-    if doc_check_classes:
-        if args.verbose:
-            print(f"\nRunning {len(doc_check_classes)} documentation checks (once)...")
-
-        checker = MatterSampleChecker(
-            config_dict,
-            nrf_base,
-            verbose=args.verbose,
-            allowed_names=args.allow_names,
-            expected_years=expected_years,
-            check_classes=doc_check_classes,
-        )
-
-        doc_report, doc_issues = checker.run_checks()
-
-        if doc_report.strip():
-            all_reports.append(doc_report)
-            total_issues += doc_issues
-
-    # Run sample-specific checks for each sample
     for sample_path in sample_paths:
         checker = MatterSampleChecker(
             config_dict,
-            nrf_base,
+            workspace_base,
             sample_path,
             verbose=args.verbose,
             allowed_names=args.allow_names,
             expected_years=expected_years,
             check_classes=check_classes,
         )
-
         report, issue_count = checker.run_checks()
-
         all_reports.append(report)
         total_issues += issue_count
 
-    # Combine all reports
     final_report = "\n\n".join(all_reports)
 
-    # Add summary for multi-sample mode
     if len(sample_paths) > 1:
         summary = f"\n{'=' * 80}\n"
         summary += "SUMMARY\n"
@@ -234,10 +157,8 @@ verbose output
         final_report = final_report + summary
 
     print(final_report)
-
-    # Exit with error code if issues found
     return total_issues
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -3,7 +3,7 @@ Registering code-driven clusters
 
 .. toggle::
 
-   The Matter |NCS| common library provides a mechanism for automatic registration and initialization of custom Matter clusters using the ``NRF_MATTER_CLUSTER_INIT`` macro.
+   The Matter |addon| provides a subsystem for automatic registration and initialization of custom Matter clusters using the ``NRF_MATTER_CLUSTER_INIT`` macro.
    This allows cluster implementations to register their initialization functions that are automatically called during Matter server startup without manual registration in the application code.
    This mechanism uses Zephyr's iterable sections feature, which allows the linker to collect all registered entries automatically at build time without explicit registration calls.
 
@@ -64,7 +64,7 @@ Registering code-driven clusters
 
          NRF_MATTER_CLUSTER_INIT(my_cluster_id, MyClusterInit);
 
-   All callbacks will be automatically run by the ``StartServer()`` function dedicated to the |NCS| Matter solution.
+   All callbacks will be automatically run by the ``StartServer()`` function dedicated to the |addon| Matter solution.
 
    The source file name is automatically captured at compile time for logging purposes.
    When a cluster initializes, the log displays the filename, for example:

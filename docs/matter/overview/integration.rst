@@ -16,7 +16,7 @@ That is, the code used for the |NCS| and Matter integration is stored in the Mat
    The |NCS| repository structure
 
 Both instances depend on each other, but their development is independent to ensure that they both support the latest stable version of one another.
-The fork is maintained and verified as a part of the |NCS| release process as an :ref:`OSS repository <dm_repo_types>`.
+The fork is maintained and verified as a part of the |NCS| release process as an `Repository types`_.
 
 The Matter repository fetched into the fork also includes documentation files.
 A selection of these pages is included in the |NCS| documentation under the :ref:`ug_matter` tab.
@@ -35,7 +35,7 @@ In case of Matter over Thread, the |NCS|'s Multiprotocol Service Layer (MPSL) dr
 
    nRF Connect platform in Matter
 
-For detailed description, see the :doc:`matter:nrfconnect_platform_overview` page in the Matter documentation.
+For detailed description, see the `Matter nRF Connect platform overview`_ page in the Matter documentation.
 
 .. _ug_matter_overview_architecture_integration_designs:
 
@@ -43,7 +43,7 @@ Matter platform designs (System-on-Chip, multiprotocol)
 *******************************************************
 
 Matter in the |NCS| supports the *System-on-Chip, multiprotocol* platform designs, available with the related network stack on Nordic Semiconductor devices in the |NCS|.
-For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
+For more information about the multiprotocol feature, see `Multiprotocol support`_.
 
 .. _ug_matter_overview_architecture_integration_designs_thread:
 

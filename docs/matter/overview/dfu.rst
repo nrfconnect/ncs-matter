@@ -17,9 +17,9 @@ The download takes place over a special transfer protocol and user consent is re
 
 The Matter OTA is just one of the possible firmware update methods.
 You can also implement a custom solution.
-For example, the `nrfconnect platform <dedicated Matter fork_>`_ for Matter comes with a solution that lets you update the firmware outside of the Matter network, using Bluetooth LE and the :ref:`Simple Management Protocol <dfu_smp_readme>`.
+For example, the `nrfconnect platform <dedicated Matter fork_>`_ for Matter comes with a solution that lets you update the firmware outside of the Matter network, using Bluetooth LE and the `Simple Management Protocol`_.
 The conceptual details of this solution are outside the scope of this page.
-For detailed information about how to perform an update over Bluetooth LE, see :doc:`matter:nrfconnect_examples_software_update`.
+For detailed information about how to perform an update over Bluetooth LE, see `Matter software update guide`_.
 
 .. _ug_matter_overview_dfu_roles:
 
@@ -36,7 +36,7 @@ OTA Requestor
    Because of this, it may implement a mechanism to discover providers and query the OTA Provider periodically about new software images using the mandatory polling mechanism.
    However, it can also receive information about the OTA Providers from the commissioner during :ref:`ug_matter_overview_commissioning`.
 
-   The OTA Requestor is typically implemented on accessories (for example, embedded devices built using the |NCS|).
+   The OTA Requestor is typically implemented on accessories (for example, embedded devices built using the |addon|).
 
 OTA Provider
    The device that provides the image for the OTA update.
@@ -142,36 +142,36 @@ The software image must use fixed encoding and it must include the mandatory fie
 
 .. _table:
 
-+-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Field name            | Type   | Characteristics                               | Description                                                                                                                                          |
-+=======================+========+===============================================+======================================================================================================================================================+
-| ``FileIdentifier``    | uint32 | Fixed-width, little-endian-encoded, unsigned. | Identifies the OTA image file at its beginning.                                                                                                      |
-+-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``TotalSize``         | uint64 |                                               | Indicates the total size in bytes of the _entire_ file.                                                                                              |
-+-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``HeaderSize``        | uint32 |                                               | Indicates the total size of the TLV-encoded header field.                                                                                            |
-+-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``Header``            | TLV    | TLV encoding type and value.                  | Includes the `ota-image-header-struct` with a predefined order. See section 11.20.2.4 of the `Matter Core Specification`_ for more information.      |
-+-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``Payload``           | n/a    | Software image contents.                      | Includes the new software to be installed on the OTA Requestor. When using the |NCS|, this field also includes `Nordic Matter platform additions`_.  |
-+-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+
++-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Field name            | Type   | Characteristics                               | Description                                                                                                                                                |
++=======================+========+===============================================+============================================================================================================================================================+
+| ``FileIdentifier``    | uint32 | Fixed-width, little-endian-encoded, unsigned. | Identifies the OTA image file at its beginning.                                                                                                            |
++-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``TotalSize``         | uint64 |                                               | Indicates the total size in bytes of the _entire_ file.                                                                                                    |
++-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``HeaderSize``        | uint32 |                                               | Indicates the total size of the TLV-encoded header field.                                                                                                  |
++-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``Header``            | TLV    | TLV encoding type and value.                  | Includes the `ota-image-header-struct` with a predefined order. See section 11.20.2.4 of the `Matter Core Specification`_ for more information.            |
++-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``Payload``           | n/a    | Software image contents.                      | Includes the new software to be installed on the OTA Requestor. When using the |addon|, this field also includes ref:`ug_matter_overview_dfu_image_nordic` |
++-----------------------+--------+-----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. _ug_matter_overview_dfu_image_nordic:
 
 Nordic Matter platform additions
 ================================
 
-When building a Matter application for :doc:`nRF Connect platform <matter:nrfconnect_platform_overview>`, the Matter OTA image is one of the build :ref:`output files <app_build_output_files>`.
+When building a Matter application for `Matter nRF Connect platform overview`_, the Matter OTA image is one of the build `Application output files`_.
 The default location of the software image is :file:`matter.ota` in the build directory.
-The `Payload` field of the software image includes :file:`dfu_multi_image.bin` file, which is :ref:`another output file <app_build_output_files_other>` of the build process.
+The `Payload` field of the software image includes :file:`dfu_multi_image.bin` file, which is `Other application output files`_ of the build process.
 
 The :file:`dfu_multi_image.bin` file is an archive file that includes a CBOR manifest and a collection of user-selected update components.
 The CBOR manifest contains identifiers and sizes of the included update components to allow a user to successfully unpack the archive.
 The default update components are firmware images for all MCU cores.
 
-During the Matter OTA firmware update process, the downloaded Matter OTA image is saved to external flash using the :ref:`lib_dfu_multi_image` and :ref:`lib_dfu_target` libraries.
+During the Matter OTA firmware update process, the downloaded Matter OTA image is saved to external flash using the `DFU multi-image library`_ and `DFU target library`_ libraries.
 The DFU multi-image library uses `zcbor`_ for parsing the CBOR header.
-Applying the software image requires rebooting to :ref:`MCUboot <mcuboot:mcuboot_ncs>` bootloader which installs the new firmware.
+Applying the software image requires rebooting to `Using MCUboot in nRF Connect SDK`_ bootloader which installs the new firmware.
 
 .. _ug_matter_overview_dfu_image_tlv:
 

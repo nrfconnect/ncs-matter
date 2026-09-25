@@ -3,8 +3,8 @@ Support for Trusted Firmware-M
 
 .. toggle::
 
-    The |matter_type| supports using `Trusted Firmware-M <Trusted Firmware-M_>`_ on the |matter_dks_tfm|.
-    The memory map of the |matter_type| has been aligned to meet the `ug_tfm_partition_alignment_requirements <TF-M partition alignment_>`_.
+    The |matter_type| supports using `Trusted Firmware-M`_ on the |matter_dks_tfm|.
+    The memory map of the |matter_type| has been aligned to meet the `TF-M partition alignment`_.
 
     To build the |matter_type| with Trusted Firmware-M support, add the ``ns`` suffix to the |matter_dks_tfm| board target, and use the :makevar:`FILE_SUFFIX=tfm` variable:
 

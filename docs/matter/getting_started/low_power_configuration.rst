@@ -315,4 +315,4 @@ The `RAM power-down`_ library allows you to disable unused sections of RAM and s
 Unused sections of RAM depend on the SoC architecture and the total amount of used static RAM.
 In Matter, you can use this feature by setting the :kconfig:option:`CONFIG_RAM_POWER_DOWN_LIBRARY` Kconfig option to ``y``.
 
-Once the feature is enabled, the :c:func:`power_down_unused_ram` function is called automatically in the :file:`matter_init.cpp` file during the initialization process.
+Once the feature is enabled, the :local:c:func:`subsys/app/matter_init.cpp#power_down_unused_ram` function is called automatically in the :local:file:`subsys/app/matter_init.cpp` file during the initialization process.

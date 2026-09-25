@@ -295,7 +295,7 @@ To simplify the factory data generation, you can use the `Generate factory data 
 
 To use this script, complete the following steps:
 
-1. Navigate to the :file:`connectedhomeip` root directory.
+1. Navigate to the :external:file:`modules/lib/matter` root directory.
 #. Run the script with ``-h`` option to see all possible options:
 
    .. code-block:: console
@@ -471,7 +471,7 @@ Use the JSON file you find there when :ref:`ug_matter_device_factory_provisionin
    Generating new certificates is optional if default vendor and product IDs are used and requires providing a path to the ``chip-cert`` executable.
    Complete the following steps to generate the new certificates:
 
-   1.  Navigate to the :file:`connectedhomeip` root directory.
+   1.  Navigate to the :external:file:`modules/lib/matter` root directory.
    #.  In a terminal, run the following command to build the executable:
 
        .. code-block:: console
@@ -696,7 +696,7 @@ In this example, a ``factory_data`` partition has been placed between the applic
 Its size has been set to one flash page (4 kB).
 
 .. note::
-   The :ref:`partition_manager` is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
+   The `Partition Manager`_ is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
 
    This functionality is in the process of being deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
    It is recommended that all new designs using Nordic devices are to be built with DTS instead of Partition Manager.
@@ -755,7 +755,7 @@ If you provided these arguments, skip the following steps of this section.
 
 You can skip the optional arguments and do this using the `Generate partition script`_, but this is an obsolete solution and kept only for backward compatibility:
 
-1. Navigate to the :file:`connectedhomeip` root directory.
+1. Navigate to the :external:file:`modules/lib/matter` root directory.
 #. Run the following command pattern:
 
    .. code-block:: console
@@ -859,7 +859,7 @@ Each factory data parameter has its default value reflected in the Kconfig.
 The list below shows some Kconfig settings that are configured in the nRF Connect build system and have an impact on the application.
 You can modify them to achieve the desired behavior of your application.
 
-* The device uses the test certificates located in the :file:`credentials/development/attestation/` directory, which are generated using all default values.
+* The device uses the test certificates located in the :external:file:`modules/lib/matter/credentials/development/attestation/` directory, which are generated using all default values.
   If you want to change the default ``vendor_id``, ``product_id``, ``vendor_name``, or ``device_name`` and generate new test certificates, set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_CERT_SOURCE_GENERATED` Kconfig option to ``y``.
   Remember to build the ``chip-cert`` application and add it to the system PATH.
 
@@ -942,12 +942,12 @@ Using own factory data implementation
 The :ref:`ug_matter_device_factory_provisioning_generating_factory_data` described above is only an example valid for the nRF Connect platform.
 You can well create a HEX file containing all :ref:`ug_matter_device_factory_provisioning_factory_data_component_table` in any format and then implement a parser to read out all parameters and pass them to a provider.
 Each manufacturer can implement their own factory data by implementing a parser and a factory data accessor inside the Matter stack.
-Use the :file:`FactoryDataProvider.h` and :file:`FactoryDataParser.h` files from the `Matter nRF Connect platform source files`_ as examples.
+Use the :external:file:`modules/lib/matter/src/platform/nrfconnect/FactoryDataProvider.h` and :external:file:`modules/lib/matter/src/platform/nrfconnect/FactoryDataParser.h` files from the `Matter nRF Connect platform source files`_ as examples.
 
 You can read the factory data set from the device's flash memory in different ways, depending on the purpose and the format.
 In the nRF Connect example, the factory data is stored in the CBOR format.
-The device uses the :file:`FactoryDataParser.h` file to read out raw data, decode it, and store it in the ``FactoryData`` structure.
-The :file:`FactoryDataProvider.c` implementation uses this parser to get all needed factory data parameters and provide them to the Matter core.
+The device uses the :external:file:`modules/lib/matter/src/platform/nrfconnect/FactoryDataParser.h` file to read out raw data, decode it, and store it in the ``FactoryData`` structure.
+The :external:file:`modules/lib/matter/src/platform/nrfconnect/FactoryDataProvider.cpp` implementation uses this parser to get all needed factory data parameters and provide them to the Matter core.
 
 In the nRF Connect example, the ``FactoryDataProvider`` is a template class that inherits from the ``DeviceAttestationCredentialsProvider``, ``CommissionableDataProvider``, and ``DeviceInstanceInfoProvider`` classes.
 Your custom implementation must also inherit from these classes and implement their functions to get all factory data parameters from the device's flash memory.

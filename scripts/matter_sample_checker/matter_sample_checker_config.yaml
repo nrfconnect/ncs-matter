@@ -127,9 +127,6 @@ documentation:
       nrf54l15tag_nrf54l15_cpuapp: "nRF54L15 DK with internal memory only"
     # RST tab titles to skip when comparing flash tables to partition DTSI files
     flash_doc_tabs_skip_dtsi_compare:
-  link_txt:
-    path: "doc/links.txt"
-    optional: true
 
 ###################################################
 # Expected file structure for Matter samples

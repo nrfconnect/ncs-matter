@@ -20,7 +20,7 @@ See the :ref:`Creating custom clusters in Matter application <ug_matter_creating
 
 
 .. note::
-   Make sure you are familiar with Matter in the |NCS| and you have tested some of the available :ref:`matter_samples` before you work with this user guide.
+   Make sure you are familiar with Matter in the |addon| and you have tested some of the available :ref:`matter_samples` before you work with this user guide.
 
 .. _ug_matter_creating_accessory_overview:
 
@@ -80,8 +80,8 @@ Use the :ref:`Matter Template <matter_template_sample>` sample as the base for b
 
 1. Make sure that you meet the requirements for building the sample.
 #. Build and test the sample as described on its documentation page.
-#. Copy the contents of the :file:`samples/matter/template` directory to a new directory meant for your custom application.
-   For example, :file:`samples/matter/sensor`.
+#. Copy the contents of the :local:file:`samples/template` directory to a new directory meant for your custom application.
+   For example, :file:`samples/sensor`.
 
 .. _ug_matter_creating_accessory_edit_zap:
 
@@ -247,12 +247,12 @@ To add a new timer for the measurement task, edit the :file:`src/app_task.cpp` f
    }
 
 The timer must be initialized in the ``Init()`` method of the ``AppTask`` class.
-If :c:func:`StartSensorTimer` is called, the ``Sensor Measure`` task is added to the tasks queue every *aTimeoutMs* milliseconds, until :c:func:`StopSensorTimer` is called.
+If ``StartSensorTimer`` is called, the ``Sensor Measure`` task is added to the tasks queue every *aTimeoutMs* milliseconds, until ``StopSensorTimer`` is called.
 
 Implement task handlers
 -----------------------
 
-When a task is dequeued, the ``task_executor`` module calls the task handler passed to the :c:func:`PostTask` function.
+When a task is dequeued, the ``task_executor`` module calls the task handler passed to the :local:c:func:`subsys/app/task_executor.h#PostTask` function.
 Because you need to handle new tasks, you must implement the corresponding handlers.
 
 To add new task handlers, complete the following steps:
@@ -278,7 +278,7 @@ To add new task handlers, complete the following steps:
       }
 
    With this addition, when the sensor is active, the timer expiration event happens every half a second.
-   This causes an invocation of :c:func:`SensorMeasureHandler` and triggers an update of the ``MeasuredValue`` attribute of the Temperature Measurement cluster.
+   This causes an invocation of ``SensorMeasureHandler`` and triggers an update of the ``MeasuredValue`` attribute of the Temperature Measurement cluster.
 
    .. note::
       In the code fragment, the example value is updated randomly, but in a real sensor application it would be updated with the value obtained from external measurement.
@@ -310,9 +310,9 @@ To implement the callback function, complete the following steps:
 1. Create a new file, for example :file:`src/zcl_callbacks.cpp`.
 2. Implement the callback in this file:
 
-   a. Open :file:`ncs/modules/lib/matter/src/app/util/generic-callback-stubs.cpp` to check the list of customizable callback functions, marked with ``__attribute__((weak))``.
-   #. Read the description of :c:func:`MatterPostAttributeChangeCallback` in the :file:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h` file.
-   #. Implement :c:func:`MatterPostAttributeChangeCallback` in the :file:`src/zcl_callbacks.cpp` file.
+   a. Open :external:file:`ncs/modules/lib/matter/src/app/util/generic-callback-stubs.cpp` to check the list of customizable callback functions, marked with ``__attribute__((weak))``.
+   #. Read the description of :external:c:func:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h#MatterPostAttributeChangeCallback` in the :external:file:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h` file.
+   #. Implement :external:c:func:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h#MatterPostAttributeChangeCallback` in the :file:`src/zcl_callbacks.cpp` file.
 
 For example, the implementation can look as follows:
 

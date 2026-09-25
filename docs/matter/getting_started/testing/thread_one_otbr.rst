@@ -53,7 +53,7 @@ Configure the Thread Border Router
 ==================================
 
 Configure the Thread Border Router on a PC or on a Raspberry Pi, depending on what hardware you are using.
-For detailed steps, see the Running OTBR using Docker section on the :ref:`ug_thread_tools_tbr` page in the |NCS| documentation.
+For detailed steps, see the Running OTBR using Docker section on the `Thread tools - Thread Border Router`_ page in the |NCS| documentation.
 
 .. rst-class:: numbered-step
 
@@ -68,12 +68,12 @@ Complete the following steps:
 1. Choose one of the following options:
 
    * Use the prebuilt tool package from the `Matter nRF Connect releases`_ GitHub page.
-     Make sure that the package is compatible with your |NCS| version.
-   * Build manually from the source files available in the :file:`modules/lib/matter/examples/chip-tool` directory.
-     Use the building instructions from the :doc:`matter:chip_tool_guide` page in the Matter documentation.
+     Make sure that the package is compatible with your |addon| version.
+   * Build manually from the source files available in the :external:file:`modules/lib/matter/examples/chip-tool` directory.
+     Use the building instructions from the `CHIP Tool`_ page in the Matter documentation.
 
 #. Configure the CHIP Tool controller.
-   Complete the following actions by following the steps in the :doc:`matter:chip_tool_guide` user guide in the Matter documentation:
+   Complete the following actions by following the steps in the `CHIP Tool`_ user guide in the Matter documentation:
 
    * Build and run the CHIP Tool by completing the steps listed in "Building and running CHIP Tool."
    * Prepare the environment for testing by completing the steps listed in "Using CHIP Tool for Matter device testing."

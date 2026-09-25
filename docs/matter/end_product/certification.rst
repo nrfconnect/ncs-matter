@@ -83,7 +83,7 @@ Testing
 
 The Matter certification process requires testing before any application for certification is sent.
 The testing process includes specific actions and test scenarios that must be triggered on the device under test.
-Some of these operations must be initiated with the :ref:`test event triggers <ug_matter_test_event_triggers>`, which is a dedicated software component supported by the |NCS| Matter samples.
+Some of these operations must be initiated with the :ref:`test event triggers <ug_matter_test_event_triggers>`, which is a dedicated software component supported by the |addon| Matter samples.
 This component allows the Matter controller to trigger test actions by interacting with the ``generaldiagnostics`` Matter cluster implemented on the device.
 
 The testing can be performed at an Authorized Test Laboratory (ATL), using a test plan developed by CSA.
@@ -120,7 +120,7 @@ The final application for certification requires you to send the following docum
 * Description of the Matter component to be certified (and photos of the end product, for the product certification)
 
 Certification document templates from Nordic Semiconductor
-  When applying for certification for products that use Nordic Semiconductor's devices, some of the certification documents require providing information about Nordic Semiconductor's SoCs or the |NCS|.
+  When applying for certification for products that use Nordic Semiconductor's devices, some of the certification documents require providing information about Nordic Semiconductor's SoCs or the |addon|.
   To help you with filling in these documents, Nordic Semiconductor can provide you with appropriate templates for:
 
   * Matter Attestation of Security
@@ -144,7 +144,7 @@ Dependent Transport Attestation
 When applying for Matter certification, you must present a self-attestation that confirms you have applied for and obtained the certification for the transport platform you are using for your Matter component.
 The processes for obtaining such certification are governed by different Standard Development Organizations (SDOs).
 
-See the :ref:`ug_matter_device_certification_reqs` for more information about the processes compatible with the Matter platform in the |NCS|.
+See the :ref:`ug_matter_device_certification_reqs` for more information about the processes compatible with the Matter platform in the |addon|.
 
 CSA provides attestation forms to its members on the `Matter Attestation Form`_ directory page.
 
@@ -216,7 +216,7 @@ The following table lists Matter over Thread certification requirements for when
 
 Bluetooth and Thread certifications can be inherited from Nordic Semiconductor (see the :ref:`ug_matter_device_certification_reqs_dependent` section below).
 
-You can also find more information about the Bluetooth QDID in the :ref:`Bluetooth protocol section <ug_bt_qualification>`, and Thread certification in the :ref:`Thread protocol section <ug_thread_cert>`.
+You can also find more information about the Bluetooth QDID in the `Bluetooth qualification`_ section, and Thread certification in the `Thread certification`_.
 
 .. _ug_matter_device_certification_reqs_mowifi:
 
@@ -236,9 +236,9 @@ The following table lists Matter over Wi-Fi certification requirements for when 
 +-------------------------------+---------------------------+-----------------------------+----------------------------------------+
 
 Bluetooth certification can be inherited from Nordic Semiconductor (see the :ref:`ug_matter_device_certification_reqs_dependent` section below).
-:ref:`Wi-Fi certification <ug_wifi_certification>` is not yet available for inheritance from Nordic Semiconductor.
+`Wi-Fi certification`_ is not yet available for inheritance from Nordic Semiconductor.
 
-You can also find more information about the Bluetooth QDID in the :ref:`Bluetooth protocol section <ug_bt_qualification>`.
+You can also find more information about the Bluetooth QDID in the `Bluetooth qualification`_ section.
 
 .. _ug_matter_device_certification_reqs_dual:
 
@@ -260,16 +260,16 @@ The following table lists certification requirements for products that offer :re
 +-------------------------------+---------------------------+-----------------------------+----------------------------------------+
 
 Bluetooth and Thread certifications can be inherited from Nordic Semiconductor (see the :ref:`ug_matter_device_certification_reqs_dependent` section below).
-:ref:`Wi-Fi certification <ug_wifi_certification>` is not yet available for inheritance from Nordic Semiconductor.
+`Wi-Fi certification`_ is not yet available for inheritance from Nordic Semiconductor.
 
-You can also find more information about the Bluetooth QDID in the :ref:`Bluetooth protocol section <ug_bt_qualification>`, and the Thread certification in the :ref:`Thread protocol section <ug_thread_cert>`.
+You can also find more information about the Bluetooth QDID in the `Bluetooth qualification`_ section, and the Thread certification in the `Thread certification`_.
 
 .. _ug_matter_device_certification_reqs_dependent:
 
 Matter dependent certification inheritance
 ==========================================
 
-If your product uses a qualified Bluetooth stack or certified Thread libraries (or both) provided as part of the |NCS|, you can *inherit* certification from Nordic Semiconductor, provided that you do not introduce any changes to these stacks.
+If your product uses a qualified Bluetooth stack or certified Thread libraries (or both) provided as part of the |addon|, you can *inherit* certification from Nordic Semiconductor, provided that you do not introduce any changes to these stacks.
 In practice, this means reusing Nordic Semiconductor's certification identifiers, which were obtained as a result of the official certification procedures.
 
 When reusing Nordic Semiconductor's certification identifiers, you still need to join the SDO and meet its requirements to apply for certification by inheritance.
@@ -296,7 +296,7 @@ You can visit the following compatibility matrices to check the Bluetooth QDIDs 
 * `nRF54LM20A Compatibility Matrix`_
 * `nRF54LM20B Compatibility Matrix`_
 
-For Matter Compliant Platform Certification IDs and |NCS| release mappings, see :ref:`ug_matter_platform_and_dmp_matrix`.
+For Matter Compliant Platform Certification IDs and |addon| release mappings, see :ref:`ug_matter_platform_and_dmp_matrix`.
 
 Matter certification process variants
 =====================================
@@ -442,7 +442,7 @@ This variant is meant for Matter components that use Matter software that was al
 Certification status of Matter samples
 **************************************
 
-The |NCS| includes several :ref:`matter_samples` that are example implementations of Matter devices.
+The |addon| includes several :ref:`matter_samples` that are example implementations of Matter devices.
 The samples are maintained to fulfill Matter certification requirements as closely as possible, but they do not have official Matter compliance certificates.
 You can use them as a reference for creating your own application, but this does not guarantee that your application will pass the Matter certification.
 

@@ -36,7 +36,7 @@
 
 .. thingy53_nrf5340_cpuapp
 
-| Thingy:53 | PCA20053 | `thingy53`_ | ``thingy53/nrf5340/cpuapp`` |
+| `Developing with Thingy:53`_ | PCA20053 | `thingy53`_ | ``thingy53/nrf5340/cpuapp`` |
 
 .. nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns
 

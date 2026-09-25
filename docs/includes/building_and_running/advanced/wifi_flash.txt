@@ -3,7 +3,7 @@ Flashing the Matter over Wi-Fi sample variant
 
 .. toggle::
 
-   In the Matter over Wi-Fi variant of this sample, the `portion of the application code related to the nRF70 Series Wi-Fi firmware <nRF70 firmware patch external flash_>`_ is stored in the external memory.
+   In the Matter over Wi-Fi variant of this sample, the portion of the application code related to the nRF70 Series Wi-Fi firmware (`nRF70 firmware patch external flash`_) is stored in the external memory.
    When you program the sample onto your development kit, the build process automatically includes the Wi-Fi firmware patch and programs it into the external memory.
 
    By default, using the ``west flash`` command erases the entire external flash memory before writing the new Wi-Fi firmware patch.
@@ -35,4 +35,4 @@ Flashing the Matter over Wi-Fi sample variant
    #. Set the :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` Kconfig option to ``n``.
    #. Set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option to ``2``.
 
-   To learn more about the Wi-Fi firmware patch, see the `nrf70_fw_patch_update_adding_partitions <nRF70 firmware patch partitions_>`_ user guide.
+   To learn more about the Wi-Fi firmware patch, see the `nRF70 firmware patch partitions`_ user guide.

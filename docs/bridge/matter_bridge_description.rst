@@ -3,7 +3,7 @@
 .. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
 .. |matter_dks_wifi| replace:: ``nrf54lm20dk/nrf54lm20b/cpuapp`` and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets with the ``nrf7002eb2`` shield attached
 .. |matter_dks_internal| replace:: nRF54LM20 DK
-.. |sample path| replace:: :file:`applications/matter_bridge`
+.. |sample path| replace:: :local:file:`samples/bridge`
 .. |matter_qr_code_payload| replace:: MT:Y.K9042C00KA0648G00
 .. |matter_pairing_code| replace:: 34970112332
 .. |matter_qr_code_image| image:: /images/matter_qr_code_bridge.png
@@ -35,8 +35,8 @@ To test the Matter bridge application with the :ref:`Bluetooth® LE bridged devi
 
 * An additional development kit compatible with one of the following Bluetooth LE samples:
 
-  * `ble_peripheral_lbs`_
-  * `ble_peripheral_esp`_
+  * `Bluetooth LE LBS Peripheral sample`_
+  * `Bluetooth LE ESP Peripheral sample`_
 
 * A USB cable for every development kit to connect it to the PC.
 
@@ -67,18 +67,18 @@ For information about how to add a new bridged Matter device type to the applica
 Except for the On/Off Light Switch, all of the listed device types are enabled by default.
 To disable one of them, set any of the following configuration options:
 
-* :kconfig:option:`CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE` to ``n`` to disable On/Off Light.
-* :kconfig:option:`CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE` to ``n`` to disable Generic Switch
-* :kconfig:option:`CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE` to ``n`` to disable Temperature Sensor.
-* :kconfig:option:`CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE` to ``n`` to disable Humidity Sensor.
+* :option:`CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE` to ``n`` to disable On/Off Light.
+* :option:`CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE` to ``n`` to disable Generic Switch
+* :option:`CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE` to ``n`` to disable Temperature Sensor.
+* :option:`CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE` to ``n`` to disable Humidity Sensor.
 
 Additionally, you can choose to use the On/Off Light Switch implementation instead of the Generic Switch implementation for a switch device.
 To enable the On/Off Light Switch implementation, set the following configuration options:
 
-* :kconfig:option:`CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE` to ``n`` to disable Generic Switch.
-* :kconfig:option:`CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE` to ``y`` to enable On/Off Light Switch.
+* :option:`CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE` to ``n`` to disable Generic Switch.
+* :option:`CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE` to ``y`` to enable On/Off Light Switch.
 
-See :ref:`cmake_options` for instructions on how to add these options to your build.
+See `Providing CMake options`_ for instructions on how to add these options to your build.
 
 The Matter bridge device has an additional functionality, enabling it to work as a smart plug.
 This feature provides an additional endpoint with an ID equal to 2, which represents Matter on/off smart plug device type functionality.
@@ -96,9 +96,9 @@ The application supports two bridged device configurations that are mutually exc
 * Bluetooth LE bridged device - This configuration allows to connect a real peripheral Bluetooth LE device to the Matter bridge and represent its functionalities using :ref:`Matter Data Model <ug_matter_overview_data_model>`.
   The application supports the following Bluetooth LE services:
 
-  * Nordic Semiconductor's :ref:`LED Button Service <lbs_readme>` - represented by the Matter On/Off Light and Generic Switch device types.
+  * Nordic Semiconductor's `Bluetooth LE LBS Peripheral sample`_ - represented by the Matter On/Off Light and Generic Switch device types.
     The service can be configured to use the On/Off Light Switch instead of the Generic Switch device type.
-  * Zephyr's `ble_peripheral_esp`_ sample - represented by the Matter Temperature Sensor and Humidity Sensor device types.
+  * Zephyr's `Bluetooth LE ESP Peripheral sample`_ sample - represented by the Matter Temperature Sensor and Humidity Sensor device types.
 
 If the Bluetooth LE service required by your use case is not supported, you can extend the application.
 For information about how to add a new Bluetooth LE service support to the application, see the :ref:`matter_bridge_app_extending_ble_service` section.
@@ -127,7 +127,7 @@ First LED:
    .. include:: /includes/interface/state_led.txt
 
 Second LED:
-   If the :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT` Kconfig option is set to ``y``, shows the current state of Bridge's Bluetooth LE connectivity.
+   If the :option:`CONFIG_BRIDGED_DEVICE_BT` Kconfig option is set to ``y``, shows the current state of Bridge's Bluetooth LE connectivity.
    The following states are possible:
 
    * Turned Off - The Bridge device is in the idle state and has no Bluetooth LE devices paired.
@@ -277,7 +277,7 @@ matter_bridge onoff
 
          uart:~$ matter_bridge onoff 1 3
 
-      Note that the above command will only work if the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL` option is selected in the build configuration.
+      Note that the above command will only work if the :option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL` option is selected in the build configuration.
       If the Kconfig option is not selected, the simulated device changes its state periodically in autonomous manner and cannot be controlled by using shell commands.
 
 .. _matter_bridge_cli_onoff_switch:
@@ -435,15 +435,15 @@ Bridged device configuration
 
 You can enable the :ref:`matter_bridge_app_bridged_support` by using the following Kconfig options:
 
-* :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED` - For the simulated bridged device.
-* :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT` - For the Bluetooth LE bridged device.
+* :option:`CONFIG_BRIDGED_DEVICE_SIMULATED` - For the simulated bridged device.
+* :option:`CONFIG_BRIDGED_DEVICE_BT` - For the Bluetooth LE bridged device.
 
 The simulated On/Off Light bridged device can operate in the following modes:
 
 * Autonomous - The simulated device periodically changes its state.
-  To build the simulated On/Off Light data provider in this mode, select the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC` Kconfig option.
+  To build the simulated On/Off Light data provider in this mode, select the :option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC` Kconfig option.
 * Controllable - The user can explicitly control the On/Off state by using shell commands.
-  To build the simulated On/Off Light data provider in this mode, select the :kconfig:option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL` Kconfig option.
+  To build the simulated On/Off Light data provider in this mode, select the :option:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL` Kconfig option.
   This is enabled by default.
 
 Additionally, you can decide how many bridged devices the bridge application will support.
@@ -451,9 +451,9 @@ The decision will make an impact on the flash and RAM memory usage, and is verif
 The application uses dynamic memory allocation and stores bridged device objects on the heap, so it may be necessary to increase the heap size using the :kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP_SIZE` Kconfig option.
 Use the following configuration options to customize the number of supported bridged devices:
 
-* :kconfig:option:`CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER` - For changing the maximum number of non-Matter bridged devices supported by the bridge application
-* :kconfig:option:`CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER` - For changing the maximum number of Matter endpoints used for bridging devices by the bridge application.
-  This option does not have to be equal to :kconfig:option:`CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER`, as it is possible to use non-Matter devices that are represented using more than one Matter endpoint.
+* :option:`CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER` - For changing the maximum number of non-Matter bridged devices supported by the bridge application
+* :option:`CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER` - For changing the maximum number of Matter endpoints used for bridging devices by the bridge application.
+  This option does not have to be equal to :option:`CONFIG_BRIDGE_MAX_BRIDGED_DEVICES_NUMBER`, as it is possible to use non-Matter devices that are represented using more than one Matter endpoint.
 
 The following configuration options are available, click on the toggle to see the details:
 
@@ -539,18 +539,18 @@ Configuring Bluetooth LE connection and scan parameters
 .. toggle::
 
    You can set your own Bluetooth LE connection parameters instead of accepting the default ones requested by the peripheral device.
-   You can disable configuring the parameters by setting the :kconfig:option:`CONFIG_BRIDGE_FORCE_BT_CONNECTION_PARAMS` Kconfig option to ``n``.
+   You can disable configuring the parameters by setting the :option:`CONFIG_BRIDGE_FORCE_BT_CONNECTION_PARAMS` Kconfig option to ``n``.
 
    Use the following Kconfig options to set the desired parameters:
 
-   - :kconfig:option:`CONFIG_BRIDGE_BT_SCAN_WINDOW` - The duration a central actively scans for devices within the scan interval.
-   - :kconfig:option:`CONFIG_BRIDGE_BT_SCAN_INTERVAL` - Time between consecutive Bluetooth LE scan windows.
-   - :kconfig:option:`CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MIN` - The minimum time requested by the central (the bridge) after which the peripheral device should wake up to communicate.
-   - :kconfig:option:`CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MAX` - The maximum time requested by the central (the bridge) after which the peripheral device should wake up to communicate.
-   - :kconfig:option:`CONFIG_BRIDGE_BT_CONNECTION_TIMEOUT` - The time since the last packet was successfully received until the devices consider the connection lost.
-   - :kconfig:option:`CONFIG_BRIDGE_BT_CONNECTION_LATENCY` - Allows the peripheral to skip waking up for a certain number of connection events if it does not have any data to send.
+   - :option:`CONFIG_BRIDGE_BT_SCAN_WINDOW` - The duration a central actively scans for devices within the scan interval.
+   - :option:`CONFIG_BRIDGE_BT_SCAN_INTERVAL` - Time between consecutive Bluetooth LE scan windows.
+   - :option:`CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MIN` - The minimum time requested by the central (the bridge) after which the peripheral device should wake up to communicate.
+   - :option:`CONFIG_BRIDGE_BT_CONNECTION_INTERVAL_MAX` - The maximum time requested by the central (the bridge) after which the peripheral device should wake up to communicate.
+   - :option:`CONFIG_BRIDGE_BT_CONNECTION_TIMEOUT` - The time since the last packet was successfully received until the devices consider the connection lost.
+   - :option:`CONFIG_BRIDGE_BT_CONNECTION_LATENCY` - Allows the peripheral to skip waking up for a certain number of connection events if it does not have any data to send.
 
-   The parameters in this application have been selected based on the :ref:`multiprotocol_bt_thread` information in the :ref:`ug_multiprotocol_support` section.
+   The parameters in this application have been selected based on the `Bluetooth LE and Thread coexistence`_ information in the `Multiprotocol support`_ section.
 
 .. _matter_bridge_app_bt_security:
 
@@ -571,17 +571,17 @@ Configuring the Bluetooth LE security
    * Security Level 3 - supports AES-CMAC communication encryption, requires device authentication and pairing.
    * Security Level 4 - supports ECDHE communication encryption, requires authentication and pairing.
 
-   To read more about the Bluetooth LE security implementation in Zephyr, see the Security section of the :ref:`bluetooth-arch` page.
+   To read more about the Bluetooth LE security implementation in Zephyr, see the Security section of the `Zephyr Bluetooth LE Security`_ page.
    By default, the Matter bridge application has SMP enabled and supports security levels 2, 3 and 4.
 
-   You can disable the Bluetooth LE security mechanisms by setting the :kconfig:option:`CONFIG_BT_SMP` Kconfig option to ``n``.
+   You can disable the Bluetooth LE security mechanisms by setting the :option:`CONFIG_BT_SMP` Kconfig option to ``n``.
    This is strongly not recommended, as it leads to unencrypted communication with bridged devices, which makes them vulnerable to the security attacks.
 
    You can select the minimum security level required by the application.
    When selected, the Matter bridge will require setting the selected minimum level from the connected Bluetooth LE bridged device.
    If the bridged device supports also levels higher than the selected minimum, the devices may negotiate using the highest shared security level.
    In case the bridged device does not support the minimum required level, the connection will be terminated.
-   To select the minimum security level, set the :kconfig:option:`CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL` Kconfig option to ``2``, ``3`` or ``4``.
+   To select the minimum security level, set the :option:`CONFIG_BRIDGE_BT_MINIMUM_SECURITY_LEVEL` Kconfig option to ``2``, ``3`` or ``4``.
 
 Building and running
 ********************
@@ -675,7 +675,7 @@ Depending on the chosen bridged devices configuration, complete the steps in one
 
       #. Write down the value for the bridged device dynamic endpoint ID.
          This is going to be used in the next steps (*<bridged_device_endpoint_ID>*).
-      #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` to read the value of an attribute from the bridged device endpoint.
+      #. Use the `CHIP Tool`_ to read the value of an attribute from the bridged device endpoint.
          For example, read the value of the *on-off* attribute from the *onoff* cluster using the following command:
 
          .. parsed-literal::
@@ -687,8 +687,8 @@ Depending on the chosen bridged devices configuration, complete the steps in one
 
       1. Build and program the one of the following Bluetooth LE samples to an additional development kit compatible with the sample:
 
-         * `ble_peripheral_lbs`_
-         * `ble_peripheral_esp`_
+         * `Bluetooth LE LBS Peripheral sample`_
+         * `Bluetooth LE ESP Peripheral sample`_
 
       #. Connect the development kit that is running the Bluetooth LE sample to the PC.
       #. |connect_terminal_ANSI|
@@ -788,7 +788,7 @@ Depending on the chosen bridged devices configuration, complete the steps in one
       #. Write down the value for the bridged device dynamic endpoint ID.
          This is going to be used in the next steps (*<bridged_device_endpoint_ID>*).
 
-      #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` to read the value of an attribute from the bridged device endpoint.
+      #. Use the `CHIP Tool`_ to read the value of an attribute from the bridged device endpoint.
          For example, read the value of the *on-off* attribute from the *onoff* cluster using the following command:
 
          .. parsed-literal::
@@ -872,7 +872,7 @@ Complete the following steps to add a bridged light switch device using either a
 
       .. group-tab:: Testing with Bluetooth LE bridged light switch device
 
-         a. Build and program the :ref:`Peripheral LBS Bluetooth LE <ble_peripheral_lbs>` sample to an additional development kit.
+         a. Build and program the `Bluetooth LE LBS Peripheral sample`_ to an additional development kit.
          #. Connect the development kit that is running the Bluetooth LE sample to the PC.
          #. Using the terminal emulator connected to the bridge, run the following :ref:`Matter CLI command <matter_bridge_cli>` to scan for available Bluetooth LE devices:
 

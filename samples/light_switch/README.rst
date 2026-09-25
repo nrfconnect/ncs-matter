@@ -290,7 +290,7 @@ Use **1** as the node ID for the light bulb device.
 Bind the light switch with the light bulb device
 ------------------------------------------------
 
-#. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb devices, establish a group for groupcast and bind the light switch.
+#. Use the `CHIP Tool`_ ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb devices, establish a group for groupcast and bind the light switch.
    Depending on the number of the light bulb devices you are using, use one of the following commands, where node ID **2** refers to the light switch device and node ID **1** refers to the light bulb device commissioned in the previous steps.
 
    If you are using only one light bulb device, follow the instructions in the **unicast** tab to bind the light switch with the light bulb device.

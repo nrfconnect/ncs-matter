@@ -15,4 +15,4 @@ Choose the appropriate tab below and follow the corresponding steps to prepare y
    .. group-tab:: Matter over Wi-Fi
 
       1. Download the prebuilt CHIP tool package from the `Matter nRF Connect releases`_ GitHub page.
-         Make sure that the package is compatible with your |NCS| version.
+         Make sure that the package is compatible with your |addon| version.

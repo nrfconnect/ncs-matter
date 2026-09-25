@@ -30,9 +30,9 @@ Predefined last fabric removal behaviors
 There are four predefined reactions to the last fabric removal available in the :ref:`matter_samples`.
 All behaviors are implemented as a delegation for the Fabric Table module, and the chosen reaction is run as a callback on each fabric removal.
 
-To enable the predefined behavior in your specific sample based on the :ref:`matter_samples` in the |NCS|, complete the following steps:
+To enable the predefined behavior in your specific sample based on the :ref:`matter_samples` in the |addon|, complete the following steps:
 
-1. Include the :file:`fabric_table_delegate.h` header file in the :file:`app_task.cpp` project file:
+1. Include the :local:file:`subsys/app/fabric_table_delegate.h` header file in the :file:`app_task.cpp` project file:
 
    .. code-block:: c
 
@@ -45,7 +45,7 @@ To enable the predefined behavior in your specific sample based on the :ref:`mat
       AppFabricTableDelegate::Init();
 
 
-For more information, see the :file:`fabric_table_delegate.h` header file which is located in the Matter samples common directory.
+For more information, see the :local:file:`subsys/app/fabric_table_delegate.h` header file.
 
 You can choose one of the following reactions to the last fabric removal and instruct the device to:
 
@@ -79,7 +79,7 @@ Implementing the custom Fabric Table delegation
 
 To implement the custom Fabric Table delegation, complete the following points:
 
-   * Include the :file:`app/util/attribute-storage.h` file from the Matter stack core.
+   * Include the :external:file:`modules/lib/matter/src/app/util/attribute-storage.h` file from the Matter stack core.
 
       .. code-block:: c
 
@@ -107,4 +107,4 @@ To implement the custom Fabric Table delegation, complete the following points:
    To postpone running the chosen action, delegate its invocation to the Zephyr thread of Matter using the ``chip::DeviceLayer::PlatformMgr().ScheduleWork`` method.
    If the device does not complete all activities that need to be done before clearing non-volatile storage, use a timer to delay the action execution.
 
-To see an example implementation of the Fabric Table delegation, see the :file:`fabric_table_delegate.h` file which is located in the Matter samples common directory.
+To see an example implementation of the Fabric Table delegation, see the :local:file:`subsys/app/fabric_table_delegate.h` file.

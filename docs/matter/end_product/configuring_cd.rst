@@ -20,7 +20,7 @@ The following sections describe where and how you can place CD in firmware and h
 Storing Certification Declaration
 *********************************
 
-In the |NCS| implementation of Matter, you can configure CD by adding the :c:macro:`CHIP_DEVICE_CONFIG_CERTIFICATION_DECLARATION` define in the :file:`chip_project_config.h` file.
+In the |addon| implementation of Matter, you can configure CD by adding the :external:c:macro:`modules/lib/matter/src/platform/nrfconnect/CHIPDevicePlatformConfig.h#CHIP_DEVICE_CONFIG_CERTIFICATION_DECLARATION` define in the :local:file:`subsys/certification/chip_project_config.h` file.
 You can locate the array of bytes related to CD by running the search with the following condition:
 
 .. code-block:: console
@@ -33,7 +33,7 @@ Storing Certification Declaration in Zephyr
 Alternatively, you can opt for storing CD in Zephyr's Settings subsystem, which allows for storing data even after the device has been programmed.
 For example, this lets you add CD to the subsystem through CLI, or use Zephyr's API to store CD in the Settings subsystem within the code.
 
-To enable this configuration method, set the :kconfig:option:`CONFIG_CHIP_CERTIFICATION_DECLARATION_STORAGE` Kconfig option in the :file:`prj.conf` file instead of the define in :file:`chip_project_config.h`.
+To enable this configuration method, set the :kconfig:option:`CONFIG_CHIP_CERTIFICATION_DECLARATION_STORAGE` Kconfig option in the :file:`prj.conf` file instead of the define in :local:file:`subsys/certification/chip_project_config.h`.
 
 .. _ug_matter_device_configuring_cd_generating_steps:
 
@@ -52,8 +52,8 @@ To generate CD for integration testing, complete the following steps:
 
    In this command:
 
-   * *path_to_key* corresponds to the path to the :file:`Chip-Test-CD-Signing-Key.pem` file, which usually can be found under :file:`modules/lib/matter/credentials/test/certification-declaration/`.
-   * *path_to_cert* corresponds to the path to the :file:`Chip-Test-CD-Signing-Cert.pem` file, which usually can be found under :file:`modules/lib/matter/credentials/test/certification-declaration/`.
+   * *path_to_key* corresponds to the path to the :file:`Chip-Test-CD-Signing-Key.pem` file, which usually can be found under :external:file:`modules/lib/matter/credentials/test/certification-declaration/`.
+   * *path_to_cert* corresponds to the path to the :file:`Chip-Test-CD-Signing-Cert.pem` file, which usually can be found under :external:file:`modules/lib/matter/credentials/test/certification-declaration/`.
    * *VID* corresponds to your Vendor ID.
    * *PID* corresponds to your Product ID.
    * *device_type* corresponds to the device type identifier for the primary function of the device.

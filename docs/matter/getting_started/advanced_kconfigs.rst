@@ -56,7 +56,7 @@ See the :ref:`matter_template_sample` for an example build configuration with th
 .. note::
    :kconfig:option:`CONFIG_CHIP_NFC_BASED_COMMISSIONING` and :kconfig:option:`CONFIG_CHIP_NFC_ONBOARDING_PAYLOAD` are mutually exclusive.
 
-For more details about enabling and using NFC-based commissioning in |NCS| Matter samples, see the :ref:`matter_template_sample` advanced configuration section.
+For more details about enabling and using NFC-based commissioning in |addon| Matter samples, see the :ref:`matter_template_sample` advanced configuration section.
 
 .. _ug_matter_configuring_optional_persistent_subscriptions:
 
@@ -161,7 +161,7 @@ Matter shell commands
 You can enable the Matter shell library using the :kconfig:option:`CONFIG_CHIP_LIB_SHELL` Kconfig option.
 This option lets you use the Matter shell commands with :ref:`matter_samples`.
 
-See :doc:`matter:nrfconnect_examples_cli` in the Matter documentation for the list of available Matter shell commands.
+See `Matter CLI examples guide`_ in the Matter documentation for the list of available Matter shell commands.
 
 .. _ug_matter_configuring_settings_shell:
 
@@ -214,7 +214,7 @@ It does not replace the default commissioning process, but uses the cloud-based 
 FFS supports a variety of different network protocols, including Matter.
 For more information about how FFS works, see the `Understanding Frustration-Free Setup`_ page in the Amazon developer documentation.
 
-The support for FFS over Matter in the |NCS| allows Matter devices to be automatically commissioned to the Matter network using the Matter-enabled Amazon Echo device.
+The support for FFS over Matter in the |addon| allows Matter devices to be automatically commissioned to the Matter network using the Matter-enabled Amazon Echo device.
 To enable the FFS support, set the following configuration options to meet the Amazon FFS setup prerequisites:
 
 * :kconfig:option:`CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE` to ``y``.
@@ -270,7 +270,7 @@ Read Client functionality
 =========================
 
 The Read Client functionality is used for reading attributes from another device in the Matter network.
-This functionality is disabled by default for Matter samples in the |NCS|, except for ones that need to read attributes from the bound devices, such as the :ref:`matter_light_switch_sample` and :ref:`matter_thermostat_sample` samples, and the :ref:`matter_bridge_app` application.
+This functionality is disabled by default for Matter samples in the |addon|, except for ones that need to read attributes from the bound devices, such as the :ref:`matter_light_switch_sample` and :ref:`matter_thermostat_sample` samples, and the :ref:`matter_bridge_app` application.
 Enable the feature if your device needs to be able to access attributes from a different device within the Matter network using, for example, bindings.
 
 .. _ug_matter_persistent_storage:
@@ -279,10 +279,10 @@ Persistent storage
 ==================
 
 The persistent storage module allows for the application data and configuration to survive a device reboot.
-|NCS| Matter applications use one generic Persistent Storage API that can be enabled by the :option:`CONFIG_MATTER_PERSISTENT_STORAGE` Kconfig option.
+|addon| Matter applications use one generic Persistent Storage API that can be enabled by the :option:`CONFIG_MATTER_PERSISTENT_STORAGE` Kconfig option.
 This API consists of methods with ``Secure`` and ``NonSecure`` prefixes, which handle secure (ARM Platform Security Architecture Persistent Storage) and non-secure (raw Zephyr settings) storage operations, respectively.
 
-You can learn more details about the Persistent Storage API from the :file:`subsys/persistent_storage/persistent_storage.h` header file.
+You can learn more details about the Persistent Storage API from the :local:file:`subsys/persistent_storage/persistent_storage.h` header file.
 
 The interface is implemented by two available backends.
 Both can be used simultaneously by controlling the following Kconfig options:

@@ -3,7 +3,7 @@
 Samples
 #######
 
-The |NCS| provides several samples showcasing the :ref:`Matter <ug_matter>` protocol.
+The |addon| provides several samples showcasing the :ref:`Matter <ug_matter>` protocol.
 You can build the samples for a variety of board targets and configure them for different usage scenarios.
 
 The following table lists variants and extensions available out of the box for each Matter sample:
@@ -60,7 +60,7 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       - ✔
       - ✔
-    * - :ref:`Thread role <thread_ot_device_types>`
+    * - `Thread device types`_
       - Router
       - SED
       - MED

@@ -4,10 +4,13 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 from abc import abstractmethod
-from dataclasses import dataclass
+from collections.abc import Callable
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from internal.utils.defines import LEVELS, MatterSampleCheckerResult
+
+ProgressHandler = Callable[[str, str], None]
 
 
 @dataclass
@@ -19,6 +22,8 @@ class MatterCheckerConfig:
     skip: bool = False
     expected_years: list[int] | None = None
     allowed_names: list[str] | None = None
+    live_progress: bool = False
+    progress_handler: ProgressHandler | None = field(default=None, repr=False)
 
 
 class MatterSampleTestCase:
@@ -52,37 +57,52 @@ class MatterSampleTestCase:
         except Exception as e:
             self.issue(str(e))
         finally:
-            if (
-                len([result for result in self.result if result.level == LEVELS["issue"]]) == 0
-                and len([result for result in self.result if result.level == LEVELS["warning"]])
-                == 0
-            ):
+            check_issues = [result for result in self.result if result.level == LEVELS["issue"]]
+            check_warnings = [result for result in self.result if result.level == LEVELS["warning"]]
+
+            if not check_issues and not check_warnings:
                 self.info("✅ No issues found")
-            if len([result for result in self.result if result.level == LEVELS["issue"]]) > 0:
-                self.info(
-                    f"❌ {
-                        len([result for result in self.result if result.level == LEVELS['issue']])
-                    } Issues found"
-                )
-            if len([result for result in self.result if result.level == LEVELS["warning"]]) > 0:
-                self.info(
-                    f"⚠️ {
-                        len([result for result in self.result if result.level == LEVELS['warning']])
-                    } Warnings found"
-                )
+            else:
+                if check_issues:
+                    self._print_result_summary("FAILURES", check_issues, marker="❌")
+                    self.info(f"❌ {len(check_issues)} Issues found")
+                if check_warnings:
+                    self._print_result_summary("WARNINGS", check_warnings, marker="⚠️")
+                    self.info(f"⚠️ {len(check_warnings)} Warnings found")
         return self.result
 
+    def _print_result_summary(
+        self,
+        heading: str,
+        items: list[MatterSampleCheckerResult],
+        *,
+        marker: str,
+    ) -> None:
+        """Re-print check failures/warnings in a compact block easy to spot in CI logs."""
+        self.info("")
+        self.info("!" * 60)
+        self.info(f"{marker} {heading} in {self.name()} ({len(items)}):")
+        for index, item in enumerate(items, start=1):
+            self.info(f"  [{index}] {item.message}")
+        self.info("!" * 60)
+        self.info("")
+
+    def _emit(self, level: str, message: str) -> None:
+        self.result.append(MatterSampleCheckerResult(level=level, message=message))
+        if self.config.progress_handler is not None:
+            self.config.progress_handler(level, message)
+
     def issue(self, message: str):
-        self.result.append(MatterSampleCheckerResult(level=LEVELS["issue"], message=message))
+        self._emit(LEVELS["issue"], message)
 
     def warning(self, message: str):
-        self.result.append(MatterSampleCheckerResult(level=LEVELS["warning"], message=message))
+        self._emit(LEVELS["warning"], message)
 
     def info(self, message: str):
-        self.result.append(MatterSampleCheckerResult(level=LEVELS["info"], message=message))
+        self._emit(LEVELS["info"], message)
 
     def debug(self, message: str):
-        self.result.append(MatterSampleCheckerResult(level=LEVELS["debug"], message=message))
+        self._emit(LEVELS["debug"], message)
 
     @abstractmethod
     def prepare(self):

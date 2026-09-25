@@ -51,7 +51,7 @@ If you follow within the Matter Platform SOE and the platform's certified scope,
 Matter Compliant Platform certification information
 ===================================================
 
-Use the following Matter CIDs compatibility matrices to find the current Matter Compliant Platform Certification IDs (CIDs), |NCS| release mappings, dependent certification references, and supported hardware within the SOE for each SoC that supports Matter in the |NCS|:
+Use the following Matter CIDs compatibility matrices to find the current Matter Compliant Platform Certification IDs (CIDs), |addon| release mappings, dependent certification references, and supported hardware within the SOE for each SoC that supports Matter in the |addon|:
 
 * `Matter CIDs for nRF52840`_
 * `Matter CIDs for nRF5340`_
@@ -61,7 +61,7 @@ Use the following Matter CIDs compatibility matrices to find the current Matter 
 * `Matter CIDs for nRF54LM20B`_
 
 The Matter CIDs compatibility matrices do not link directly to CSA platform certificates.
-Enter the platform Certification ID from the matrix for your SoC and |NCS| version in the **Certification ID #** filter on the `CSA Certified Products Database`_ to open the platform certificate entry and download the associated PICS baseline.
+Enter the platform Certification ID from the matrix for your SoC and |addon| version in the **Certification ID #** filter on the `CSA Certified Products Database`_ to open the platform certificate entry and download the associated PICS baseline.
 
 Derived Matter Product
 ======================
@@ -161,10 +161,10 @@ Use the following guidance when planning changes:
 
 .. _ug_matter_dmp_ncs_guideline:
 
-Guidelines for leveraging the platform's |NCS| to build a DMP
-*************************************************************
+Guidelines for leveraging the platform's |addon| to build a DMP
+***************************************************************
 
-This section provides practical steps for using the |NCS| to move from a platform to a DMP.
+This section provides practical steps for using the |addon| to move from a platform to a DMP.
 
 .. rst-class:: numbered-step
 
@@ -172,14 +172,14 @@ Choose a supported configuration
 ================================
 
 Start by reviewing the platform's SOE and selecting a supported SoC and transport.
-Use the specific Matter component within the |NCS|, which corresponds to the platform certification.
+Use the specific Matter component within the |addon|, which corresponds to the platform certification.
 
 .. rst-class:: numbered-step
 
 Fetch and check out the certified platform sources
 ==================================================
 
-Start by initializing and updating the |NCS| repository at the tag corresponding to the certified platform.
+Start by initializing and updating the |addon| repository at the tag corresponding to the certified platform.
 This ensures your environment matches the platform as tested and certified:
 
 .. code-block:: console
@@ -204,14 +204,14 @@ This provides a certified reference for the enabled features and clusters:
    west flash --recover
 
 .. note::
-   The reference data model used during platform testing can be found in :file:`samples/matter/common/src/certification`.
+   The reference data model used during platform testing can be found in :local:file:`subsys/certification/thread_platform`.
 
 This template is provided as a reference (transport, core clusters).
 You may customize your product by enabling or disabling optional clusters, attributes, and features and by building your own application data model.
 When customizing, ensure that your PICS reflects the final feature set, remain within the platform's SOE (boards, radios and SDK/OS versions), and do not alter the core platform functionality covered by the platform certification.
 
 .. important::
-   The Matter samples provided in the |NCS| are maintained to be as close as possible to Matter specification compliance, but they are not certified and are not part of the compliant platform.
+   The Matter samples provided in the |addon| are maintained to be as close as possible to Matter specification compliance, but they are not certified and are not part of the compliant platform.
    These samples should not be treated as certified implementations and are provided for reference and development purposes only.
 
 .. rst-class:: numbered-step
@@ -231,7 +231,7 @@ What not to change (to retain inheritance)
 
 To retain test inheritance from the platform, avoid the following changes:
 
-* Upgrading :file:`modules/lib/matter` beyond the tag corresponding to the certified |NCS| tag without a coordinated platform update.
+* Upgrading :external:file:`modules/lib/matter` beyond the tag corresponding to the certified |addon| tag without a coordinated platform update.
 * Changing radio/PHY parameters, Wi-Fi bands, or Thread version beyond the SOE.
 * Editing the platform PICS baseline or any platform test list artifacts.
 
@@ -245,7 +245,7 @@ You can safely make the following product-level changes:
 * Application configuration - Kconfig/DTS overlays for product peripherals, partitions, etc.
 * Optional clusters/features within platform scope (enable/disable) with matching PICS updates.
 * Manufacturing data and branding - Stock keeping unit (SKU), product strings, documentation, etc.
-* Changes to application clusters in :file:`modules/lib/matter` (not part of platform).
+* Changes to application clusters in :external:file:`modules/lib/matter` (not part of platform).
 
 .. rst-class:: numbered-step
 
@@ -302,7 +302,7 @@ DMP submission checklist
 
 Use this checklist to prepare and submit your DMP efficiently:
 
-* Board and transport selection confirmed within SOE and certified |NCS| tag noted.
+* Board and transport selection confirmed within SOE and certified |addon| tag noted.
 * Product partition layout and bootloader configuration prepared (see :ref:`ug_matter_device_bootloader_partition_layout`, :ref:`ug_matter_device_bootloader`).
 * Attestation Certificates generated (test or production) (see :ref:`ug_matter_device_attestation`).
 * Factory data prepared (VID, PID, discriminator, etc.); onboarding codes generated if needed (see :ref:`ug_matter_device_factory_provisioning`).
@@ -335,7 +335,7 @@ The platform provider must supply the following:
 
 * Complaint Platform Certification ID and access for ATL to the platform test report (if necessary).
 * SOE specification (supported boards/radios, SDK/OS versions).
-* |NCS| release mapping to the Matter software version.
+* |addon| and |NCS| release mapping to the Matter software version.
 * Dependent certification references applicable to the platform.
 * Security attestation (pre-filled with platform details).
 

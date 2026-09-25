@@ -11,7 +11,7 @@ To test this |matter_type|, you need the following hardware depending on the pro
         * PC with Ubuntu (20.04 or newer) or macOS (11 or never)
         * Raspberry Pi Model 3B+ or newer with Ubuntu (20.04 or newer) instead of Raspbian OS
 
-      For detailed requirements, see the `ug_thread_tools_tbr <Thread Border Router_>`_ page.
+      For detailed requirements, see the `Thread Border Router`_ page.
 
    .. group-tab:: Matter over Wi-Fi
 

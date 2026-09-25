@@ -7,7 +7,7 @@ Ecosystems certification
    :local:
    :depth: 2
 
-The Matter stack provided in the |NCS| works with commercial ecosystems that are compatible with the official Matter implementation.
+The Matter stack provided in the |addon| works with commercial ecosystems that are compatible with the official Matter implementation.
 A Matter product can be called compatible with the Matter implementation once it has passed relevant Matter certification.
 
 Some of the ecosystem providers offer additional certification programs to verify that Matter product is able to work with that provider's applications and supports their features.
@@ -21,7 +21,7 @@ Works with Google Home certification
 The `Works with Google Home`_ certification program ensures that a Matter product supports Matter features in the same extent as the Google Home application.
 A product that passed all the certification test cases is allowed to use the Works with Google Home badge.
 
-The Matter samples delivered in the |NCS| have not received official certificates, as certification can only be obtained for final products.
+The Matter samples delivered in the |addon| have not received official certificates, as certification can only be obtained for final products.
 However, they have been tested against the Works with Google Home certification test cases and have successfully passed all of them.
 The following is a full list of Matter samples that were verified to pass the Works with Google certification test cases:
 
@@ -48,8 +48,8 @@ There are two types of certification:
 * Default - For standard products or for the creation of a reference design.
 * Simplified - For products using a certified reference design.
 
-The Matter platform provided in the |NCS| was tested against the FFS certification test cases and passed them in several variants.
-This means that if you create a Matter product based on the |NCS|, you can approach the simplified certification path.
+The Matter platform provided in the |addon| was tested against the FFS certification test cases and passed them in several variants.
+This means that if you create a Matter product based on the |addon|, you can approach the simplified certification path.
 You can do this by filling the Reference APID field when you register your product on Amazon's developer page.
 Use one of the following values:
 

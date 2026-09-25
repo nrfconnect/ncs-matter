@@ -2,4 +2,4 @@ Selecting a configuration
 =========================
 
 Before you start testing the |matter_type|, you can select one of the Matter |matter_name| custom configurations.
-See `app_build_file_suffixes <Application file suffixes_>`_ and `cmake_options <Providing CMake options_>`_ for more information on how to select a configuration.
+See the `Application file suffixes`_ and `Providing CMake options`_ pages for more information on how to select a configuration.

@@ -23,13 +23,13 @@ Complete the following steps to add support for a proprietary protocol:
 
 1. Create a ``MyProtocol Data Provider`` class that inherits from the ``Bridged Device Data Provider`` class.
    This class should contain all the data and logic used by all your bridged devices.
-   For reference, see the implementation in the :file:`src/ble/data_providers/ble_bridged_device.h` file.
+   For reference, see the implementation in the :local:file:`samples/bridge/src/ble/data_providers/ble_bridged_device.h` file.
 
 #. For each bridged device type, create a ``MyProtocol MyDevice Data Provider`` class that inherits from the ``MyProtocol Data Provider`` class.
    These classes keep the state of the Matter device synchronized with the state of the device, using the following functions:
 
-   * :c:func:`NotifyUpdateState` - Called to notify the bridge when the bridged device changed state.
-   * :c:func:`UpdateState` - Called by the bridge when the bridged device should update its state (for example, turning a light on or off).
+   * :local:c:func:`samples/bridge/src/core/bridged_device_data_provider.h#NotifyUpdateState` - Called to notify the bridge when the bridged device changed state.
+   * :local:c:func:`samples/bridge/src/core/bridged_device_data_provider.h#UpdateState` - Called by the bridge when the bridged device should update its state (for example, turning a light on or off).
 
 #. Create a ``MyProtocol Connectivity Manager`` class that holds information about all current connections of the bridged device.
    This class must implement the following functions:
@@ -45,7 +45,7 @@ Complete the following steps to add support for a proprietary protocol:
 #. Create a ``MyProtocol Bridged Device Factory`` class that handles device creation, storage, and removal.
 
 #. Adapt the main application to use your newly created classes.
-   Create a new ``BRIDGED_DEVICE_MY_PROTOCOL`` configuration, go through the application code and find where the :kconfig:option:`CONFIG_BRIDGED_DEVICE_BT` Kconfig option is used by the preprocessor.
+   Create a new ``BRIDGED_DEVICE_MY_PROTOCOL`` configuration, go through the application code and find where the :option:`CONFIG_BRIDGED_DEVICE_BT` Kconfig option is used by the preprocessor.
    Add support for your protocol in the found instances.
 
 An application with support for ``MyProtocol`` would work like this:
@@ -53,7 +53,7 @@ An application with support for ``MyProtocol`` would work like this:
 1. The application reads the stored devices and creates them using the ``MyProtocol Bridged Device Factory`` class.
 #. To bridge new devices, the application needs to know their ``MyProtocol`` connection details.
    Those details can be provided by the user or obtained through device discovery.
-   To enable this, implement the necessary shell commands in the :file:`src/bridge_shell.cpp` file.
+   To enable this, implement the necessary shell commands in the :local:file:`samples/bridge/src/bridge_shell.cpp` file.
 #. Using the ``MyProtocol Bridged Device Factory`` class and knowing the connection details, the application creates and stores new bridged devices.
    You can use the ``MyProtocol Connectivity Manager`` class to map the ``MyProtocol`` device ID to the corresponding ``MyProtocol Device Data Provider`` instance.
 #. Matter traffic is routed through the ``MyProtocol MyDevice Data Provider`` class.

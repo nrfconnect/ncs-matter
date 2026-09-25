@@ -27,6 +27,8 @@ MATTER_MODULE = NCS_ROOT / 'modules' / 'lib' / 'matter'
 
 sys.path.insert(0, str(DOC_BASE / '_extensions'))
 
+from west_substitutions import load_west_substitutions
+
 extensions = [
     'table_from_rows',
     'breathe',
@@ -41,7 +43,13 @@ extensions = [
     'memory_layout_viz',
     'stack_viz',
     'options_from_kconfig',
+    'west_substitutions',
+    'external_code_refs',
 ]
+
+west_manifest_path = str(NCS_MATTER_BASE / 'west.yml')
+matter_module_path = str(MATTER_MODULE)
+repo_root_path = str(NCS_MATTER_BASE)
 
 root_doc = 'index'
 
@@ -55,6 +63,11 @@ html_theme = 'sphinx_ncs_theme'
 
 html_theme_options = {
     'docsets': {},
+    "ncs_url": "https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/",
+    "ncs_label": "nRF Connect SDK Docs",
+    "addons_url": "https://nrfconnect.github.io/ncs-app-index/",
+    "bare_metal_url": "",
+    "logo_url": "https://docs.nordicsemi.com",
 }
 
 # Copied into the HTML output for the hosted documentation version switcher.
@@ -90,6 +103,12 @@ def _apply_substitutions(text: str, substitutions: dict[str, str]) -> str:
 
 _shortcuts_path = DOC_BASE / 'shortcuts.txt'
 _substitutions = _read_rst_substitutions(_shortcuts_path)
+_substitutions.update(
+    load_west_substitutions(
+        NCS_MATTER_BASE / 'west.yml',
+        matter_module=MATTER_MODULE,
+    )
+)
 _rst_epilog_links = _apply_substitutions(
     (DOC_BASE / 'links.txt').read_text(encoding='utf-8'),
     _substitutions,
@@ -117,6 +136,9 @@ ncs_matter_kconfig_extra_dirs = [str(MATTER_MODULE)]
 # -- Options for options_from_kconfig (local add-on copy) --------------------
 
 options_from_kconfig_base_dir = str(NCS_MATTER_BASE)
+
+external_code_sources_file = str(DOC_BASE / 'external_code_sources.yaml')
+external_code_shortcuts_file = str(DOC_BASE / 'shortcuts.txt')
 
 suppress_warnings = [
     'ref.option',

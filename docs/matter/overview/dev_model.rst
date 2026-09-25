@@ -13,21 +13,21 @@ The Matter stack implementation contains separation between platform-agnostic an
 The open-source implementation offers ports for several resource-constrained, embedded SoCs as well as POSIX-based platforms.
 
 Matter strives for reusing technologies from market-proven solutions, such as Apple HomeKit or Google Weave.
-Wi-Fi® and :ref:`ug_thread` are its main wireless connectivity protocols that offer seamless integration with other IPv6-based networks and are application-layer agnostic.
+Wi-Fi® and `Thread protocol`_ are its main wireless connectivity protocols that offer seamless integration with other IPv6-based networks and are application-layer agnostic.
 Bluetooth® LE can be used for commissioning of the Matter accessories, and QR codes and NFC tags can be used to initiate the commissioning.
 
-Matter in the |NCS|
-*******************
+Matter in the |addon| and its compatibility with the |NCS|
+**********************************************************
 
 The |NCS| provides full toolchain for Linux, macOS, and Windows, and is built on top of the Zephyr RTOS.
 It includes west for managing repositories, toolchain manager for managing toolchain, Kconfig for feature configuration, and devicetree for board description.
 Finally, it integrates the OpenThread and Wi-Fi stacks, both of which can work in a multiprotocol scenario with the integrated Bluetooth LE stack.
 
-Nordic Semiconductor integrates the Matter stack in the |NCS| using a `dedicated Matter fork`_.
-The official Matter repository is fetched into the fork and the fork is included in the |NCS| as a Zephyr module, including files deployed in the :ref:`ug_matter` tab.
-The fork is maintained and verified as a part of the |NCS| release process as an :ref:`OSS repository <dm_repo_types>`.
+Nordic Semiconductor integrates the Matter stack in the |addon| using a `dedicated Matter fork`_.
+The official Matter repository is fetched into the fork and the fork is included in the |addon| as a Zephyr module, including files deployed in the :ref:`ug_matter` tab.
+The fork is maintained and verified as a part of the |NCS| release process as an `Repository types`_.
 
-For more information about Matter architecture and Matter in the |NCS|, read :ref:`ug_matter_overview_architecture_integration`.
+For more information about Matter architecture and Matter in the |addon|, read :ref:`ug_matter_overview_architecture_integration`.
 
 .. _ug_matter_overview_dev_model_support:
 

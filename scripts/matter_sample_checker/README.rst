@@ -7,7 +7,7 @@ Matter Sample Checker
    :local:
    :depth: 2
 
-The Matter Sample Checker script is a comprehensive consistency checker for Matter samples in the |NCS|.
+The Matter Sample Checker script is a comprehensive consistency checker for Matter samples in the |addon|.
 This tool automatically validates the file structure, configuration consistency, license years, ZAP files, and detects common copy-paste mistakes in Matter samples.
 
 Overview

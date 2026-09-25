@@ -24,7 +24,7 @@ It then proceeds to verify the device certificates.
 To read more about Matter commissioning, see :ref:`ug_matter_network_topologies_commissioning`.
 
 .. note::
-   The :ref:`matter_samples` in the |NCS| include temporary Device Attestation with data for testing purposes.
+   The :ref:`matter_samples` in the |addon| include temporary Device Attestation with data for testing purposes.
    This data must be regenerated when :ref:`ug_matter_device_attestation_testing_da` of the Matter end product.
 
 .. _ug_matter_device_attestation_cert:
@@ -241,7 +241,7 @@ The commissioner can then proceed to the next stage of :ref:`ug_matter_network_t
 Testing Device Attestation during development
 *********************************************
 
-The :ref:`matter_samples` in the |NCS| include temporary Device Attestation with data for testing purposes.
+The :ref:`matter_samples` in the |addon| include temporary Device Attestation with data for testing purposes.
 If you want to test Device Attestation during development of your product without using the data from the samples, you can generate your own data:
 
 * Factory data - Read the detailed :ref:`ug_matter_device_factory_provisioning` guide in the Matter documentation for more information.

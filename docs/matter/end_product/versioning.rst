@@ -13,7 +13,7 @@ It is also displayed within ecosystem applications, as provided by the Basic Inf
 
 There are two primary approaches for maintaining versioning:
 
-* Utilizing a :file:`VERSION` file as detailed on the :ref:`app-version-details` page of the Zephyr Project documentation.
+* Utilizing a :file:`VERSION` file as detailed on the `Application VERSION file`_ page of the Zephyr Project documentation.
   This method involves defining the version information in a specific file format.
 
 * Utilizing dedicated Kconfig configurations.
@@ -106,4 +106,4 @@ Set its value in the following format: ``"MAJOR . MINOR . PATCHLEVEL + TWEAK"``.
 Performing Device Firmware Upgrade
 **********************************
 
-After properly configuring the application version, you can perform device firmware upgrade as explained in :doc:`matter:nrfconnect_examples_software_update`.
+After properly configuring the application version, you can perform device firmware upgrade as explained in `Matter software update guide`_.

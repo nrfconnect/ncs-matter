@@ -7,12 +7,12 @@ Testing with commercial Matter ecosystems
    :local:
    :depth: 2
 
-Nordic Semiconductor's Matter platform and Matter applications integrated in the |NCS| follow the most recent versions of the Matter protocol and are interoperable with several commercial Matter ecosystems.
+Nordic Semiconductor's Matter platform and Matter applications integrated in the |addon| follow the most recent versions of the Matter protocol and are interoperable with several commercial Matter ecosystems.
 
 Matter allows multiple ecosystems to work with each other thanks to the :ref:`multiple fabrics feature <ug_matter_overview_multi_fabrics>`.
 It also lets you use different wireless protocols for different use cases at the same time (for example, Thread or Wi-Fi®).
 
-You can test the interoperability of the Matter solution in the |NCS| with a selection of compatible Matter ecosystems by following the `Testing the nRF Connect platform with Apple, Google and Samsung ecosystems`_ tutorial on DevZone.
+You can test the interoperability of the Matter solution in the |addon| with a selection of compatible Matter ecosystems by following the `Testing the nRF Connect platform with Apple, Google and Samsung ecosystems`_ tutorial on DevZone.
 
 Prerequisites
 *************
@@ -29,7 +29,7 @@ At the very least, you need the following pieces of hardware to set up and test 
   * `Amazon Alexa <Amazon Alexa integration with Matter_>`_
 
 * 1x Wi-Fi Access Point supporting IPv6 connected to the Internet (for example, Asus RT-AC1300G, as used in the tutorial)
-* 1x PC with |NCS| v2.2.0 (or later) installed
+* 1x PC with |addon| v1.0.0 (or later) installed
 
 Setup and testing
 *****************

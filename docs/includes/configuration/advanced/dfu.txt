@@ -16,7 +16,7 @@ Device firmware upgrade support
    The DFU over Matter is enabled by default.
    Additionally, you can enable the DFU over SMP by using the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag.
 
-   See `cmake_options <Providing CMake options_>`_ for instructions on how to add these options to your build.
+   See `Providing CMake options`_ for instructions on how to add these options to your build.
 
    The following platforms require external flash memory to perform the DFU:
 
@@ -24,7 +24,7 @@ Device firmware upgrade support
    * nRF5340 DK
    * nRF54L10 DK
 
-   You can run DFU without external flash memory on the nRF54L15 and nRF54LM20 DKs using the `mcuboot_image_compression <MCUboot image compression_>`_ feature.
+   You can run DFU without external flash memory on the nRF54L15 and nRF54LM20 DKs using the `MCUboot image compression`_ feature.
    To see if the |matter_type| supports this feature, check whether the ``internal`` build configuration is available in the build configuration table.
 
    .. tabs::

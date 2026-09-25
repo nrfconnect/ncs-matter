@@ -8,7 +8,7 @@ Matter diagnostic logs snippet (matter-diagnostic-logs)
    :local:
    :depth: 2
 
-To build with this snippet, follow the instructions in the :ref:`using-snippets` page.
+To build with this snippet, follow the instructions in the `Using snippets`_ page.
 
 .. tabs::
 

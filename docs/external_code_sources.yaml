@@ -1,0 +1,52 @@
+# Registry for :external:c:*:, :externa:c:*:, and :external:file: Sphinx roles.
+#
+# Use :local:file: and :local:c:*: for ncs-matter repository paths. Those roles
+# resolve automatically from the repository checkout and are not listed here.
+#
+# workspace_prefixes on a source map west-workspace paths used in RST roles to
+# that repository. Any :external:file:`…` or :external:c:*:`path#symbol` under
+# a prefix is validated and linked without per-file registry entries.
+#
+# Optional files: and symbols: sections remain for overrides (for example
+# Doxygen pages that are not file paths in a Git repository).
+#
+# {ncs_matter_revision} resolves from the current git checkout:
+# main on main, PR head SHA in pull_request CI, release tag on tagged builds,
+# otherwise the short HEAD SHA, with v{addon_version} as fallback.
+
+sources:
+  ncs_matter:
+    base_url: https://github.com/nrfconnect/ncs-matter/blob/{ncs_matter_revision}/
+  sdk_nrf:
+    base_url: https://github.com/nrfconnect/sdk-nrf/blob/v{ncs_version}/
+    workspace_prefixes:
+      - ncs/nrf
+  sdk_connectedhomeip:
+    base_url: https://github.com/nrfconnect/sdk-connectedhomeip/blob/{sdk_connectedhomeip_revision}/
+    workspace_prefixes:
+      - modules/lib/matter
+      - ncs/modules/lib/matter
+  zephyr_doxygen:
+    base_url: https://docs.nordicsemi.com/bundle/ncs-{ncs_version}/page/zephyr/doxygen/html/
+  local:
+    base_url: https://github.com/nrfconnect/ncs-matter/blob/{ncs_matter_revision}/
+
+# External URLs that intentionally redirect (for example to a member login page).
+# docs/checks/conf.py loads these into Sphinx linkcheck_allowed_redirects;
+# check_doc_links.py suppresses matching redirect warnings in CI output.
+link_redirect_allowlist:
+  - url: https://groups.csa-iot.org/wg/members-all/document/27432
+    redirect: https://allianceconnect\.b2clogin\.com/.*
+    reason: CSA Alliance Connect member login
+  - url: https://groups.csa-iot.org/wg/members-all/document/folder/2255
+    redirect: https://allianceconnect\.b2clogin\.com/.*
+    reason: CSA Alliance Connect member login
+  - url: https://community.csa-iot.org/page/matter-resource-kit
+    redirect: https://allianceconnect\.b2clogin\.com/.*
+    reason: CSA Alliance Connect member login
+
+symbols:
+  struct:
+    bt_uuid:
+      source: zephyr_doxygen
+      path: structbt__uuid.html

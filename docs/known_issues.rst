@@ -1,4 +1,4 @@
-.. _known_issues:
+.. _ncs_matter_known_issues:
 
 Known issues
 ############

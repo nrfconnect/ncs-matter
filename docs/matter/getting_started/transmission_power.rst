@@ -129,7 +129,7 @@ Changing TX power for Thread
 To change the radio TX power used by the Thread protocol, set the :kconfig:option:`CONFIG_OPENTHREAD_DEFAULT_TX_POWER` Kconfig option to the desired dBm value in a range from ``-40`` to ``20`` dBm.
 
 The following table lists the maximum output power values in dBm for each board.
-The maximum value of 20 dBm is only recommended for devices that are using :ref:`radio Front-End Modules <ug_radio_fem>`.
+The maximum value of 20 dBm is only recommended for devices that are using `Developing with Front-End Modules`_.
 
 +--------------------------+-----------------------------------------------------------------------------+
 | Board name               | Min - max TX power (dBm)                                                    |
@@ -181,7 +181,7 @@ To change the radio TX power used by Zephyr's Bluetooth LE controller, set the :
 However, you cannot set this config value directly, as it obtains the value from the selected ``CONFIG_BT_CTLR_TX_PWR_MINUS_<X>`` or ``CONFIG_BT_CTLR_TX_PWR_PLUS_<X>``, where *<X>* is replaced by the desired power value, in an irregular dBm range from ``-40`` to ``3`` or ``8`` dBm (depending on the SoC).
 For example, to set Bluetooth LE TX power to +5 dBM, set the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_PLUS_5` Kconfig option to ``y``.
 
-Check the :ref:`Kconfig Reference <kconfig-search>` for the full list of possible values for `CONFIG_BT_CTLR_TX_PWR_MINUS`_ and `CONFIG_BT_CTLR_TX_PWR_PLUS`_, as well as their dependencies.
+Check the `Kconfig search`_ for the full list of possible values for `CONFIG_BT_CTLR_TX_PWR_MINUS`_ and `CONFIG_BT_CTLR_TX_PWR_PLUS`_, as well as their dependencies.
 The only exception is the value of 0 dBm, which is set with the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_0` Kconfig option.
 
 The following table lists the minimum and maximum output power values in dBm for each board.
@@ -244,12 +244,12 @@ See `Electrical specification for nRF7002`_ for reference values.
 Changing TX power for FEM
 *************************
 
-The Matter application can support optional :ref:`radio Front-End Modules <ug_radio_fem>`.
+The Matter application can support optional `Developing with Front-End Modules`_.
 When you work with Matter over Thread, you can control the TX power of the device by configuring the FEM's TX gain.
 
 By default, the TX FEM gain is handled automatically by the FEM driver.
 After setting the desired TX output power, for example using the :kconfig:option:`CONFIG_OPENTHREAD_DEFAULT_TX_POWER` Kconfig option, the radio driver configures the FEM gain to reach the desired value.
 However, you can disable this feature and set the FEM gain TX power value manually.
-For information about how to do this, read the :ref:`ug_radio_fem` page, in particular :ref:`ug_radio_fem_sw_support_mpsl_fem_output`.
+For information about how to do this, read the `Developing with Front-End Modules`_ page, in particular `MPSL FEM output support`_.
 
 The RX FEM gain is set to 13 dB by default, so the signal received at the antenna port will gain 13 dB and it will be provided to the SoC.

@@ -35,7 +35,7 @@ Front-End Modules
 =================
 
 SoCs from Nordic Semiconductor that can run the Matter protocol over Thread can also work with external Front-End Modules.
-For more information about the FEM support in the |NCS|, see `Developing with Front-End Modules <Developing with Front-End Modules_>`_ and `nRF21540 DK <Programming board names_>`_.
+For more information about the FEM support in the |NCS|, see `Developing with Front-End Modules`_ and `nRF21540 DK <Programming board names_>`_.
 
 .. _ncs_matter_hw_requirements_external_flash:
 
@@ -47,7 +47,7 @@ This is required to perform the DFU operation.
 
 .. note::
    The nRF54L15 SoC supports DFU with image compression, which may eliminate the need for external flash.
-   For more details, see `MCUboot image compression <MCUboot image compression_>`_.
+   For more details, see `MCUboot image compression`_.
 
 The development kits for the supported SoCs from Nordic Semiconductor are supplied with the MX25R64 type of external flash that meets these memory requirements.
 However, it is possible to configure the SoCs with different QSPI or SPI memory if it is supported by Zephyr.

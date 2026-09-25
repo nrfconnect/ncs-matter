@@ -45,16 +45,16 @@ Since bridged devices can be added to the bridge or removed from it at runtime, 
 
 .. _ug_matter_overview_bridge_ncs_implementation:
 
-Implementation in the |NCS|
-***************************
+Implementation in the |addon|
+*****************************
 
-The |NCS| includes a reference implementation of the Matter bridge core, located in the :file:`applications/matter_bridge/src/bridge` directory.
+The |addon| includes a reference implementation of the Matter bridge core, located in the :local:file:`samples/bridge/src/core` directory.
 The core implementation is not dependent on any specific connectivity technology, and provides basic bridge functionalities and a generic API.
-In addition to the core part, the |NCS| also includes an example :ref:`matter_bridge_app` application that you can use as a reference for creating your own application.
+In addition to the core part, the |addon| also includes an example :ref:`matter_bridge_app` application that you can use as a reference for creating your own application.
 
 The Matter bridge translates between the Matter data model and the data representation specific for other protocols.
 It is not possible to provide a generic translation between Matter and all other IoT protocols.
-The |NCS| application implements support for the Bluetooth LE protocol, but you can also disable Bluetooth LE support and use the core implementation part to create an application bridging Matter to any connectivity technology.
+The |addon| application implements support for the Bluetooth LE protocol, but you can also disable Bluetooth LE support and use the core implementation part to create an application bridging Matter to any connectivity technology.
 
 The bridge application can be customized in various ways depending on the supported connectivity protocol and Matter device types used for bridging, or the UI used to control the device.
 The following figure shows the software components of the bridge core and their relation to the user's application:

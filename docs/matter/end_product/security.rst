@@ -7,7 +7,7 @@ Security
    :local:
    :depth: 3
 
-Nordic Matter samples leverage :ref:`security` features supported in the |NCS| that can be divided into four major categories:
+Nordic Matter samples leverage `Security in the nRF Connect SDK`_ features supported in the |NCS| that can be divided into four major categories:
 
 * Cryptography
 * Secure processing environment
@@ -19,33 +19,33 @@ In the following sections you will learn more details about each listed category
 Cryptography
 ************
 
-Depending on the networking backend, the |NCS| Matter samples currently use the following APIs to implement cryptographic operations:
+Depending on the networking backend, the |addon| Matter samples currently use the following APIs to implement cryptographic operations:
 
-* :ref:`PSA Crypto API <psa_crypto_support>` for Thread networking.
-  Both :ref:`ug_crypto_architecture_implementation_standards` are supported, but using TF-M Crypto Service is only possible with Trusted Firmware-M (TF-M).
+* `PSA Crypto API configuration`_ for Thread networking.
+  Both `Cryptography implementation standards`_ are supported, but using TF-M Crypto Service is only possible with Trusted Firmware-M (TF-M).
 
 .. note::
    Support for the PSA Crypto API in the Wi-Fi backend is planned for a future release.
 
 Both APIs are integrated through the nRF Security subsystem.
-For an overview of the PSA Crypto API, see the :ref:`ug_crypto_architecture` page.
-For an overview of the cryptography layer configuration supported for each |NCS| Matter-enabled platform, see the :ref:`matter_platforms_security_support` section.
+For an overview of the PSA Crypto API, see the `Cryptography architecture`_ page.
+For an overview of the cryptography layer configuration supported for each |addon| Matter-enabled platform, see the :ref:`matter_platforms_security_support` section.
 
 Secure processing environment
 *****************************
 
-When building for the nRF54L15 DK using the ``nrf54l15dk/nrf54l15/cpuapp/ns`` :ref:`board target <app_boards_names>`, Matter samples can use the :ref:`secure processing environment <ug_tfm_security_by_separation>` with Trusted Firmware-M (TF-M).
-In such cases, all cryptographic operations within the Matter stack are performed by using the `Platform Security Architecture (PSA)`_ API and executed in the secure TF-M environment using the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`.
-The secure materials like Matter Session keys and other keys (except for the DAC private key) can be stored in the TF-M secure storage using the :ref:`tfm_encrypted_its` or :ref:`key_storage_kmu`.
+When building for the nRF54L15 DK using the ``nrf54l15dk/nrf54l15/cpuapp/ns`` `Board target names`_, Matter samples can use the `TF-M security by separation`_ with Trusted Firmware-M (TF-M).
+In such cases, all cryptographic operations within the Matter stack are performed by using the `Platform Security Architecture (PSA)`_ API and executed in the secure TF-M environment using the `TF-M Crypto Service implementation`_.
+The secure materials like Matter Session keys and other keys (except for the DAC private key) can be stored in the TF-M secure storage using the `TF-M encrypted ITS`_ or `Key storage KMU`_.
 
 Matter samples use the full, configurable TF-M build, so you cannot use the minimal build.
-For more information, see :ref:`ug_tfm_supported_services_profiles`.
+For more information, see `TF-M supported services profiles`_.
 
 Matter sample partition layout
 ==============================
 
 To configure the partition layout for your application, you can edit the :file:`boards/nrf54l15dk_nrf54l15_cpuapp.overlay` board file that is available in each sample directory.
-To read more about the TF-M partitioning, see :ref:`ug_tfm_partition_alignment_requirements`.
+To read more about the TF-M partitioning, see `TF-M partition alignment requirements`_.
 While using TF-M, the application partition size and available RAM space for the application is lower than without TF-M.
 You must keep this in mind and calculate the available space for the application partition.
 The recommended values are provided in the :ref:`ncs_matter_memory_requirements_layouts` section.
@@ -56,13 +56,13 @@ See the :ref:`matter_platforms_security_dac_priv_key_kmu` section for more infor
 Secure storage
 **************
 
-:ref:`secure_storage_in_ncs` lets you securely store and manage sensitive data.
-Currently, all :ref:`matter_samples` in the |NCS| use the `Trusted storage`_ library as the PSA Secure Storage API implementation for all supported platforms.
-You can find an overview of the PSA Secure Storage configuration supported for each |NCS| Matter-enabled platform in the :ref:`matter_platforms_security_support` section.
+`Secure storage in the nRF Connect SDK`_ lets you securely store and manage sensitive data.
+Currently, all :ref:`matter_samples` in the |addon| use the `Trusted storage`_ library as the PSA Secure Storage API implementation for all supported platforms.
+You can find an overview of the PSA Secure Storage configuration supported for each |addon| Matter-enabled platform in the :ref:`matter_platforms_security_support` section.
 
 .. note::
-   For the nRF52840 devices, in regards to :ref:`matter_samples` in |NCS|, AEAD keys are derived using hashes of entry UIDs (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
-   This approach is less secure than using the :ref:`lib_hw_unique_key` library for key derivation as it only provides integrity of sensitive material.
+   For the nRF52840 devices, in regards to :ref:`matter_samples` in |addon|, AEAD keys are derived using hashes of entry UIDs (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
+   This approach is less secure than using the `Hardware unique key library`_ library for key derivation as it only provides integrity of sensitive material.
    It is also possible to implement a custom AEAD key generation method when the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_CUSTOM` Kconfig option is selected.
 
 For more details about AEAD key generation and backend configuration, see the `Trusted storage`_ readme.
@@ -72,7 +72,7 @@ For more details about AEAD key generation and backend configuration, see the `T
 Matter platforms security support
 *********************************
 
-The following table summarizes the current security configuration and features supported for Matter-enabled hardware platforms in the |NCS|.
+The following table summarizes the current security configuration and features supported for Matter-enabled hardware platforms in the |addon|.
 This is a reference configuration that can be modified in the production firmware by using proper Kconfig settings or implementing custom cryptographic backends.
 
 .. list-table:: Matter platforms security support
@@ -130,20 +130,20 @@ This is a reference configuration that can be modified in the production firmwar
        The CRACEN backend is used by default for any supported cryptographic operations.
        For all other operations not supported by CRACEN, the Oberon backend is used.
        To use the Oberon backend for specific cryptographic operations supported by both drivers, disable those operations in the CRACEN driver, as it takes priority when both are enabled.
-       See the :ref:`nrf_security_drivers` documentation for more information.
+       See the `nRF security drivers`_ documentation for more information.
 
 .. _matter_platforms_security_kmu:
 
 nRF54L Key Management Unit (KMU)
 ================================
 
-Most nRF54L Series devices include :ref:`ug_kmu_hardware_peripheral` that can be used to store cryptographic keys in Matter.
-In this solution, the keys are stored within the available slots in the :ref:`ug_kmu_slots` range that are not reserved for current and future |NCS| use cases.
+Most nRF54L Series devices include `KMU hardware peripheral`_ that can be used to store cryptographic keys in Matter.
+In this solution, the keys are stored within the available slots in the `KMU slots`_ range that are not reserved for current and future |addon| use cases.
 
 The default slots range used for Matter is from ``100`` to ``180``, excluding the DAC private key.
 For details on the DAC private key configuration, see :ref:`matter_platforms_security_dac_priv_key_kmu`.
 To change the slots range, set the :kconfig:option:`CONFIG_CHIP_KMU_SLOT_RANGE_START` and :kconfig:option:`CONFIG_CHIP_KMU_SLOT_RANGE_END` Kconfig options.
-The Raw usage scheme defined in the :ref:`ug_kmu_guides_key_usage_schemes` section is used for all Matter keys.
+The Raw usage scheme defined in the `KMU key usage schemes`_ section is used for all Matter keys.
 
 To use this feature, set the :kconfig:option:`CONFIG_CHIP_STORE_KEYS_IN_KMU` Kconfig option to ``y``, and switch to the ``KMUKeyAllocator`` by calling the ``chip::Crypto::SetPSAKeyAllocator`` method in your code during the Matter stack initialization.
 
@@ -156,7 +156,7 @@ For example:
     static KMUKeyAllocator kmuAllocator;
     Crypto::SetPSAKeyAllocator(&kmuAllocator);
 
-See the :file:`samples/matter/common/src/app/matter_init.cpp` file for a usage example.
+See the :local:file:`subsys/app/matter_init.cpp` file for a usage example.
 
 Due to limited slots available in the KMU, the maximum number of Matter fabric is limited.
 The following table shows all the crypto materials used in Matter, the number of slots needed for each key and a Kconfig option that can be used to adjust the number of each key type:
@@ -345,7 +345,7 @@ By default, the DAC private key occupies the last slots dedicated for applicatio
 For the non-encrypted version, it occupies the last two slots (178 and 179), and for the encrypted version, it occupies the last four slots (176-179).
 You can change the default slots by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_KMU_SLOT_ID` Kconfig option to the first slot number of the desired slots, making sure that all slots fit within the possible range.
 This means you can set it to slot numbers 0-176 for encrypted, or 0-178 for non-encrypted.
-To read more about KMU slots, see the :ref:`ug_kmu_guides_cracen_overview` page.
+To read more about KMU slots, see the `CRACEN KMU overview`_ page.
 
 Securing production devices
 ***************************
@@ -357,11 +357,11 @@ Enable AP-Protect
 
 Make sure to enable the AP-Protect feature for the production devices to disable the debug functionality.
 
-Several Nordic Semiconductor SoCs or SiPs supported in the |NCS| offer an implementation of the access port protection mechanism (AP-Protect).
+Several Nordic Semiconductor SoCs or SiPs supported in the |addon| offer an implementation of the access port protection mechanism (AP-Protect).
 When enabled, this mechanism blocks the debugger from read and write access to all CPU registers and memory-mapped addresses.
 Accessing these registers and addresses again requires disabling the mechanism and erasing the flash.
 
-See :ref:`app_approtect` for more information.
+See `Approtect`_ for more information.
 
 Disable debug serial port
 =========================

@@ -18,9 +18,9 @@ The following steps show how to add support for a new Matter device type, using 
 #. Implement the ``Matter Bridged Device`` role.
 
    a. Create the :file:`pressure_sensor.cpp` and :file:`pressure_sensor.h` files in the :file:`src/bridged_device_types` directory.
-   #. Open the :file:`samples/bridge/src/core/matter_bridged_device.h` header file and find the :c:struct:`MatterBridgedDevice` class constructor.
+   #. Open the :local:file:`samples/bridge/src/core/matter_bridged_device.h` header file and find the :local:c:struct:`samples/bridge/src/core/matter_bridged_device.h#MatterBridgedDevice` class constructor.
       Note the constructor signature, it will be used in the child class implemented in the next steps.
-   #. Add a new :c:struct:`PressureSensorDevice` class inheriting :c:struct:`MatterBridgedDevice`, and implement its constructor in the :file:`pressure_sensor.cpp` and :file:`pressure_sensor.h` files.
+   #. Add a new ``PressureSensorDevice`` class inheriting :local:c:struct:`samples/bridge/src/core/matter_bridged_device.h#MatterBridgedDevice`, and implement its constructor in the :file:`pressure_sensor.cpp` and :file:`pressure_sensor.h` files.
 
       - :file:`pressure_sensor.h`
 
@@ -47,9 +47,9 @@ The following steps show how to add support for a new Matter device type, using 
             PressureSensorDevice::PressureSensorDevice(const char *uniqueID, const char *nodeLabel)
                   : MatterBridgedDevice(uniqueID, nodeLabel) {}
 
-   #. Declare all clusters that are mandatory for the Pressure Sensor device type, according to the Matter device library specification, and fill the appropriate :c:struct:`MatterBridgedDevice` class fields in the :c:struct:`PressureSensorDevice` class constructor.
+   #. Declare all clusters that are mandatory for the Pressure Sensor device type, according to the Matter device library specification, and fill the appropriate :local:c:struct:`samples/bridge/src/core/matter_bridged_device.h#MatterBridgedDevice` class fields in the ``PressureSensorDevice`` class constructor.
 
-      The Pressure Sensor device requires the ``Descriptor``, ``Bridged Device Basic Information`` and ``Identify`` clusters, which can be declared using helper macros from the :file:`samples/bridge/src/core/matter_bridged_device.h` header file, and the ``Pressure Measurement`` cluster, which has to be defined in the application.
+      The Pressure Sensor device requires the ``Descriptor``, ``Bridged Device Basic Information`` and ``Identify`` clusters, which can be declared using helper macros from the :local:file:`samples/bridge/src/core/matter_bridged_device.h` header file, and the ``Pressure Measurement`` cluster, which has to be defined in the application.
       Edit the :file:`pressure_sensor.cpp` file as follows:
 
       - Add:
@@ -109,8 +109,8 @@ The following steps show how to add support for a new Matter device type, using 
                   mDataVersion = static_cast<DataVersion *>(chip::Platform::MemoryAlloc(sizeof(DataVersion) * mDataVersionSize));
             }
 
-   #. Open the :file:`samples/bridge/src/core/matter_bridged_device.h` header file again to see which methods of the :c:struct:`MatterBridgedDevice` class are purely virtual (assigned with ``=0``) and have to be overridden by the :c:struct:`PressureSensorDevice` class.
-   #. Edit the :c:struct:`PressureSensorDevice` class in the :file:`pressure_sensor.h` header file to declare the required methods as follows:
+   #. Open the :local:file:`samples/bridge/src/core/matter_bridged_device.h` header file again to see which methods of the :local:c:struct:`samples/bridge/src/core/matter_bridged_device.h#MatterBridgedDevice` class are purely virtual (assigned with ``=0``) and have to be overridden by the ``PressureSensorDevice`` class.
+   #. Edit the ``PressureSensorDevice`` class in the :file:`pressure_sensor.h` header file to declare the required methods as follows:
 
       .. code-block:: C++
 
@@ -123,7 +123,7 @@ The following steps show how to add support for a new Matter device type, using 
         CHIP_ERROR HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
                         size_t dataSize) override;
 
-   #. Implement the body of the :c:func:`GetDeviceType` method so that it can return the device type ID for the Pressure Sensor device type, which is equal to ``0x0305``.
+   #. Implement the body of the :local:c:func:`samples/bridge/src/core/matter_bridged_device.h#GetDeviceType` method so that it can return the device type ID for the Pressure Sensor device type, which is equal to ``0x0305``.
       To check the device type ID for specific type of device, see Matter Device Library Specification.
 
       Edit the :file:`pressure_sensor.cpp` file as follows:
@@ -134,14 +134,14 @@ The following steps show how to add support for a new Matter device type, using 
             return PressureSensorDevice::kPressureSensorDeviceTypeId;
          }
 
-   #. Implement the body of the :c:func:`HandleRead` method to handle reading data operations for all supported attributes.
+   #. Implement the body of the :local:c:func:`samples/bridge/src/core/matter_bridged_device.h#HandleRead` method to handle reading data operations for all supported attributes.
 
       The read operations for the ``Descriptor``, ``Bridged Device Basic Information`` and ``Identify`` clusters, which are common to all devices, are handled in a common bridge module.
       The read operations for the ``Pressure Measurement`` cluster are the only ones that need to be handled in the application.
 
       To provide support for reading attributes for the Pressure Sensor device, edit the :file:`pressure_sensor.h` and :file:`pressure_sensor.cpp` files as follows:
 
-      - :file:`pressure_sensor.h`, :c:struct:`PressureSensorDevice` class
+      - :file:`pressure_sensor.h`, ``PressureSensorDevice`` class
 
          .. code-block:: C++
 
@@ -193,7 +193,7 @@ The following steps show how to add support for a new Matter device type, using 
                }
             }
 
-   #. Implement the body of the :c:func:`HandleWrite` method, which handles write data operations for all supported attributes.
+   #. Implement the body of the :local:c:func:`samples/bridge/src/core/matter_bridged_device.h#HandleWrite` method, which handles write data operations for all supported attributes.
       In this case, there is no attribute supporting write operations, so edit the :file:`pressure_sensor.cpp` file as follows:
 
       .. code-block:: C++
@@ -202,7 +202,7 @@ The following steps show how to add support for a new Matter device type, using 
             return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
          }
 
-   #. Implement the body of the :c:func:`HandleAttributeChange` method.
+   #. Implement the body of the :local:c:func:`samples/bridge/src/core/matter_bridged_device.h#HandleAttributeChange` method.
       This will be called by the ``Bridge Manager`` to notify that data was changed by the ``Bridged Device Data Provider`` and the local state should be updated.
 
       Edit the :file:`pressure_sensor.h` and :file:`pressure_sensor.cpp` files as follows:
@@ -258,9 +258,9 @@ The following steps show how to add support for a new Matter device type, using 
 #. Implement the ``Bridged Device Data Provider`` role.
 
    a. Create the :file:`simulated_pressure_sensor_data_provider.cpp` and :file:`simulated_pressure_sensor_data_provider.h` files in the :file:`src/simulated_providers` directory.
-   #. Open the :file:`samples/bridge/src/core/bridged_device_data_provider.h` header file and find the :c:struct:`BridgedDeviceDataProvider` class constructor.
+   #. Open the :local:file:`samples/bridge/src/core/bridged_device_data_provider.h` header file and find the :local:c:struct:`samples/bridge/src/core/bridged_device_data_provider.h#BridgedDeviceDataProvider` class constructor.
       Note the constructor signature, it will be used in the child class implemented in the next steps.
-   #. Add a new :c:struct:`SimulatedPressureSensorDataProvider` class inheriting :c:struct:`BridgedDeviceDataProvider`, and implement its constructor in the :file:`simulated_pressure_sensor_data_provider.h` header file.
+   #. Add a new ``SimulatedPressureSensorDataProvider`` class inheriting :local:c:struct:`samples/bridge/src/core/bridged_device_data_provider.h#BridgedDeviceDataProvider`, and implement its constructor in the :file:`simulated_pressure_sensor_data_provider.h` header file.
 
       .. code-block:: C++
 
@@ -276,8 +276,8 @@ The following steps show how to add support for a new Matter device type, using 
             ~SimulatedPressureSensorDataProvider() {}
          };
 
-   #. Open the :file:`samples/bridge/src/core/bridged_device_data_provider.h` header file again to see which methods of the :c:struct:`BridgedDeviceDataProvider` class are purely virtual (assigned with ``=0``) and have to be overridden by the :c:struct:`SimulatedPressureSensorDataProvider` class.
-   #. Edit the :c:struct:`SimulatedPressureSensorDataProvider` class in the :file:`simulated_pressure_sensor_data_provider.h` header file to declare the required methods as follows:
+   #. Open the :local:file:`samples/bridge/src/core/bridged_device_data_provider.h` header file again to see which methods of the :local:c:struct:`samples/bridge/src/core/bridged_device_data_provider.h#BridgedDeviceDataProvider` class are purely virtual (assigned with ``=0``) and have to be overridden by the ``SimulatedPressureSensorDataProvider`` class.
+   #. Edit the ``SimulatedPressureSensorDataProvider`` class in the :file:`simulated_pressure_sensor_data_provider.h` header file to declare the required methods as follows:
 
       .. code-block:: C++
 
@@ -285,12 +285,12 @@ The following steps show how to add support for a new Matter device type, using 
          void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data, size_t dataSize) override;
          CHIP_ERROR UpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, uint8_t *buffer) override;
 
-   #. Implement the body of the :c:func:`Init` method so that it can prepare the data provider for further operation.
+   #. Implement the body of the :local:c:func:`samples/bridge/src/core/bridged_device_data_provider.h#Init` method so that it can prepare the data provider for further operation.
       In this case, the pressure measurements will be simulated by changing data in a random manner and updating it at fixed time intervals.
 
       To initialize the timer and perform measurement updates, edit the :file:`simulated_pressure_sensor_data_provider.h` and :file:`simulated_pressure_sensor_data_provider.cpp` files as follows:
 
-      - :file:`simulated_pressure_sensor_data_provider.h`, :c:struct:`SimulatedPressureSensorDataProvider` class
+      - :file:`simulated_pressure_sensor_data_provider.h`, ``SimulatedPressureSensorDataProvider`` class
 
          .. code-block:: C++
 
@@ -340,7 +340,7 @@ The following steps show how to add support for a new Matter device type, using 
 		            reinterpret_cast<intptr_t>(timer->user_data));
             }
 
-   #. Implement the body of the :c:func:`NotifyUpdateState` method that shall be called after every data change related to the Pressure Sensor device.
+   #. Implement the body of the :local:c:func:`samples/bridge/src/core/bridged_device_data_provider.h#NotifyUpdateState` method that shall be called after every data change related to the Pressure Sensor device.
       It is used to inform the ``Bridge Manager`` and Matter Data Model that an attribute value should be updated.
 
       To make the method invoke the appropriate callback, edit the :file:`simulated_pressure_sensor_data_provider.cpp` file as follows:
@@ -357,7 +357,7 @@ The following steps show how to add support for a new Matter device type, using 
             }
          }
 
-   #. Implement the body of the :c:func:`UpdateState` method.
+   #. Implement the body of the :local:c:func:`samples/bridge/src/core/bridged_device_data_provider.h#UpdateState` method.
       This will be called by the ``Bridge Manager`` to inform that data in Matter Data Model was changed and request propagating this information to the end device.
 
       In this case, there is no attribute supporting write operations and sending data to end device is not required, so edit the :file:`simulated_pressure_sensor_data_provider.cpp` file as follows:
@@ -371,7 +371,7 @@ The following steps show how to add support for a new Matter device type, using 
          }
 
 #. Add the ``PressureSensorDevice`` and ``SimulatedPressureSensorDataProvider`` implementations created in previous steps to the compilation process.
-   To do that, edit the :file:`CMakeLists.txt` file as follows:
+   To do that, edit the :local:file:`samples/bridge/CMakeLists.txt` file as follows:
 
    .. code-block:: cmake
 
@@ -381,18 +381,18 @@ The following steps show how to add support for a new Matter device type, using 
       )
 
 #. Provide allocators for ``PressureSensorDevice`` and ``SimulatedPressureSensorDataProvider``  object creation.
-   The Matter Bridge application uses a :c:struct:`SimulatedBridgedDeviceFactory` factory module that creates paired ``Matter Bridged Device`` and ``Bridged Device Data Provider`` objects matching a specific Matter device type ID.
+   The Matter Bridge application uses a :local:c:struct:`samples/bridge/src/simulated_providers/simulated_bridged_device_factory.h#SimulatedBridgedDeviceFactory` factory module that creates paired ``Matter Bridged Device`` and ``Bridged Device Data Provider`` objects matching a specific Matter device type ID.
 
-   To add support for creating the ``PressureSensorDevice`` and ``SimulatedPressureSensorDataProvider`` objects when the Pressure Sensor device type ID is used, edit the :file:`src/simulated_providers/simulated_bridged_device_factory.h` and :file:`src/simulated_providers/simulated_bridged_device_factory.cpp` files as follows:
+   To add support for creating the ``PressureSensorDevice`` and ``SimulatedPressureSensorDataProvider`` objects when the Pressure Sensor device type ID is used, edit the :local:file:`samples/bridge/src/simulated_providers/simulated_bridged_device_factory.h` and :local:file:`samples/bridge/src/simulated_providers/simulated_bridged_device_factory.cpp` files as follows:
 
-   - :file:`src/simulated_providers/simulated_bridged_device_factory.h`
+   - :local:file:`samples/bridge/src/simulated_providers/simulated_bridged_device_factory.h`
 
       .. code-block:: C++
 
          #include "pressure_sensor.h"
          #include "simulated_pressure_sensor_data_provider.h"
 
-   - :file:`src/simulated_providers/simulated_bridged_device_factory.cpp`, :c:func:`GetBridgedDeviceFactory` method
+   - :local:file:`samples/bridge/src/simulated_providers/simulated_bridged_device_factory.cpp`, :local:c:func:`samples/bridge/src/simulated_providers/simulated_bridged_device_factory.cpp#GetBridgedDeviceFactory` method
 
       .. code-block:: C++
 
@@ -404,7 +404,7 @@ The following steps show how to add support for a new Matter device type, using 
             return chip::Platform::New<PressureSensorDevice>(uniqueID, nodeLabel);
          } },
 
-   - :file:`src/simulated_providers/simulated_bridged_device_factory.cpp`, :c:func:`GetDataProviderFactory` method
+   - :local:file:`samples/bridge/src/simulated_providers/simulated_bridged_device_factory.cpp`, :local:c:func:`samples/bridge/src/simulated_providers/simulated_bridged_device_factory.cpp#GetDataProviderFactory` method
 
       .. code-block:: C++
 

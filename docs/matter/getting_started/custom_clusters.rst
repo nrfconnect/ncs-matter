@@ -31,8 +31,8 @@ Copy Matter template sample
 Use the :ref:`matter_template_sample` as the base for building a manufacturer-specific device as follows:
 
 1. Make sure that you meet the requirements for building the sample.
-#. Copy the contents of the :file:`samples/matter/template` directory to a new directory meant for your custom application.
-   For example, :file:`samples/matter/sensor`.
+#. Copy the contents of the :local:file:`samples/template` directory to a new directory meant for your custom application.
+   For example, :file:`samples/sensor`.
 #. Build and test the sample as described on its documentation page.
 
 .. rst-class:: numbered-step
@@ -301,7 +301,7 @@ You can create a new cluster description file in the following ways:
       The cluster ID for a manufacturer-specific cluster must be in the range from ``0xFC00`` to ``0xFFFE``.
 
       The example contains a cluster with the code ``0xFFF1FC01``, which means ``0xFFF1`` is the Test Manufacturer ID, and ``0xFC01`` is the cluster ID.
-      See the :file:`<default Matter SDK location>/src/app/zap-templates/zcl/data-model/manufacturers.xml` file to learn about the manufacturer codes.
+      See the :external:file:`modules/lib/matter/src/app/zap-templates/zcl/data-model/manufacturers.xml` file to learn about the manufacturer codes.
 
       The XML file consists of the following elements:
 
@@ -633,7 +633,7 @@ This guide focuses on the :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool
 
       west zap-gui -j src/default_zap/zcl.json --clusters ./MyCluster.xml
 
-   This example command copies the original :file:`<default Matter SDK location>/src/app/zap-templates/zcl/zcl.json` file, adds the :file:`MyCluster.xml` cluster, and saves the new :file:`zcl.json` file in the sample directory.
+   This example command copies the original :external:file:`modules/lib/matter/src/app/zap-templates/zcl/zcl.json` file, adds the :file:`MyCluster.xml` cluster, and saves the new :file:`zcl.json` file in the sample directory.
    The newly generated :file:`zcl.json` file is used as an input to the ZAP tool.
 
    .. note::
@@ -699,10 +699,6 @@ For example:
 
       west zap-generate --full -j ./zcl.json
 
-.. important::
-
-   In the |NCS| versions older than 3.2.0, the :file:`zcl.json` had to be stored in the ``sample_directory/src/default_zap/`` subdirectory.
-
 After completing these steps, the following changes will be visible within your sample directory:
 
 * The new cluster description file :file:`MyCluster.xml`.
@@ -720,7 +716,7 @@ Align CMake configuration with the new cluster
 **********************************************
 
 Generating the :file:`.zap` files with the ``--full`` option creates new source files under :file:`zap-generated/app-common`.
-They need to override the default files located in the Matter SDK in the :file:`zzz_generated/app-common` directory.
+They need to override the default files located in the Matter SDK in the :external:file:`modules/lib/matter/zzz_generated/app-common` directory.
 To override the path, you need to set the ``CHIP_APP_ZAP_DIR`` variable in the :file:`CMakeLists.txt` file, pointing to the parent of the generated :file:`app-common` directory before initializing the Matter Data Model.
 
 As custom clusters are not part of the default Matter SDK, you need to additionally pass a list of all new cluster names in an ``EXTERNAL_CLUSTERS`` argument when calling ``ncs_configure_data_model``.

@@ -12,12 +12,12 @@ The Bluetooth LE services can run next to the Matter stack and the Bluetooth LE 
 
 You can add a Bluetooth LE service in one of the following ways:
 
-* Taking advantage of :ref:`Bluetooth services <lib_bluetooth_services>` and their related samples in the |NCS|.
+* Taking advantage of `Bluetooth services`_ and their related samples in the |NCS|.
   You can use the library functions for configuring services and follow the available samples to learn how to integrate the services into your application.
 * Using `Bluetooth SIG's Assigned Numbers`_ documentation with predefined characteristics to create your custom implementation.
 * Writing the custom Bluetooth LE service from scratch.
 
-This guide describes the first case and uses :ref:`nus_service_readme` as an example.
+This guide describes the first case and uses `Nordic UART Service (NUS)`_ as an example.
 
 .. _ug_matter_device_adding_bt_services_ble_arbiter:
 
@@ -31,7 +31,7 @@ When several application services are active, they can define a request to the A
 If the service with the highest priority stops advertising, the Arbiter automatically selects the next service in the queue.
 If the service that requests advertising has a higher priority than the service that is running when the request is submitted, the advertising is restarted using parameters defined in the new request.
 
-In the Matter implementation in the |NCS|, the following services are configured by default for all Matter applications:
+In the Matter implementation in the |addon|, the following services are configured by default for all Matter applications:
 
 * Commissioning for Matter (priority ``0``)
 * DFU over Bluetooth LE (priority ``uint8 max``)
@@ -46,9 +46,9 @@ For more information about what the class offers, see the `Bluetooth LE Arbiter'
 Adding support for a Bluetooth LE service
 *****************************************
 
-To add support for a Bluetooth LE service implemented in the |NCS|, complete the following steps:
+To add support for a Bluetooth LE service implemented in the |addon|, complete the following steps:
 
-1. Check the documentation of the :ref:`Bluetooth service <lib_bluetooth_services>` for its characteristics and functions.
+1. Check the documentation of the `Bluetooth service`_ for its characteristics and functions.
 #. Add the application code that instantiates and fills the Bluetooth LE Arbiter's ``Request`` structure, including its ``priority`` field:
 
    .. code-block:: cpp

@@ -7,7 +7,7 @@ Software maturity levels
    :local:
    :depth: 2
 
-The |NCS| provides the software maturity levels for the Matter components and features.
+The |addon| provides the software maturity levels for the Matter components and features.
 To learn more about the levels, see the `Software maturity levels`_ page.
 
 .. _software_maturity_protocol_matter:

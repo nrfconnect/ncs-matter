@@ -8,14 +8,14 @@ Bootloader configuration in Matter
    :depth: 2
 
 All Matter nodes are required to implement a firmware update mechanism that validates the authenticity of new firmware before executing it.
-To meet this requirement, Nordic Semiconductor recommends using :doc:`MCUboot <mcuboot:index-ncs>` bootloader for installing a new firmware image.
+To meet this requirement, Nordic Semiconductor recommends using `Using MCUboot in nRF Connect SDK`_ bootloader for installing a new firmware image.
 
 This page contains guidelines for configuring the MCUboot bootloader in Matter projects.
 
 Adding MCUboot to application
 *****************************
 
-Read :ref:`ug_bootloader_adding_sysbuild_immutable_mcuboot` to learn how to add MCUboot to an |NCS| application.
+Read `Immutable MCUboot`_ to learn how to add MCUboot to an |addon| application.
 Some Matter samples include Device Firmware Update (DFU) support out of the box, as listed in the :ref:`sample feature matrix table <matter_samples>`.
 
 MCUboot minimal configuration
@@ -24,7 +24,7 @@ MCUboot minimal configuration
 MCUboot is by default configured to enable debug features, such as logs.
 You can reduce the size of the bootloader image by disabling unnecessary features.
 
-See the following files for the MCUboot minimal configuration used by :ref:`matter_samples` in the |NCS|:
+See the following files for the MCUboot minimal configuration used by :ref:`matter_samples` in the |addon|:
 
 * :file:`prj.conf` file located in each sample's :file:`sysbuild/mcuboot` directory
 * Board files located in each sample's :file:`sysbuild/mcuboot/boards` directory
@@ -38,7 +38,7 @@ Partition layout
 ****************
 
 .. note::
-   The :ref:`partition_manager` is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
+   The `Partition Manager`_ is a component in the |NCS| and is responsible for handling the memory partitioning at build time.
 
    This functionality is in the process of being deprecated and replaced by Zephyr's default devicetree-based memory partitioning.
    It is recommended that all new designs using Nordic devices are to be built with DTS instead of Partition Manager.
@@ -50,7 +50,7 @@ Partition layout
    * `nRF Connect SDK v3.4.0 release notes`_
 
 A bootloader is a critical component in a Matter device, ensuring secure firmware updates and authenticating new application images.
-All Nordic Matter samples in the |NCS| use MCUboot as the primary bootloader, with configuration and partitioning adapted to application and device needs.
+All Nordic Matter samples in the |addon| use MCUboot as the primary bootloader, with configuration and partitioning adapted to application and device needs.
 
 .. _ug_matter_hw_requirements_partition_dts_reference:
 
@@ -67,7 +67,7 @@ Consider the following when defining partitions for your end product:
   See :ref:`ug_matter_device_optimizing_memory_configuration` to learn how to adjust the partition sizes.
 
 * Given the size of the Matter stack, it is usually not possible to fit both the primary and the secondary slot in the internal flash in order to store the current and the new firmware image, respectively.
-  Instead, you should use the :ref:`external flash <ug_bootloader_external_flash>` to host the secondary slot.
+  Instead, you should use the `MCUboot external flash`_ to host the secondary slot.
 
   .. note::
       Remember to enable a proper flash driver when placing the secondary slot in the external flash.
@@ -203,7 +203,7 @@ To configure the number of sectors used by the backend, set the corresponding Kc
 
 For example, to cover a settings partition of 32 kB in size, you require 8 sectors.
 
-As shown in the :ref:`ncs_matter_memory_requirements_layouts` page, Matter samples in the |NCS| reserve exactly 32 kB for the ``settings_storage`` partition.
+As shown in the :ref:`ncs_matter_memory_requirements_layouts` page, Matter samples in the |addon| reserve exactly 32 kB for the ``settings_storage`` partition.
 
 Factory data partition
 ======================
@@ -212,7 +212,7 @@ If you make a real Matter product, you also need the ``factory_data`` partition 
 The factory data contains a set of immutable device identifiers, certificates and cryptographic keys, programmed onto a device at the time of the device fabrication.
 For that partition one flash page of 4 kB should be enough in most use cases.
 
-By default, the ``factory_data`` partition is write-protected with the :ref:`fprotect_readme` driver (``fprotect``).
+By default, the ``factory_data`` partition is write-protected with the `Fprotect`_ driver (``fprotect``).
 The hardware limitations require that the write-protected areas are aligned to :kconfig:option:`CONFIG_FPROTECT_BLOCK_SIZE`.
 For this reason, to effectively implement ``fprotect``, make sure that the partition layout of the application meets the following requirements:
 
@@ -245,12 +245,12 @@ If the signature check fails, MCUboot rejects the image and either:
    As the key pair is publicly known, it provides no protection against the image forgery.
    For this reason, when making a real product, it is of the greatest importance to replace it with a unique key pair, known only to the device maker.
 
-   Read :ref:`ug_bootloader_adding_sysbuild_immutable_mcuboot_keys` to learn how to configure MCUboot to use a custom key pair.
+   Read `Immutable MCUboot keys`_ to learn how to configure MCUboot to use a custom key pair.
 
 Downgrade protection
 ********************
 
-The :ref:`downgrade protection <ug_fw_update_image_versions_mcuboot_downgrade>` mechanism makes it impossible for an attacker to trick a user to install a firmware image older than the currently installed one.
+The `MCUboot downgrade protection`_ mechanism makes it impossible for an attacker to trick a user to install a firmware image older than the currently installed one.
 The attacker might want to do this to reintroduce old security vulnerabilities that have already been fixed in newer firmware revisions.
 You should enable the downgrade protection mechanism if you choose to enable MCUboot's :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY` Kconfig option, which disables the fallback recovery in case of a faulty upgrade.
 
@@ -259,7 +259,7 @@ You should enable the downgrade protection mechanism if you choose to enable MCU
 Image compression
 *****************
 
-The :ref:`MCUboot image compression <mcuboot_image_compression>` feature allows you to reduce the size of the firmware image that is being installed.
+The `MCUboot image compression`_ feature allows you to reduce the size of the firmware image that is being installed.
 This is done by compressing the image before it is written to the secondary slot.
 
 Thanks to the compression, the secondary slot can be smaller than the primary one.

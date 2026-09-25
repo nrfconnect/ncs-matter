@@ -199,7 +199,7 @@ These IDs are going to be used in the next steps (*<thermostat_node_ID>*, *<temp
 Add proper ACL for the temperature sensor device
 -------------------------------------------------
 
-Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the temperature sensor device.
+Use the `CHIP Tool`_ ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the temperature sensor device.
 Use the following command, with *<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<temperature_sensor_endpoint_ID>* values from the previous step about commissioning:
 
 .. parsed-literal::
@@ -219,7 +219,7 @@ Write a binding table to the thermostat to inform the device about the temperatu
 
    chip-tool binding write binding '[{"fabricIndex": 1, "node": <temperature_sensor_node_ID>, "endpoint": <temperature_sensor_endpoint_ID>, "cluster": 1026}]' <thermostat_node_ID> 1
 
-(You can read more about this step in the "Adding a binding table to the ``binding`` cluster" in the :doc:`CHIP Tool <matter:chip_tool_guide>` guide.)
+(You can read more about this step in the "Adding a binding table to the ``binding`` cluster" in the `CHIP Tool`_ guide.)
 
 The thermostat is now able to read the real temperature data from the temperature sensor device.
 The connection is ensured by :ref:`matter_thermostat_sample_binding` to Matter's temperature measurement cluster.

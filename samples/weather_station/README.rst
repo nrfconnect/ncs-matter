@@ -64,7 +64,7 @@ The recommended way of getting measurement values is using the mobile Matter con
             If you build Matter weather station firmware with factory data support it will not be compatible with other Thingy:53 samples and applications.
             Then, the only way to program the new firmware image is to use the J-Link programmer.
 
-         See :ref:`thingy53_app_guide` for details.
+         See `Thingy:53 application guide`_ for details.
 
       .. group-tab:: nRF54L15 TAG
 
@@ -73,7 +73,7 @@ The recommended way of getting measurement values is using the mobile Matter con
 
          If your tag is already programmed with one of the Matter samples, you can use DFU over Bluetooth LE or Matter OTA Software Update.
 
-         See :ref:`nRF54L15 TAG <ug_nrf54l>` for details.
+         See `Developing with nRF54L Series`_ for details.
 
 User interface
 **************
@@ -169,7 +169,7 @@ Building with factory data support
 
     .. note::
        Matter factory data support requires a dedicated partition layout.
-       This means that if you build the application using the ``overlay-factory_data`` configuration overlay, it will not be compatible with other :ref:`Thingy:53 applications and samples <thingy53_compatible_applications>`.
+       This means that if you build the application using the ``overlay-factory_data`` configuration overlay, it will not be compatible with other `Thingy:53 compatible applications`_.
 
     To generate a new factory data set when building for the given board target:
 
@@ -190,7 +190,7 @@ Building with factory data support
           Where ``<board_target>`` is ``thingy53/nrf5340/cpuapp`` or ``nrf54l15tag/nrf54l15/cpuapp``.
 
     This command builds the application with default certificates.
-    After building for the board target, the generated :file:`factory_data.hex` file will be merged with the application target HEX file, so you can use the :ref:`regular command to flash it to the device <programming>`.
+    After building for the board target, the generated :file:`factory_data.hex` file will be merged with the application target HEX file, so you can use the `Programming an application`_.
 
     If you want to use Vendor ID, Product ID or other data that is not reserved for tests, you need custom test certificates.
     To build with custom certificates, you need to :ref:`install the CHIP Certificate Tool <ug_matter_gs_tools_cert_installation>`.

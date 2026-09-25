@@ -21,6 +21,7 @@ class MatterSampleChecker:
         allowed_names: list[str] = None,
         expected_years: list[int] = None,
         check_classes: list[type[MatterSampleTestCase]] = None,
+        live_progress: bool = False,
     ):
         self.result: list[MatterSampleCheckerResult] = []
         self.config = MatterCheckerConfig(
@@ -31,6 +32,7 @@ class MatterSampleChecker:
             skip=False,
             expected_years=expected_years,
             allowed_names=allowed_names,
+            live_progress=live_progress,
         )
 
         self.check_classes = check_classes
@@ -48,8 +50,16 @@ class MatterSampleChecker:
         self.result.extend(test_case.run(self.config))
 
     def generate_report(self) -> str:
-        """Generate the final report."""
+        """Generate the final report.
+
+        When live_progress is on, every info/warning/issue message has
+        already been printed as it happened, so repeating the full itemized
+        listing here would show every result twice. In that case, only the
+        counts and the final verdict banner are emitted; the itemized
+        listing is only included when nothing was streamed live.
+        """
         report = []
+        condensed = self.config.live_progress
 
         if self.config.sample_path:
             report.append("=" * 60)
@@ -64,30 +74,50 @@ class MatterSampleChecker:
             report.append(f"Check time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             report.append("=" * 60)
 
-        report.append("\nℹ️  INFORMATION:")
-        for info_item in self.result:
-            if info_item.level == LEVELS["info"]:
-                report.append(f"  {info_item.message}")
-            if info_item.level == LEVELS["debug"] and self.config.verbose:
-                report.append(f"  {info_item.message}")
-
         warnings_count = len(
             [result for result in self.result if result.level == LEVELS["warning"]]
         )
-        if warnings_count > 0:
-            report.append(f"\n⚠️  WARNINGS ({warnings_count}):")
-            for i, warning in enumerate(
-                [result for result in self.result if result.level == LEVELS["warning"]], 1
-            ):
-                report.append(f"  {i}. {warning.message}")
-
         issues_count = len([result for result in self.result if result.level == LEVELS["issue"]])
-        if issues_count > 0:
-            report.append(f"\n❌ ISSUES FOUND ({issues_count}):")
-            for i, issue in enumerate(
-                [result for result in self.result if result.level == LEVELS["issue"]], 1
-            ):
-                report.append(f"  {i}. {issue.message}")
+
+        if condensed:
+            report.append("\nℹ️  SUMMARY (details were already printed above):")
+            report.append(f"  ⚠️  {warnings_count} warning(s)")
+            report.append(f"  ❌ {issues_count} issue(s)")
+            if issues_count > 0:
+                report.append("\n❌ ISSUES (repeated for quick scanning):")
+                for index, issue in enumerate(
+                    [result for result in self.result if result.level == LEVELS["issue"]],
+                    start=1,
+                ):
+                    report.append(f"  [{index}] {issue.message}")
+            if warnings_count > 0:
+                report.append("\n⚠️  WARNINGS (repeated for quick scanning):")
+                for index, warning in enumerate(
+                    [result for result in self.result if result.level == LEVELS["warning"]],
+                    start=1,
+                ):
+                    report.append(f"  [{index}] {warning.message}")
+        else:
+            report.append("\nℹ️  INFORMATION:")
+            for info_item in self.result:
+                if info_item.level == LEVELS["info"]:
+                    report.append(f"  {info_item.message}")
+                if info_item.level == LEVELS["debug"] and self.config.verbose:
+                    report.append(f"  {info_item.message}")
+
+            if warnings_count > 0:
+                report.append(f"\n⚠️  WARNINGS ({warnings_count}):")
+                for i, warning in enumerate(
+                    [result for result in self.result if result.level == LEVELS["warning"]], 1
+                ):
+                    report.append(f"  {i}. {warning.message}")
+
+            if issues_count > 0:
+                report.append(f"\n❌ ISSUES FOUND ({issues_count}):")
+                for i, issue in enumerate(
+                    [result for result in self.result if result.level == LEVELS["issue"]], 1
+                ):
+                    report.append(f"  {i}. {issue.message}")
 
         report.append("\n" + "=" * 60)
         if issues_count == 0:
@@ -98,7 +128,15 @@ class MatterSampleChecker:
 
         return "\n".join(report)
 
+    def _handle_live_progress(self, level: str, message: str) -> None:
+        if level == LEVELS["debug"] and not self.config.verbose:
+            return
+        print(message, flush=True)
+
     def run_checks(self):
+        if self.config.live_progress:
+            self.config.progress_handler = self._handle_live_progress
+
         # Run all checks
         for check_class in self.check_classes:
             try:

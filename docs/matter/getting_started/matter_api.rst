@@ -20,7 +20,7 @@ There is no one unified, documented Matter SDK API that can be referenced when d
 Instead, to learn how to interact with the Matter library, a Matter firmware developer must peruse the source code of any of the existing Matter sample applications.
 To aid developers, Nordic Semiconductor provides a unified API that wraps initialization of Matter-specific components into more user-friendly high level code.
 
-The Matter application code in the |NCS| can be divided into the following steps:
+The Matter application code in the |addon| can be divided into the following steps:
 
 1. Initialization of application-specific components.
    This includes initialization of hardware modules and registration of proprietary Bluetooth® LE services.
@@ -29,7 +29,7 @@ The Matter application code in the |NCS| can be divided into the following steps
 #. Interaction between the application and the Matter Data Model.
    This is based on the Zigbee Cluster Library (ZCL) callbacks.
 
-Steps 1 to 3 can be implemented with the use of the nRF Connect Matter API and the utilities provided as a part of Matter add-on's ``subsys`` modules (:file:`subsys`).
+Steps 1 to 3 can be implemented with the use of the nRF Connect Matter API and the utilities provided as a part of Matter add-on's ``subsys`` modules (:local:file:`subsys`).
 Step 4 requires ZCL callback functions that must be provided to interact with the Matter Data Model.
 These callbacks are specific to the particular configuration of the Data Model (in other words, the supported clusters) and therefore cannot be generalized or abstracted in a more user-friendly form.
 
@@ -108,49 +108,49 @@ The default implementation object is stripped by the compiler if the user overwr
 
 The nRF Connect Matter API contains the following functions that can be used to initialize Matter components in proper order:
 
-:c:func:`PrepareServer()`:
+:local:c:func:`subsys/app/matter_init.h#PrepareServer`:
   This function schedules the initialization of Matter components, including memory, server configuration and networking backend.
   Depending on the selected Kconfig options, the initialization may also include factory data and operational key storage.
   All initialization procedures are scheduled to the Matter thread to provide a synchronization between all components and the application code.
 
-  This function accepts an :c:struct:`InitData` argument that contains the implementation of all required Matter interfaces.
-  If no argument is provided, this function uses the default-constructed :c:struct:`InitData` temporary object.
-  After this function is used, the :c:func:`StartServer` function must be called to start the Matter thread, eventually execute the initialization, and wait to synchronize the caller's thread with the Matter thread.
+  This function accepts an :local:c:struct:`subsys/app/matter_init.h#InitData` argument that contains the implementation of all required Matter interfaces.
+  If no argument is provided, this function uses the default-constructed :local:c:struct:`subsys/app/matter_init.h#InitData` temporary object.
+  After this function is used, the :local:c:func:`subsys/app/matter_init.h#StartServer` function must be called to start the Matter thread, eventually execute the initialization, and wait to synchronize the caller's thread with the Matter thread.
 
-:c:func:`StartServer()`:
+:local:c:func:`subsys/app/matter_init.h#StartServer`:
   This is a blocking function that starts the Matter thread and waits until all Matter server components are initialized.
 
-:c:func:`GetFactoryDataProvider()`:
+:local:c:func:`subsys/app/matter_init.h#GetFactoryDataProvider`:
   This function returns the generic pointer to the ``FactoryDataProvider`` object that was set during the initialization.
-  It can be used when you need to access factory data at the Matter server initialization stage or as a part of the post initialization callback (``mPostServerInitClbk`` in :c:struct:`InitData`).
+  It can be used when you need to access factory data at the Matter server initialization stage or as a part of the post initialization callback (``mPostServerInitClbk`` in :local:c:struct:`subsys/app/matter_init.h#InitData`).
 
   This function is only available if the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option is selected.
 
-For more details regarding nRF Connect Matter initialization API, refer to the Doxygen commentary in the :file:`subsys/app/matter_init.h` header file.
+For more details regarding nRF Connect Matter initialization API, refer to the Doxygen commentary in the :local:file:`subsys/app/matter_init.h` header file.
 
 Event handler API
 =================
 
 The Matter SDK provides a notification scheme based on the public events that are propagated from the Matter stack to the application layer.
 The nRF Connect Matter event handler API provides mechanisms to register and unregister custom functions that handle these events within an application.
-This module also includes a default handler that is used in |NCS| Matter samples and applications.
+This module also includes a default handler that is used in |addon| Matter samples and applications.
 
-The specific Matter events that can be handled in the application are listed in the :file:`ncs/modules/lib/matter/src/include/platform/CHIPDeviceEvent.h` header file.
+The specific Matter events that can be handled in the application are listed in the :external:file:`ncs/modules/lib/matter/src/include/platform/CHIPDeviceEvent.h` header file.
 The nRF Connect Matter API contains of the following functions that can be used to handle events:
 
-:c:func:`RegisterEventHandler()`:
+:local:c:func:`subsys/app/matter_event_handler.h#RegisterEventHandler`:
   This function is used to register the provided Matter event handler(``EventHandlerFunct``) in a thread-safe manner.
   It is safe to call this function in the application after the Matter server has already been initialized.
 
-:c:func:`UnregisterEventHandler()`:
+:local:c:func:`subsys/app/matter_event_handler.h#UnregisterEventHandler`:
   This function is used to unregister the provided Matter event handler(``EventHandlerFunct``) in a thread-safe manner.
   It is safe to call this function in the application after the Matter server has already been initialized.
 
-:c:func:`DefaultEventHandler()`:
+:local:c:func:`subsys/app/matter_event_handler.h#DefaultEventHandler`:
   This is an nRF Connect Matter event handler function that is registered in the nRF Connect Matter Initialization API by default.
-  You can unregister this handler with the :c:func:`UnregisterEventHandler` function in the application if needed.
+  You can unregister this handler with the :local:c:func:`subsys/app/matter_event_handler.h#UnregisterEventHandler` function in the application if needed.
 
-For more details regarding nRF Connect Matter event handler API, refer to the Doxygen commentary in the :file:`subsys/app/matter_event_handler.h` header file.
+For more details regarding nRF Connect Matter event handler API, refer to the Doxygen commentary in the :local:file:`subsys/app/matter_event_handler.h` header file.
 
 nRF Connect Matter API usage example
 ====================================
@@ -194,28 +194,28 @@ Combining both aforementioned nRF Connect Matter APIs, you can develop an applic
          return Nrf::Matter::StartServer();
    }
 
-Note that the ``PrepareServer()`` call may contain more fields of the :c:struct:`InitData` being initialized, or can be called without any explicit argument.
+Note that the ``PrepareServer()`` call may contain more fields of the :local:c:struct:`subsys/app/matter_init.h#InitData` being initialized, or can be called without any explicit argument.
 If there is no explicit argument, the default initialization will be provided.
-For more references and examples on how to leverage the nRF Connect Matter APIs, examine the source code for the :ref:`matter_samples` in the |NCS|.
+For more references and examples on how to leverage the nRF Connect Matter APIs, examine the source code for the :ref:`matter_samples` in the |addon|.
 
 Interacting with Matter Data Model
 **********************************
 
 The Matter SDK Data Model interacs with the user's code based on callbacks that can be implemented by the application.
-The generic callbacks that are common for Matter applications, regardless of the clusters configuration, are defined in the :file:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h` header file.
-The weak implementations of these functions, that can be overwritten in the application, are provided in the :file:`ncs/modules/lib/matter/src/app/util/generic-callback-stubs.cpp` source file.
+The generic callbacks that are common for Matter applications, regardless of the clusters configuration, are defined in the :external:file:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h` header file.
+The weak implementations of these functions, that can be overwritten in the application, are provided in the :external:file:`ncs/modules/lib/matter/src/app/util/generic-callback-stubs.cpp` source file.
 
-For example, the :c:func:`MatterPostAttributeChangeCallback` function is called by the Matter Data Model engine directly after an attribute value is changed.
+For example, the :external:c:func:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h#MatterPostAttributeChangeCallback` function is called by the Matter Data Model engine directly after an attribute value is changed.
 The value passed into this callback is the value to which the attribute was set by the framework.
 In addition to the value, this function is called with the attribute path ( of ``chip::app::ConcreteAttributePath`` type) that can be used to filter the cluster and particular attribute.
-The :c:func:`MatterPostAttributeChangeCallback` function is useful if you need to provide the synchronization between the Data Model and the application state.
+The :external:c:func:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h#MatterPostAttributeChangeCallback` function is useful if you need to provide the synchronization between the Data Model and the application state.
 For instance, a Matter device that implements a light bulb may drive the state of the LED based on the ``On/Off`` attribute value.
 Every change of this attribute is reported by the aforementioned callback and thus can be captured in the application layer.
 
-In addition to the :c:func:`MatterPostAttributeChangeCallback` function, Matter defines other generic callbacks that can be employed in different use cases.
-For example, the :c:func:`emberAfExternalAttributeReadCallback` and :c:func:`emberAfExternalAttributeWriteCallback` functions can be used to store and handle attributes externally, by bypassing the Matter Data Model framework.
-To learn the complete set of Matter generic callbacks, refer to the :file:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h` header file and included Doxygen commentary.
-An example implementation of the :c:func:`MatterPostAttributeChangeCallback` that can be used to control the Door Lock Matter device type is listed below:
+In addition to the :external:c:func:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h#MatterPostAttributeChangeCallback` function, Matter defines other generic callbacks that can be employed in different use cases.
+For example, the :external:c:func:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h#emberAfExternalAttributeReadCallback` and :external:c:func:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h#emberAfExternalAttributeWriteCallback` functions can be used to store and handle attributes externally, by bypassing the Matter Data Model framework.
+To learn the complete set of Matter generic callbacks, refer to the :external:file:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h` header file and included Doxygen commentary.
+An example implementation of the :external:c:func:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h#MatterPostAttributeChangeCallback` that can be used to control the Door Lock Matter device type is listed below:
 
 .. code-block:: C++
 
@@ -243,12 +243,12 @@ An example implementation of the :c:func:`MatterPostAttributeChangeCallback` tha
 In addition to Matter generic callbacks, the Matter Data Model engine provides callbacks that are cluster-specific.
 These callbacks are usually defined as weak functions in the :file:`callback-stub.cpp` file that is generated together with other C++ source files when configuring clusters automatically with the `ZCL Advanced Platform`_ (ZAP tool).
 In case of some clusters, however, a different approach is used and related callbacks are defined within the source code that constitutes the implementation of the cluster itself.
-As an example, the ``DoorLock`` cluster server implementation defines application callbacks in the :file:`ncs/modules/lib/matter/src/app/clusters/door-lock-server/door-lock-server.h` header file and places the related weak implementations in the :file:`ncs/modules/lib/matter/src/app/clusters/door-lock-server/door-lock-server-callback.cpp` file.
+As an example, the ``DoorLock`` cluster server implementation defines application callbacks in the :external:file:`ncs/modules/lib/matter/src/app/clusters/door-lock-server/door-lock-server.h` header file and places the related weak implementations in the :external:file:`ncs/modules/lib/matter/src/app/clusters/door-lock-server/door-lock-server-callback.cpp` file.
 
 .. note::
    Most of the Matter Data Model callback function names are prefixed with ``emberAf``.
    The reason for this is the fact that the Matter Data Model inherits extensively from the Zigbee Ember Application Framework API.
 
-In the |NCS|, all Matter samples follow the same convention and implement the described Matter Data Model callbacks in the :file:`zcl_callbacks.cpp` files which are populated as a part of the application source code.
-You can review the :file:`zcl_callbacks.cpp` file of any |NCS| Matter sample to find example implementations of various Data Model callbacks.
-For instance, you can find the reference implementation of ``DoorLock``-specific Matter Data Model callbacks in the :file:`ncs/nrf/samples/matter/lock/src/zcl_callbacks.cpp` source file.
+In the |addon|, all Matter samples follow the same convention and implement the described Matter Data Model callbacks in the :file:`zcl_callbacks.cpp` files which are populated as a part of the application source code.
+You can review the :file:`zcl_callbacks.cpp` file of any |addon| sample to find example implementations of various Data Model callbacks.
+For instance, you can find an example implementation of the :external:c:func:`ncs/modules/lib/matter/src/app/util/generic-callbacks.h#MatterPostAttributeChangeCallback` function in the :external:file:`ncs/nrf/samples/matter/light_bulb/src/zcl_callbacks.cpp` source file.

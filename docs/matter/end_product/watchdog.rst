@@ -10,7 +10,7 @@ Matter watchdog
 A watchdog is a type of hardware timer responsible for rebooting the device if it does not receive a specific signal within a designated time window.
 This signal is referred to as a *feeding signal*, and sending the signal is referred to as *feeding the watchdog*.
 
-In |NCS| Matter samples, you can create multiple watchdog sources and assign them to specific functions.
+In |addon| Matter samples, you can create multiple watchdog sources and assign them to specific functions.
 Each watchdog source created must be fed to reset the timer and prevent the device from rebooting.
 
 Overview
@@ -35,7 +35,7 @@ By default, the timeout is set to 10 minutes.
 
 .. note::
 
-   The Matter watchdog implementation demonstrates how to use the Zephyr watchdog API and is specifically designed for Matter samples within the |NCS|.
+   The Matter watchdog implementation demonstrates how to use the Zephyr watchdog API and is specifically designed for Matter samples within the |addon|.
    If you want to use it in your application, refer to the source code and Kconfig options from this implementation.
 
 .. _ug_matter_device_watchdog_pause_mode:
@@ -59,7 +59,7 @@ By default, Matter samples enable the pause mode only during debugging.
 Creating a Matter watchdog source
 *********************************
 
-The Matter watchdog feature is based on the ``Nrf::WatchdogSource`` class, which is located in the :file:`samples\matter\common\src\watchdog\watchdog.h` file.
+The Matter watchdog feature is based on the ``Nrf::WatchdogSource`` class, which is located in the :local:file:`subsys/watchdog/watchdog.h` file.
 Each Matter watchdog source constructor includes two optional arguments:
 
 * ``feedingInterval`` - Specifies the duration in milliseconds for automatically calling the attached feeding callback.
@@ -206,7 +206,7 @@ Feeding manually
 Enabling and disabling the watchdog peripheral
 **********************************************
 
-The Global watchdog used in the |NCS| Matter samples is a single peripheral that operates independently of the CPU cores and includes multiple channels.
+The Global watchdog used in the |addon| Matter samples is a single peripheral that operates independently of the CPU cores and includes multiple channels.
 Although it is necessary to feed channels within their respective time windows separately, you cannot disable an individual channel without disabling the entire watchdog peripheral.
 Instead, you can disable the entire watchdog peripheral, and if you wish to re-enable it, you must also restore all other watchdog sources.
 

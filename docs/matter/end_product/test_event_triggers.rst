@@ -217,7 +217,7 @@ Then, set the :kconfig:option:`CONFIG_CHIP_DEVICE_ENABLE_KEY` Kconfig option to 
 
 If :kconfig:option:`SB_CONFIG_MATTER_ADD_ON_FACTORY_DATA_GENERATE` is set to ``n``, follow the :ref:`ug_matter_device_factory_provisioning` guide in the Matter documentation to generate the factory data set with the specific key value.
 
-If you do not use the |NCS| Matter common module, you need to read the enable key value manually from the factory data set and provide it to the ``TestEventTrigger`` class.
+If you do not use the |addon| Matter subsystem, you need to read the enable key value manually from the factory data set and provide it to the ``TestEventTrigger`` class.
 
 For example:
 

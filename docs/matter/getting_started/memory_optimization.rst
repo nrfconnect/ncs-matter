@@ -7,19 +7,19 @@ Optimizing memory usage in Matter applications
    :local:
    :depth: 2
 
-You can use different approaches to optimizing the memory usage of your Matter application, both on the |NCS| side and in the Matter SDK.
+You can use different approaches to optimizing the memory usage of your Matter application, both on the |addon| side and in the Matter SDK.
 
-Reducing memory usage on the |NCS| side
-***************************************
+Reducing memory usage on the |addon| side
+*****************************************
 
-See the `Application memory`_ guide for information about how to reduce memory usage for the |NCS| generally and for specific subsystems in particular, including Bluetooth® LE, Matter, and Thread.
+See the `Application memory`_ guide for information about how to reduce memory usage for the |addon| generally and for specific subsystems in particular, including Bluetooth® LE, Matter, and Thread.
 
 .. _ug_matter_device_optimizing_memory_logs:
 
 Cutting off log regions for Matter SDK modules
 **********************************************
 
-The Matter SDK, included in the |NCS| as one of the submodule repositories using a `dedicated Matter fork`_, provides a custom mechanism for optimizing memory usage in a Matter application.
+The Matter SDK, included in the |addon| as one of the submodule repositories using a `dedicated Matter fork`_, provides a custom mechanism for optimizing memory usage in a Matter application.
 This solution defines a series of logging modules, each of which is a logical section of code that is a source of log messages and can include one or more files.
 For the complete list of modules, see the Matter SDK's `LogModule enumeration`_.
 
@@ -73,7 +73,7 @@ Alternatively, you can enable each option separately.
 The Kconfig option enables the following functionalities on the Matter device:
 
 - :ref:`ug_matter_configuring_settings_shell` by setting the :option:`CONFIG_MATTER_SETTINGS_SHELL` Kconfig option to ``y``.
-- :doc:`Command-line interface <matter:nrfconnect_examples_cli>` by setting the :kconfig:option:`CONFIG_CHIP_LIB_SHELL` Kconfig option to ``y``.
+- `Matter CLI examples guide`_ by setting the :kconfig:option:`CONFIG_CHIP_LIB_SHELL` Kconfig option to ``y``.
 - Zephyr Kernel commands by setting the :kconfig:option:`CONFIG_KERNEL_SHELL` Kconfig option to ``y``.
 - Zephyr Settings shell by setting the :kconfig:option:`CONFIG_SETTINGS_SHELL` Kconfig option to ``y``.
 - OpenThread shell by setting the :kconfig:option:`CONFIG_OPENTHREAD_SHELL` Kconfig option to ``y`` if you build the Matter over Thread variant.
@@ -155,7 +155,7 @@ The NVS Settings usage may change during the device's lifetime.
 The ``storage_partition`` partition can only be changed by reflashing the Matter device.
 This means that it cannot be altered through DFU (Device Firmware Update).
 Because of this, you need to be careful when setting the partition, and should allocate some free space to ensure that it can accommodate more data in the future.
-The data used within this partition may increase with updates to Matter and the |NCS|.
+The data used within this partition may increase with updates to Matter and the |addon|.
 
 If this functionality is enabled, you can use :ref:`ug_matter_configuring_settings_shell`.
 
@@ -311,7 +311,7 @@ You can adjust the stack values for your application using estimations based on 
 Configuring memory usage
 ========================
 
-Most of the Matter samples in the |NCS| have a safe configuration that assumes a high number of free space for heap, stacks, and settings partition size.
+Most of the Matter samples in the |addon| have a safe configuration that assumes a high number of free space for heap, stacks, and settings partition size.
 After measuring the memory usage, you may want to adjust the memory parameters according to your project's requirements.
 
 The following sections present a guide on how to adjust specific maximum memory values.
@@ -324,7 +324,7 @@ Settings usage
     The ``settings_storage`` partition can only be changed by reflashing the Matter device.
     This means that it cannot be altered through DFU (Device Firmware Update).
     Because of this, you need to be careful when setting the partition, and should allocate some free space to ensure that it can accommodate more data in the future.
-    The data used within this partition may increase with updates to Matter and the |NCS|.
+    The data used within this partition may increase with updates to Matter and the |addon|.
 
 To adjust the settings usage, you need to modify the :file:`boards/<board_name>.overlay` board file related to your target board.
 For example, to modify the ``storage_partition`` partition in the :ref:`Matter Template <matter_template_sample>` sample for the ``nrf54l15dk/nrf54l15/cpuapp`` target, complete the following steps:
@@ -345,7 +345,7 @@ For example, to modify the ``storage_partition`` partition in the :ref:`Matter T
 #. Modify the ``reg`` value to adjust the size of the ``storage_partition`` partition.
 #. Align all other partitions to not overlap any memory regions.
 #. Align the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option value to the used NVS sectors.
-   Each target in |NCS| Matter samples uses 4 kB NVS sectors, so you can divide the ``storage_partition`` partition size by 4096 (0x1000) to get the value you need to set for the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option.
+   Each target in |addon| Matter samples uses 4 kB NVS sectors, so you can divide the ``storage_partition`` partition size by 4096 (0x1000) to get the value you need to set for the :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT` Kconfig option.
 
 To learn more about partitioning, see the :ref:`ug_matter_device_bootloader_partition_layout` guide.
 
@@ -378,7 +378,7 @@ The following table presents the possible threads used in a Matter application a
 | idle                | :kconfig:option:`CONFIG_IDLE_STACK_SIZE`                         | The Idle thread that work while any other thread is not        |
 |                     |                                                                  | working.                                                       |
 +---------------------+------------------------------------------------------------------+----------------------------------------------------------------+
-| MPSL Work           | :kconfig:option:`CONFIG_MPSL_WORK_STACK_SIZE`                    | :ref:`lib_mpsl_libraries` thread stack.                        |
+| MPSL Work           | :kconfig:option:`CONFIG_MPSL_WORK_STACK_SIZE`                    | `Multiprotocol Service Layer libraries`_ thread stack.         |
 |                     |                                                                  | Switching times slots for multi-protocol purposes.             |
 +---------------------+------------------------------------------------------------------+----------------------------------------------------------------+
 | sysworkq            | :kconfig:option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE`             | Zephyr stack. Switching context purposes.                      |

@@ -8,7 +8,7 @@ Matter debug snippet (matter-debug)
    :local:
    :depth: 2
 
-To build with this snippet, follow the instructions in the :ref:`using-snippets` page.
+To build with this snippet, follow the instructions in the `Using snippets`_ page.
 
 
 .. tabs::

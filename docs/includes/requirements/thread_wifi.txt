@@ -1,4 +1,4 @@
-If you want to commission the |matter_name| device and control it remotely through a Thread or Wi-Fi network, you need to set-up the `Thread Border Router <Thread Border Router_>`_ (Matter over Thread only) and control it with the :ref:`CHIP Tool <ug_matter_gs_tools_chip>`, or use a commercial ecosystem controller.
+If you want to commission the |matter_name| device and control it remotely through a Thread or Wi-Fi network, you need to set-up the `Thread Border Router`_ (Matter over Thread only) and control it with the :ref:`CHIP Tool <ug_matter_gs_tools_chip>`, or use a commercial ecosystem controller.
 When this happens, you will also be able to control it through a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
 This requires additional hardware depending on the setup you choose.
 
