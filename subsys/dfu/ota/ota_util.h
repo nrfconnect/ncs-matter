@@ -8,7 +8,6 @@
 
 #if CONFIG_CHIP_OTA_REQUESTOR
 #include "ota_image_processor_base_impl.h"
-#include <platform/nrfconnect/OTAImageProcessorImpl.h>
 #endif
 
 namespace Nrf::Matter
@@ -23,7 +22,7 @@ namespace Nrf::Matter
  * powers off the external flash when no longer needed. Otherwise, select the
  * most basic implementation.
  */
-chip::DeviceLayer::OTAImageProcessorImpl &GetOTAImageProcessor();
+OTAImageProcessorBaseImpl &GetOTAImageProcessor();
 
 /** Initialize basic OTA requestor.
  *

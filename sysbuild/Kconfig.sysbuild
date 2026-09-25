@@ -11,3 +11,10 @@ rsource "Kconfig.matter"
 # Disable parttion manager globally.
 config PARTITION_MANAGER
     default n
+
+choice BOOTLOADER
+	default BOOTLOADER_NONE if BOARD_NATIVE_SIM
+endchoice
+
+config MATTER_ADD_ON_FACTORY_DATA_GENERATE
+	default n if BOARD_NATIVE_SIM

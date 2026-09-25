@@ -12,6 +12,12 @@
 #include "board/led_widget.h"
 #include <functional>
 
+#ifdef CONFIG_DK_LIBRARY
+#include <dk_buttons_and_leds.h>
+#else
+using button_handler_t = void (*)(uint32_t button_state, uint32_t has_changed);
+#endif
+
 #include <platform/CHIPDeviceEvent.h>
 
 namespace Nrf
