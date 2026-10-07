@@ -36,6 +36,20 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  applications.matter_bridge.nrf7120.release:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=release
+      - CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
+      - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      - CONFIG_CHIP_WIFI=y
+      - CONFIG_WIFI_NRF71_PATCH=y
+      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
   applications.matter_bridge.debug:
     sysbuild: true
     build_only: true
@@ -64,6 +78,19 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  applications.matter_bridge.nrf7120.debug:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
+      - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      - CONFIG_CHIP_WIFI=y
+      - CONFIG_WIFI_NRF71_PATCH=y
+      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
   applications.matter_bridge.br_ble:
     sysbuild: true
     build_only: true
@@ -94,6 +121,20 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  applications.matter_bridge.nrf7120.br_ble:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - CONFIG_BRIDGED_DEVICE_BT=y
+      - CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
+      - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      - CONFIG_CHIP_WIFI=y
+      - CONFIG_WIFI_NRF71_PATCH=y
+      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
   applications.matter_bridge.release.br_ble:
     sysbuild: true
     build_only: true
@@ -126,6 +167,21 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  applications.matter_bridge.nrf7120.release.br_ble:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=release
+      - CONFIG_BRIDGED_DEVICE_BT=y
+      - CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
+      - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      - CONFIG_CHIP_WIFI=y
+      - CONFIG_WIFI_NRF71_PATCH=y
+      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
   applications.matter_bridge.br_ble.smp_dfu:
     sysbuild: true
     build_only: true
