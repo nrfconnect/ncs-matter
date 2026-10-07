@@ -381,9 +381,12 @@ CHIP_ERROR BridgeManager::HandleRead(uint16_t index, ClusterId clusterId,
 				     uint16_t maxReadLength)
 {
 	VerifyOrReturnError(attributeMetadata && buffer, CHIP_ERROR_INVALID_ARGUMENT);
+	VerifyOrReturnError(index != kEmberInvalidEndpointIndex, CHIP_ERROR_INVALID_ARGUMENT);
 	VerifyOrReturnValue(Instance().mDevicesMap.Contains(index), CHIP_ERROR_INTERNAL);
 
 	auto *device = Instance().mDevicesMap[index].mDevice;
+
+	VerifyOrReturnError(device != nullptr, CHIP_ERROR_INTERNAL);
 
 	/* Handle reads for the generic information for all bridged devices. Provide a valid answer even if device state
 	 * is unreachable. */
