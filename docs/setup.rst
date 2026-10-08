@@ -72,6 +72,8 @@ Follow the `Installing the nRF Connect SDK`_ instructions, with the following ex
 
    .. group-tab:: Command line
 
+      Alternatively, you can use the automated setup script described in :ref:`ncs_matter_setup_script`.
+
       **Initialize a new workspace:**
 
       1. Run the following command to initialize west with the |addon|, which also initializes the |NCS| v\ |ncs_version|:

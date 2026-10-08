@@ -18,6 +18,7 @@ For additional context on other solutions, refer to the following resources:
    :glob:
 
    setup
+   setup_script
    samples/index
    snippets/index
    matter/index
