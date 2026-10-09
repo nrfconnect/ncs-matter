@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * ST-NUCLEO-NFC stacked on nRF5340 DK Arduino UNO R3 headers.
+ *
+ * Shield wiring when stacked on Arduino UNO R3
+ *   SDA  -> D14     -> P1.2   (arduino_i2c / TWIM, i2c1)
+ *   SCL  -> D15     -> P1.3   (arduino_i2c / TWIM, i2c1)
+ *   VCC  -> P0.4    (tag supply enable; DK Arduino A0)
+ *   CTRL -> P0.6    (BiDir wake; DK Arduino A2, open-drain + shield pull-up)
+ *   3V3 (direct)
+ *   GND (direct)
+ *
+ */
+
+#include <zephyr/dt-bindings/gpio/nordic-nrf-gpio.h>
+
+&adc {
+	status = "disabled";
+};
+
+&spi1 {
+	status = "disabled";
+};
+
+&arduino_adc {
+	status = "disabled";
+};
+
+&arduino_spi {
+	status = "disabled";
+};
+
+&arduino_i2c {
+	status = "okay";
+	/delete-property/ zephyr,pm-device-runtime-auto;
+	clock-frequency = <I2C_BITRATE_FAST>;
+	zephyr,concat-buf-size = <512>;
+
+	st25dac: st25dac@c {
+		compatible = "st,st25dac";
+		reg = <0x0c>;
+		status = "okay";
+		ctrl-gpios = <&gpio0 6 (GPIO_OPEN_DRAIN | GPIO_ACTIVE_HIGH)>;
+		vcc-gpios = <&gpio0 4 (GPIO_PUSH_PULL | GPIO_ACTIVE_HIGH | NRF_GPIO_DRIVE_H0H1)>;
+	};
+};

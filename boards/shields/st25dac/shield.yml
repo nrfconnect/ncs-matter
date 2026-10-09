@@ -1,0 +1,7 @@
+shield:
+  name: st_25_dac
+  full_name: ST-25-DAC ST25DA-C Matter NFC shield
+  vendor: st
+  supported_features:
+    - i2c
+    - gpio

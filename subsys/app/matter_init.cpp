@@ -66,7 +66,11 @@
 
 #ifdef CONFIG_CHIP_NFC_BASED_COMMISSIONING
 #include <platform/internal/NFCCommissioningManager.h>
-#endif
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
+#include "app/task_executor.h"
+#include "nfc_commissioning/nfc_unpowered_commissioning.h"
+#endif // CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
+#endif // CONFIG_CHIP_NFC_BASED_COMMISSIONING
 
 #include <zephyr/logging/log.h>
 
@@ -92,7 +96,9 @@ app::Clusters::NetworkCommissioning::InstanceAndDriver<NetworkCommissioning::Gen
 #endif
 
 #ifdef CONFIG_CHIP_CRYPTO_PSA
+#ifndef CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
 chip::Crypto::PSAOperationalKeystore Nrf::Matter::InitData::sOperationalKeystoreDefault{};
+#endif
 #endif
 
 #ifdef CONFIG_CHIP_STORE_KEYS_IN_KMU
@@ -339,6 +345,7 @@ void DoInitChipServer(intptr_t /* unused */)
 #endif
 
 #ifdef CONFIG_CHIP_CRYPTO_PSA
+	/* Reserve the (hybrid) keystore before CommonCaseDeviceServerInitParams installs defaults. */
 	sLocalInitData.mServerInitParams->operationalKeystore = sLocalInitData.mOperationalKeyStore;
 #endif
 
@@ -352,6 +359,14 @@ void DoInitChipServer(intptr_t /* unused */)
 	VerifyOrReturn(sLocalInitData.mServerInitParams, LOG_ERR("No valid server initialization parameters"));
 	sInitResult = sLocalInitData.mServerInitParams->InitializeStaticResourcesBeforeServerInit();
 	VerifyInitResultOrReturn(sInitResult, "InitializeStaticResourcesBeforeServerInit() failed");
+
+#ifdef CONFIG_CHIP_CRYPTO_PSA
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
+	sInitResult = chip::DeviceLayer::NfcCommissioning::Instance().GetHybridOperationalKeystore().Init(
+		sLocalInitData.mServerInitParams->persistentStorageDelegate);
+	VerifyInitResultOrReturn(sInitResult, "NFCHybridOperationalKeystore::Init() failed");
+#endif // CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
+#endif // CONFIG_CHIP_CRYPTO_PSA
 
 	/* Inject Nordic specific group data provider that allows for optimization of factory reset. */
 	Nrf::Matter::GroupDataProviderImpl::Instance().SetStorageDelegate(
@@ -413,6 +428,19 @@ void DoInitChipServer(intptr_t /* unused */)
 	sInitResult = Nrf::Watchdog::Enable() ? CHIP_NO_ERROR : CHIP_ERROR_INTERNAL;
 	VerifyInitResultOrReturn(sInitResult, "Cannot enable global Watchdog");
 #endif
+
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
+#ifdef CONFIG_MATTER_NFC_COMMISSIONING_BUTTON_TRIGGER
+	NfcCommissioningButtonInit();
+#endif
+	/* Defer until ST25DA-C GPIO init (SYS_INIT) has settled; VCC stays off until Run(). */
+	(void) chip::DeviceLayer::SystemLayer().StartTimer(
+		chip::System::Clock::Milliseconds32(500),
+		[](chip::System::Layer *, void * /* context */) {
+			chip::DeviceLayer::NfcCommissioning::Instance().RequestRun();
+		},
+		nullptr);
+#endif // CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
 }
 
 CHIP_ERROR WaitForReadiness()

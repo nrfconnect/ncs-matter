@@ -7,6 +7,10 @@
 #include "matter_event_handler.h"
 #include "group_data_provider.h"
 
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
+#include "nfc_commissioning/nfc_unpowered_commissioning.h"
+#endif
+
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"
 #endif
@@ -73,7 +77,23 @@ void DefaultEventHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
 	case DeviceEventType::kFactoryReset:
 		GroupDataProviderImpl::Instance().WillBeFactoryReset();
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
+		if (chip::DeviceLayer::NfcCommissioning::Instance().FactoryReset() != NFC_COMMISSIONING_STATUS_OK) {
+			LOG_WRN("Failed to factory reset NFC tag");
+		} else {
+			LOG_INF("NFC tag factory reset successfully");
+		}
+#endif
 		break;
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
+	case DeviceEventType::kCommissioningComplete:
+		if (chip::DeviceLayer::NfcCommissioning::Instance().ClearTagData() != NFC_COMMISSIONING_STATUS_OK) {
+			LOG_WRN("Failed to clear NFC commissioning TLV after success");
+		} else {
+			LOG_INF("NFC commissioning TLV cleared successfully");
+		}
+		break;
+#endif
 	default:
 		break;
 	}

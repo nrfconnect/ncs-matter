@@ -159,5 +159,6 @@ config MATTER_ZAP_CLI_INSTALL_PATH
 rsource "persistent_storage/Kconfig"
 rsource "watchdog/Kconfig"
 rsource "diagnostic/Kconfig"
+rsource "nfc_commissioning/Kconfig"
 
 endif # CHIP

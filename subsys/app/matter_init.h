@@ -24,6 +24,10 @@
 #include <crypto/PSAOperationalKeystore.h>
 #endif
 
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
+#include "nfc_commissioning/nfc_unpowered_commissioning.h"
+#endif
+
 #ifdef CONFIG_CHIP_STORE_KEYS_IN_KMU
 #include <platform/nrfconnect/KMUSessionKeystore.h>
 #endif
@@ -60,8 +64,7 @@ struct InitData {
 	chip::DeviceLayer::DeviceInfoProviderImpl *mDeviceInfoProvider{ &sDeviceInfoProviderDefault };
 #ifdef CONFIG_CHIP_FACTORY_DATA
 	/** @brief Pointer to the user provided FactoryDataProvider implementation. */
-	chip::DeviceLayer::FactoryDataProviderBase *mFactoryDataProvider
-	{
+	chip::DeviceLayer::FactoryDataProviderBase *mFactoryDataProvider{
 #if defined(CONFIG_CHIP_FACTORY_DATA_CUSTOM_BACKEND)
 		nullptr
 #elif defined(CONFIG_CHIP_FACTORY_DATA_NRFCONNECT_BACKEND)
@@ -71,7 +74,13 @@ struct InitData {
 #endif /* CONFIG_CHIP_FACTORY_DATA */
 #ifdef CONFIG_CHIP_CRYPTO_PSA
 	/** @brief Pointer to the user provided OperationalKeystore implementation. */
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
+	chip::Crypto::OperationalKeystore *mOperationalKeyStore{
+		&chip::DeviceLayer::NfcCommissioning::Instance().GetHybridOperationalKeystore()
+	};
+#else
 	chip::Crypto::OperationalKeystore *mOperationalKeyStore{ &sOperationalKeystoreDefault };
+#endif
 #endif
 #ifdef CONFIG_CHIP_STORE_KEYS_IN_KMU
 	/** @brief Pointer to the user provided SessionKeystore implementation. */
@@ -93,7 +102,9 @@ struct InitData {
 		sFactoryDataProviderDefault;
 #endif
 #ifdef CONFIG_CHIP_CRYPTO_PSA
+#ifdef CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
 	static chip::Crypto::PSAOperationalKeystore sOperationalKeystoreDefault;
+#endif
 #endif
 #ifdef CONFIG_CHIP_STORE_KEYS_IN_KMU
 	static chip::DeviceLayer::KMUSessionKeystore sKMUSessionKeystoreDefault;

@@ -66,10 +66,6 @@
 	status = "disabled";
 };
 
-&i2c1 {
-	status = "disabled";
-};
-
 &spi2 {
 	status = "disabled";
 };
