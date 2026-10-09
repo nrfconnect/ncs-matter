@@ -28,6 +28,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
     set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP n)
     endif()
 
+    if(SB_CONFIG_MATTER_ROOT_PATH)
+        string(CONFIGURE "${SB_CONFIG_MATTER_ROOT_PATH}" MATTER_ROOT_PATH)
+        cmake_path(ABSOLUTE_PATH MATTER_ROOT_PATH BASE_DIRECTORY "${APP_DIR}" NORMALIZE OUTPUT_VARIABLE MATTER_ROOT_PATH)
+        set_config_string(${DEFAULT_IMAGE} CONFIG_MATTER_ROOT_PATH ${MATTER_ROOT_PATH})
+    endif()
+
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
 
 #########################################################
@@ -43,12 +49,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   # Matter related configurations
   if(SB_CONFIG_ZEPHYR_CONNECTEDHOMEIP_MODULE AND SB_CONFIG_MATTER_ADD_ON)
     if(SB_CONFIG_MATTER_ADD_ON_FACTORY_DATA_GENERATE)
-      include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data.cmake)
+      string(CONFIGURE "${SB_CONFIG_MATTER_ROOT_PATH}" MATTER_ROOT_PATH)
+      include(${MATTER_ROOT_PATH}/config/nrfconnect/chip-module/generate_factory_data.cmake)
       nrfconnect_generate_factory_data()
     endif()
 
     if(SB_CONFIG_MATTER_ADD_ON_OTA AND SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
-      include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/zephyr/ota-image_sysbuild.cmake)
+      string(CONFIGURE "${SB_CONFIG_MATTER_ROOT_PATH}" MATTER_ROOT_PATH)
+      include(${MATTER_ROOT_PATH}/config/zephyr/ota-image_sysbuild.cmake)
       chip_ota_image(chip-ota-image
         INPUT_FILES ${CMAKE_BINARY_DIR}/dfu_multi_image.bin
         OUTPUT_FILE ${CMAKE_BINARY_DIR}/${SB_CONFIG_MATTER_ADD_ON_OTA_IMAGE_FILE_NAME}

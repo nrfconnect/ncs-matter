@@ -58,6 +58,8 @@ bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler
 		return false;
 	}
 
+	mButtonHandler = buttonHandler;
+
 	/* Register an additional button handler for the user purposes */
 	if (buttonHandler) {
 		static struct button_handler handler = {
@@ -232,6 +234,17 @@ void Board::FunctionTimerEventHandler()
 		/* Actually trigger Factory Reset */
 		sInstance.mFunction = BoardFunctions::None;
 		chip::Server::GetInstance().ScheduleFactoryReset();
+	}
+}
+
+void Board::DispatchButtonEvent(ButtonState buttonState, ButtonMask hasChanged)
+{
+#if defined(CONFIG_MATTER_USE_DEFAULT_BUTTON_HANDLER) && CONFIG_MATTER_USE_DEFAULT_BUTTON_HANDLER
+	ButtonEventHandler(buttonState, hasChanged);
+#endif
+
+	if (mButtonHandler != nullptr) {
+		mButtonHandler(buttonState, hasChanged);
 	}
 }
 

@@ -5,3 +5,9 @@
 #
 
 rsource "subsys/Kconfig"
+
+config MATTER_ROOT_PATH
+    string "Do not modify it"
+    help
+      This value is a placeholder. The actual value is set by sysbuild
+      Kconfig with the same name.
