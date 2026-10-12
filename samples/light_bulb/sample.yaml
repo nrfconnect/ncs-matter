@@ -161,3 +161,26 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+  sample.matter.light_bulb.nfc_commissioning_unpowered:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - CONFIG_CHIP_NFC_ONBOARDING_PAYLOAD=n
+      - CONFIG_CHIP_NFC_BASED_COMMISSIONING=y
+      - CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED=y
+      - CONFIG_MATTER_NFC_COMMISSIONING_SHELL=y
+      - light_bulb_SHIELD=st_25_dac
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp

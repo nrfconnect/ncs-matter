@@ -84,6 +84,13 @@ if(CONFIG_MATTER_TEST_SHELL)
     target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/test/test_shell.cpp)
 endif()
 
+if(CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED)
+    target_include_directories(app PRIVATE
+        ${ZEPHYR_NCS_MATTER_MODULE_DIR}
+    )
+    add_subdirectory(nfc_commissioning)
+endif()
+
 if(CONFIG_MATTER_CERTIFICATION)
     target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/certification/certification_hooks.cpp)
 endif()

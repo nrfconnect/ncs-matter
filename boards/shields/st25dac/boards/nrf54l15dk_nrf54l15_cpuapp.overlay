@@ -1,0 +1,55 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * ST-NUCLEO-NFC on nRF54L15 DK - manual bench wiring.
+ *
+ *   SDA  -> P1.11
+ *   SCL  -> P1.12
+ *   VCC  -> P1.10
+ *   CTRL -> P0.00  BiDir wake; shield has external pull-up
+ *   3V3 (direct)
+ *   GND (direct)
+ *
+ */
+
+#include <zephyr/dt-bindings/gpio/nordic-nrf-gpio.h>
+
+&spi22 {
+	status = "disabled";
+};
+
+&pinctrl {
+	i2c22_default: i2c22_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 11)>,
+				<NRF_PSEL(TWIM_SCL, 1, 12)>;
+		};
+	};
+
+	i2c22_sleep: i2c22_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 13)>,
+				<NRF_PSEL(TWIM_SCL, 1, 12)>;
+			low-power-enable;
+		};
+	};
+};
+
+&i2c22 {
+	status = "okay";
+	/delete-property/ zephyr,pm-device-runtime-auto;
+	clock-frequency = <I2C_BITRATE_FAST>;
+	zephyr,concat-buf-size = <512>;
+	pinctrl-0 = <&i2c22_default>;
+	pinctrl-1 = <&i2c22_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	st25dac: st25dac@c {
+		compatible = "st,st25dac";
+		reg = <0x0c>;
+		status = "okay";
+		ctrl-gpios = <&gpio0 0 (GPIO_OPEN_DRAIN | GPIO_ACTIVE_HIGH)>;
+		vcc-gpios = <&gpio1 10 (GPIO_PUSH_PULL | GPIO_ACTIVE_HIGH | NRF_GPIO_DRIVE_H0H1)>;
+	};
+};

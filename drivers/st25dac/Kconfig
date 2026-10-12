@@ -1,0 +1,43 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig ST25DAC
+	bool "ST25DA-C NFC tag driver"
+	default y
+	depends on SHIELD_ST_25_DAC
+	select I2C
+	select GPIO
+	select PSA_WANT_KEY_TYPE_AES
+	select PSA_WANT_ALG_CMAC
+	select PSA_WANT_ALG_ECB_NO_PADDING
+	select ENTROPY_GENERATOR
+	help
+	  Enable the STMicroelectronics ST25DA-C transport stack for
+	  unpowered Matter NFC commissioning. Requires an st,st25dac
+	  devicetree node with ctrl-gpios and vcc-gpios.
+
+if ST25DAC
+
+config ST25DAC_BUILD_FROM_SOURCE
+	bool "Build ST25DA-C stack from sources"
+	help
+	  Compile the ST25DA-C stack from sources.
+
+config ST25DAC_LIB_STRIP_DEBUG
+	bool "Strip debug info from exported libst25dac.a"
+	depends on ST25DAC_BUILD_FROM_SOURCE
+	help
+	  When building from source, run strip --strip-debug on the exported
+	  libst25dac.a artifact.
+
+config ST25DAC_FW_UPDATE
+	bool "Allow performing ST25DA-C firmware update"
+	help
+	  Include functionality that allows performing firmware update of
+	  the ST25DA-C module.
+
+module = ST25DAC
+module-str = ST25DA-C
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif # ST25DAC

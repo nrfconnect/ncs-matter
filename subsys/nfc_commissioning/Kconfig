@@ -1,0 +1,40 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+if CHIP_NFC_COMMISSIONING_MODE_UNPOWERED
+
+choice MATTER_NFC_COMMISSIONING_BACKEND
+	prompt "NFC commissioning tag backend"
+	default MATTER_NFC_COMMISSIONING_BACKEND_ST25DAC
+
+config MATTER_NFC_COMMISSIONING_BACKEND_ST25DAC
+	bool "ST25DA-C NFC tag"
+	depends on ST25DAC
+	help
+	  Select ST Microelectronics ST25DA-C NFC tag support.
+
+endchoice
+
+config MATTER_NFC_COMMISSIONING_SHELL
+	bool "NFC commissioning Zephyr shell command (nfc)"
+	depends on SHELL
+	help
+	  Register the top-level Zephyr shell command "nfc". Backend-specific
+	  subcommands are supplied by the selected tag driver.
+
+config MATTER_NFC_COMMISSIONING_BUTTON_TRIGGER
+	bool "Trigger NFC commissioning with button"
+	default y
+	depends on DK_LIBRARY
+	help
+	  When enabled, pressing a specific button on a Nordic DK powers the ST25DA-C
+	  (VCC) and starts I2C commissioning, same as the deferred boot path.
+
+if MATTER_NFC_COMMISSIONING_SHELL
+
+config SHELL_STACK_SIZE
+	default 4096
+
+endif # MATTER_NFC_COMMISSIONING_SHELL
+
+endif # CHIP_NFC_COMMISSIONING_MODE_UNPOWERED

@@ -5,8 +5,9 @@
 # as the module CMake entry point (see zephyr/module.yml).
 
 if(CONFIG_CHIP)
-	# Enable GNU STD support.
-	include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/app/enable-gnu-std.cmake)
+  # Enable GNU STD support.
+  include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/app/enable-gnu-std.cmake)
 
-	add_subdirectory(subsys)
+  add_subdirectory(drivers)
+  add_subdirectory(subsys)
 endif()

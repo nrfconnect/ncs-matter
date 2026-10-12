@@ -1,0 +1,24 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+  STMicroelectronics ST25DA-C dynamic NFC tag used for Matter NFC commissioning.
+  Communicates over I2C. The 7-bit address is the node's reg property.
+
+compatible: "st,st25dac"
+
+include: i2c-device.yaml
+
+properties:
+  ctrl-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      Bidirectional CTRL line (CN11.3). Configured as input with rising-edge
+      interrupt when listening for tag I2C-mode events; temporarily reconfigured
+      as open-drain output to pulse the tag into I2C mode.
+
+  vcc-gpios:
+    type: phandle-array
+    required: true
+    description: Tag supply enable (CN11.1). Active high powers the ST25DA-C.
