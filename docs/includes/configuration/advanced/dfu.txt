@@ -10,6 +10,10 @@ Device firmware upgrade support
      In this case, the DFU can be done either using a smartphone application or a PC command-line tool.
      This protocol is not part of the Matter specification.
 
+   .. note::
+
+      The nRF7120 DK does not currently support DFU.
+
    For detailed information about how to perform an update over Matter or Bluetooth LE, see the `Matter software update guide`_.
    In both cases, the `MCUboot <Using MCUboot in nRF Connect SDK_>`_ secure bootloader is used to apply the new firmware image.
 

@@ -1,0 +1,25 @@
+The nRF7120 DK requires additional Wi-Fi firmware patch options for Matter over Wi-Fi builds.
+
+.. toggle::
+
+   To build the sample for the nRF7120 DK:
+
+   .. tabs::
+
+      .. group-tab:: |nRFVSC|
+
+         1. When `building an application <How to build an application_>`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
+         #. In the **Add Build Configuration** screen, click the :guilabel:`Add argument` button under the **Extra CMake arguments** section.
+         #. Add the following build arguments:
+
+            .. code-block:: console
+
+               -DCONFIG_CHIP_WIFI=y -DCONFIG_WIFI_NRF71_PATCH=y
+
+      .. group-tab:: Command line
+
+         Run the following command in the project directory:
+
+         .. code-block:: console
+
+            west build -b nrf7120dk/nrf7120/cpuapp -- -DCONFIG_CHIP_WIFI=y -DCONFIG_WIFI_NRF71_PATCH=y

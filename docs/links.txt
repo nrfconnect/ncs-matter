@@ -93,6 +93,7 @@
 .. _nrf54l15dk: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/zephyr/boards/nordic/nrf54l15dk/doc/index.html
 .. _nrf54l15tag: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/zephyr/boards/nordic/nrf54l15tag/doc/index.html
 .. _nrf54lm20dk: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/zephyr/boards/nordic/nrf54lm20dk/doc/index.html
+.. _nrf7120dk: https://nrfconnectdocs.nordicsemi.com/ncs/latest/zephyr/boards/nordic/nrf7120dk/doc/index.html
 
 .. ### Matter documentation backtick links (from sdk-nrf links.txt)
 
@@ -190,6 +191,7 @@
 .. _Developing with nRF52 Series: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/nrf/app_dev/device_guides/nrf52/index.html
 .. _Developing with nRF53 Series: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/nrf/app_dev/device_guides/nrf53/index.html
 .. _Developing with nRF70 Series: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/nrf/app_dev/device_guides/nrf70/index.html
+.. _Developing with nRF71 Series: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/app_dev/device_guides/nrf71/index.html#ug-nrf71
 .. _Logging: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/zephyr/services/logging/index.html
 .. _Matter weather station sample: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/nrf/applications/matter_weather_station/README.html
 .. _Matter bridge sample: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/nrf/applications/matter_bridge/README.html

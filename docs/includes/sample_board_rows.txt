@@ -30,6 +30,10 @@
 
 | `Developing with nRF54L Series`_ | PCA10184 | `nrf54lm20dk`_ | ``nrf54lm20dk/nrf54lm20b/cpuapp`` |
 
+.. nrf7120dk_nrf7120_cpuapp
+
+| `Developing with nRF71 Series`_ | PCA10217 | `nrf7120dk`_ | ``nrf7120dk/nrf7120/cpuapp`` |
+
 .. nrf54l15tag_nrf54l15_cpuapp
 
 | `Developing with nRF54L Series`_ | PCA10156 | `nrf54l15dk`_ | ``nrf54l15tag/nrf54l15/cpuapp`` |

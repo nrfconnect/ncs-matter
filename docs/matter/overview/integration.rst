@@ -84,11 +84,20 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp
+   :rows: nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp, nrf7120dk_nrf7120_cpuapp
 
-For this design, the Wi-Fi driver on the application core communicates with the external nRF7002 Wi-Fi 6 Companion IC over SPI:
+The Wi-Fi implementation depends on the hardware platform:
 
-* For the ``nrf54lm20dk/nrf54lm20b/cpuapp`` (``nrf54lm20a`` SoC is also supported), nRF7002 support is added using the ``nrf7002eb2`` shield connected through SPI.
+* On the nRF7120 SoC, the Wi-Fi radio and the application processor are integrated into a single SoC.
+  The Wi-Fi PHY and MAC layers run on the dedicated Wi-Fi subsystem, while the higher networking layers run on the application core.
+
+.. figure:: images/matter_platform_design_7120_wifi.svg
+   :alt: Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF7120)
+
+   Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF7120)
+
+* On the nRF54LM20 SoC, the Wi-Fi driver on the application core communicates with the external nRF7002 Wi-Fi 6 companion IC over SPI.
+  For the ``nrf54lm20dk/nrf54lm20b/cpuapp`` board target (the ``nrf54lm20a`` SoC variant is also supported), nRF7002 support is added using the ``nrf7002eb2`` shield.
 
 .. figure:: images/matter_platform_design_nRF54lm20_wifi.svg
    :alt: Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF54LM20 with the nRF7002)

@@ -201,3 +201,28 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
            - --
+
+   .. tab:: nRF71 Series
+
+      .. list-table:: Matter features support
+         :widths: auto
+         :header-rows: 1
+
+         * - Feature
+           - nRF7120
+         * - **Matter - OTA DFU over Bluetooth LE**
+           - --
+         * - **Matter Intermittently Connected Device**
+           - Experimental
+         * - **Matter commissioning over Bluetooth LE with NFC onboarding**
+           - Experimental
+         * - **Matter commissioning over Bluetooth LE with QR code onboarding**
+           - Experimental
+         * - **Matter commissioning over IP**
+           - Experimental
+         * - **Matter over Thread**
+           - --
+         * - **Matter over Wi-Fi**
+           - Experimental
+         * - **OTA DFU over Matter**
+           - --
