@@ -35,7 +35,6 @@ tests:
     extra_args:
       - CONFIG_CHIP_WIFI=y
       - CONFIG_WIFI_NRF71_PATCH=y
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
@@ -73,7 +72,6 @@ tests:
       - FILE_SUFFIX=release
       - CONFIG_CHIP_WIFI=y
       - CONFIG_WIFI_NRF71_PATCH=y
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
@@ -118,7 +116,6 @@ tests:
       - CONFIG_CHIP_DEVICE_TYPE=257
       - CONFIG_CHIP_WIFI=y
       - CONFIG_WIFI_NRF71_PATCH=y
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
@@ -173,7 +170,6 @@ tests:
       - CONFIG_CHIP_FACTORY_RESET_TIME_MEASUREMENT=y
       - CONFIG_CHIP_WIFI=y
       - CONFIG_WIFI_NRF71_PATCH=y
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
