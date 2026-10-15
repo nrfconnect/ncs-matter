@@ -1,7 +1,7 @@
 .. |matter_name| replace:: Closure
 .. |matter_type| replace:: sample
 .. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
-.. |matter_dks_wifi| replace:: ``nrf54lm20dk/nrf54lm20b/cpuapp`` and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets with the ``nrf7002eb2`` shield attached
+.. |matter_dks_wifi| replace:: ``nrf7120dk/nrf7120/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets with the ``nrf7002eb2`` shield attached
 .. |matter_dks_internal| replace:: nRF54LM20 DK
 .. |sample path| replace:: :file:`samples/matter/closure`
 .. |matter_qr_code_payload| replace:: MT:Y.K9042C00KA0648G00
@@ -121,6 +121,11 @@ Advanced building options
 
 .. include:: /includes/building_and_running/advanced/intro.txt
 .. include:: /includes/building_and_running/advanced/building_nrf54lm20dk_7002eb2.txt
+
+nRF7120 DK build configuration
+------------------------------
+
+.. include:: /includes/building_and_running/nrf7120_wifi.txt
 
 Testing
 *******

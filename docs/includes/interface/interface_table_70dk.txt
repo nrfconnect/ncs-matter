@@ -43,3 +43,12 @@ This section explains the names of **Buttons** and **LEDs** visible on a board d
      - **Button 2**
      - Not available
      - Not available
+   * - nRF71 DKs
+     - **LED 0**
+     - **LED 1**
+     - **LED 2**
+     - **LED 3**
+     - **Button 0**
+     - **Button 1**
+     - **Button 2**
+     - **Button 3**

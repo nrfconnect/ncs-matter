@@ -42,8 +42,7 @@ Build-time ZAP code generation
    * Add the Matter SDK :file:`.zap-install` directory to :envvar:`PATH` before building.
    * Set :kconfig:option:`CONFIG_MATTER_ZAP_CLI_INSTALL_PATH` to the directory that contains ``zap-cli``.
 
-   Automatic ZAP installation (default)
-   ------------------------------------
+   .. rubric:: Automatic ZAP installation (default)
 
    .. tabs::
 
@@ -64,8 +63,7 @@ Build-time ZAP code generation
 
             west build -b nrf52840dk/nrf52840
 
-   Provide ``zap-cli`` on :envvar:`PATH`
-   -------------------------------------
+   .. rubric:: Provide ``zap-cli`` on :envvar:`PATH`
 
    .. tabs::
 
@@ -88,8 +86,7 @@ Build-time ZAP code generation
             export PATH="${ZEPHYR_BASE}/../modules/lib/matter/.zap-install:${PATH}"
             west build -b nrf52840dk/nrf52840
 
-   Provide an explicit ZAP install path
-   ------------------------------------
+   .. rubric:: Provide an explicit ZAP install path
 
    .. tabs::
 

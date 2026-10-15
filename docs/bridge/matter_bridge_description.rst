@@ -1,7 +1,7 @@
 .. |matter_name| replace:: Matter bridge
 .. |matter_type| replace:: sample
 .. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
-.. |matter_dks_wifi| replace:: ``nrf54lm20dk/nrf54lm20b/cpuapp`` and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets with the ``nrf7002eb2`` shield attached
+.. |matter_dks_wifi| replace:: ``nrf7120dk/nrf7120/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets with the ``nrf7002eb2`` shield attached
 .. |matter_dks_internal| replace:: nRF54LM20 DK
 .. |sample path| replace:: :local:file:`samples/bridge`
 .. |matter_qr_code_payload| replace:: MT:Y.K9042C00KA0648G00
@@ -426,6 +426,7 @@ Advanced configuration options
 ==============================
 
 .. include:: /includes/configuration/advanced/intro.txt
+
 .. include:: /includes/configuration/advanced/nfc_commissioning.txt
 
 .. _matter_bridge_app_bridged_support_configs:
@@ -533,6 +534,30 @@ Configuring the number of Bluetooth LE bridged devices
 
                         west build -b nrf54lm20dk/nrf54lm20b/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
 
+      .. group-tab:: nRF7120 DK
+
+         The nRF7120 DK supports the Matter bridge over Wi-Fi configuration.
+         The default number of Bluetooth LE connections is ``10``, which effectively means nine bridged devices because one connection is reserved for Matter commissioning.
+         You can increase the number of Bluetooth LE connections to ``20`` by reducing the Bluetooth LE TX/RX buffer and MTU sizes.
+
+         To enable up to 20 Bluetooth LE connections (19 bridged devices), use the following build configuration.
+         The configuration enables the nRF7120 Wi-Fi firmware patch, Bluetooth LE bridged device support, and additional connections.
+
+         .. tabs::
+
+            .. group-tab:: |nRFVSC|
+
+               Add ``-DCONFIG_CHIP_WIFI=y -DCONFIG_WIFI_NRF71_PATCH=y -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"`` to **Extra CMake arguments** in your build configuration.
+
+            .. group-tab:: Command line
+
+               Run the following command in the project directory:
+
+               .. parsed-literal::
+                  :class: highlight
+
+                  west build -b nrf7120dk/nrf7120/cpuapp -- -DCONFIG_CHIP_WIFI=y -DCONFIG_WIFI_NRF71_PATCH=y -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="bt_max_connections_app.conf"
+
 Configuring Bluetooth LE connection and scan parameters
 -------------------------------------------------------
 
@@ -597,6 +622,11 @@ Advanced building options
 
 .. include:: /includes/building_and_running/advanced/intro.txt
 .. include:: /includes/building_and_running/advanced/building_nrf54lm20dk_7002eb2.txt
+
+nRF7120 DK build configuration
+------------------------------
+
+.. include:: /includes/building_and_running/nrf7120_wifi.txt
 
 Matter smart plug functionality
 -------------------------------

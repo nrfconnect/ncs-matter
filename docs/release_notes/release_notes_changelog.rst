@@ -10,6 +10,9 @@ For the list of potential issues, see the :ref:`ncs_matter_known_issues` page.
 Changelog
 *********
 
+* Added experimental Matter over Wi-Fi support for the nRF7120 DK to selected samples.
+  For supported samples, build instructions, and limitations, see the :ref:`nRF7120 DK preview <ncs_matter_nrf7120_preview>`.
+
 * Updated the ``Nrf::Matter::IdentifyCluster`` class to use the code-driven Matter SDK Identify cluster implementation directly, instead of the legacy ``Identify`` wrapper.
   The cluster is registered automatically when you create an ``Nrf::Matter::IdentifyCluster`` object.
 

@@ -26,6 +26,8 @@ Currently, the following SoCs from Nordic Semiconductor are supported for use wi
 * `nRF54L15 <Programming board names_>`_ (Matter over Thread)
 * `nRF54L10 <Programming board names_>`_ (Matter over Thread)
 * `nRF54LM20 <Programming board names_>`_ (Matter over Thread and Matter over Wi-Fi through the ``nrf7002eb2`` shield)
+* `nRF7120 <Programming board names_>`_ (Matter over Wi-Fi preview).
+  See the :ref:`nRF7120 DK preview <ncs_matter_nrf7120_preview>` for details.
 
 To use the |addon|, you need a development kit that supports the Matter protocol.
 
