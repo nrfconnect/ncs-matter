@@ -45,7 +45,6 @@ tests:
       - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
       - CONFIG_CHIP_WIFI=y
       - CONFIG_WIFI_NRF71_PATCH=y
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
@@ -86,7 +85,6 @@ tests:
       - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
       - CONFIG_CHIP_WIFI=y
       - CONFIG_WIFI_NRF71_PATCH=y
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
@@ -130,7 +128,6 @@ tests:
       - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
       - CONFIG_CHIP_WIFI=y
       - CONFIG_WIFI_NRF71_PATCH=y
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
@@ -177,7 +174,6 @@ tests:
       - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
       - CONFIG_CHIP_WIFI=y
       - CONFIG_WIFI_NRF71_PATCH=y
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:

@@ -32,6 +32,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
     add_overlay_dts(${DEFAULT_IMAGE} ${ZEPHYR_NCS_MATTER_MODULE_DIR}/dts/nrf54lm20_0_5_1_nrf7002eb.dts)
   endif()
 
+  if(SB_CONFIG_SOC_NRF7120)
+    add_overlay_dts(${DEFAULT_IMAGE} ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi)
+  endif()
+
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_image_cmake)
 
 #########################################################

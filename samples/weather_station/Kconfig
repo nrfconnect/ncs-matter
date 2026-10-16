@@ -45,6 +45,10 @@ config IEEE802154_NRF5_RX_STACK_SIZE
 config CHIP_ENABLE_ICD_SUPPORT
 	default y
 
+choice OPENTHREAD_IMPLEMENTATION
+	default OPENTHREAD_SOURCES
+endchoice
+
 endif # OPENTHREAD
 
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.features"

@@ -16,6 +16,10 @@ choice OPENTHREAD_DEVICE_TYPE
 	default OPENTHREAD_FTD
 endchoice
 
+choice OPENTHREAD_IMPLEMENTATION
+	default OPENTHREAD_SOURCES
+endchoice
+
 endif # OPENTHREAD
 
 config CHIP_WIFI
