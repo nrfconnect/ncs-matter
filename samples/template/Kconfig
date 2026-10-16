@@ -27,6 +27,10 @@ config OPENTHREAD_DEFAULT_TX_POWER
 
 endif
 
+choice OPENTHREAD_IMPLEMENTATION
+	default OPENTHREAD_SOURCES
+endchoice
+
 endif # OPENTHREAD
 
 config CHIP_WIFI
