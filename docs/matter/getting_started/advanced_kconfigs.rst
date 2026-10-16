@@ -10,7 +10,7 @@ Advanced Matter Kconfig options
 After :ref:`enabling the Matter protocol <ug_matter_gs_kconfig>` and testing some of the samples, you can enable additional options in Kconfig and start developing your own Matter application.
 
 Defining path to project-specific Matter settings
-=================================================
+*************************************************
 
 You can use the :kconfig:option:`CONFIG_CHIP_PROJECT_CONFIG` Kconfig option to define the path to the configuration file that contains project-specific Matter settings in the form of C preprocessor macros.
 These macros cannot be altered using dedicated Kconfig options.
@@ -18,7 +18,7 @@ These macros cannot be altered using dedicated Kconfig options.
 .. _ug_matter_configuring_optional_ble_advertising:
 
 Bluetooth® LE advertising
-=========================
+*************************
 
 The Matter specification requires the accessory device to advertise Matter service over Bluetooth Low Energy (LE) for commissioning purposes.
 By default, the Bluetooth LE advertising start has to be requested by the application (for example, as a result of a button press) and lasts for a maximum duration of 15 minutes.
@@ -35,33 +35,122 @@ You can configure when the device will start advertising and how long it will ad
 .. _ug_matter_configuring_optional_nfc:
 
 Commissioning with NFC
-======================
+**********************
 
-The Matter protocol can be configured to use an NFC tag for the following purposes:
+The Matter protocol can use NFC in two ways:
 
-* Device onboarding, as an alternative to using a QR code.
-* Complete device commissioning, providing an option other than Bluetooth LE.
+* Onboarding only - Share the setup code in a simple NDEF message (commissioning still runs over Bluetooth LE).
+* NFC-based commissioning - Use the Matter NFC Transport Layer (NTL) or stored commissioning data on a tag, depending on the selected mode.
 
-To share the onboarding payload in a simple NFC Type 2 Tag, set the :kconfig:option:`CONFIG_CHIP_NFC_ONBOARDING_PAYLOAD` Kconfig option.
-This mode only emulates the setup code in an NDEF message and still uses Bluetooth LE for the commissioning session.
+NFC onboarding payload (Type 2 Tag)
+===================================
 
-For full commissioning over NFC on Nordic Semiconductor DKs with the NFCT peripheral, set the :kconfig:option:`CONFIG_CHIP_NFC_BASED_COMMISSIONING` Kconfig option instead.
-This enables the Matter NFC Transport Layer (NTL) on the accessory side and serves the onboarding payload from the NDEF Tag Application, in addition to the regular Bluetooth LE commissioning.
-As soon as the Matter server finishes initializing, the onboarding payload with the NFC rendezvous flag is written to the NFC tag.
-Commission the device by tapping the tag with an NFC commissioner that supports Matter NTL; no button press is required.
-The setup code is also printed to the UART log with the NFC rendezvous flag.
-Once commissioning completes successfully, NFC tag emulation is automatically stopped.
-See the :ref:`matter_template_sample` for an example build configuration with the  :kconfig:option:`CONFIG_CHIP_NFC_BASED_COMMISSIONING` Kconfig option set to ``y``
+To emulate the setup code in an NDEF message on the on-chip NFCT peripheral, set the :kconfig:option:`CONFIG_CHIP_NFC_ONBOARDING_PAYLOAD` Kconfig option.
+The device still commissions over Bluetooth LE.
+NFC only replaces the QR code for discovery of the onboarding payload.
 
 .. note::
-   :kconfig:option:`CONFIG_CHIP_NFC_BASED_COMMISSIONING` and :kconfig:option:`CONFIG_CHIP_NFC_ONBOARDING_PAYLOAD` are mutually exclusive.
+   :kconfig:option:`CONFIG_CHIP_NFC_ONBOARDING_PAYLOAD` and :kconfig:option:`CONFIG_CHIP_NFC_BASED_COMMISSIONING` are mutually exclusive.
 
-For more details about enabling and using NFC-based commissioning in |addon| samples, see the :ref:`matter_template_sample` advanced configuration section.
+NFC-based commissioning
+=======================
+
+NFC-based commissioning goes beyond sharing a setup code: the accessory participates in (or completes) commissioning using NFC as a first-class rendezvous path.
+In ``powered mode``, the nRF device acts as the tag and runs a live Matter NTL session over the on-chip NFCT peripheral.
+In ``unpowered mode``, commissioning data is held on an external NFC tag and applied when the device boots, so the tag can be prepared even while the SoC is off.
+
+Set the :kconfig:option:`CONFIG_CHIP_NFC_BASED_COMMISSIONING` Kconfig option to ``y`` to enable this feature.
+Use :kconfig:option:`CONFIG_CHIP_NFC_COMMISSIONING_MODE_POWERED` or :kconfig:option:`CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED` to choose which implementation your hardware uses.
+
+.. _ug_matter_configuring_optional_nfc_powered:
+
+Powered mode (on-chip NFCT)
+---------------------------
+
+In ``powered mode``, the nRF SoC must be supplied and running.
+The on-chip NFCT peripheral emulates a Type 4 Tag and exposes both the Matter NTL application and a standard NDEF Tag Application with the onboarding payload in the same ISO-DEP session.
+
+This mode requires a board with NFCT and an NFC antenna (for example, nRF52840 DK, nRF5340 DK, nRF54L15 DK, or nRF54LM20 DK).
+Set the :kconfig:option:`CONFIG_CHIP_NFC_COMMISSIONING_MODE_POWERED` Kconfig option to ``y`` to enable this mode (this is the default when :kconfig:option:`CONFIG_CHIP_NFC_BASED_COMMISSIONING` is enabled).
+
+Typical flow:
+
+* After the Matter server has completed initializing, the device serves an NDEF onboarding payload that advertises the NFC rendezvous flag.
+* Tap the device with an NFC commissioner that supports Matter NTL to start commissioning; no button press is required.
+* The setup code is also printed to the UART log with the NFC rendezvous flag.
+* When commissioning completes successfully, NFC tag emulation stops automatically.
+
+.. note::
+   While NFC-based commissioning is active, commissioning over Bluetooth LE can take longer than usual.
+   The device tries NFC first and only falls back to Bluetooth LE afterwards.
+
+See the :ref:`matter_template_sample` advanced configuration section for a powered-mode build example.
+
+.. _ug_matter_configuring_optional_nfc_unpowered:
+
+Unpowered mode (external NFC tag)
+---------------------------------
+
+In ``unpowered mode``, commissioning material is stored on an external NFC tag that can be written while the nRF SoC is off (powered by the NFC reader's field).
+When the SoC boots, the application powers the tag over I2C, reads the stored commissioning TLV, imports it into the Matter stack, and joins the operational network.
+The nRF SoC cannot implement this use case with the on-chip NFCT alone.
+Connect an external NFC tag module (for example, using the ``st_25_dac`` shield).
+
+For example, while using `ST25DA-C`_ NFC tag module, enable unpowered mode as follows:
+
+* Set the :kconfig:option:`CONFIG_CHIP_NFC_BASED_COMMISSIONING` Kconfig option to ``y``.
+* Set :kconfig:option:`CONFIG_CHIP_NFC_COMMISSIONING_MODE_UNPOWERED` to ``y`` to enable this mode.
+* Attach the ``st_25_dac`` shield so that :kconfig:option:`CONFIG_ST25DAC` builds the ST25DA-C driver and selects :kconfig:option:`CONFIG_MATTER_NFC_COMMISSIONING_BACKEND_ST25DAC`.
+
+Useful optional options:
+
+* :kconfig:option:`CONFIG_MATTER_NFC_COMMISSIONING_BUTTON_TRIGGER` - Power on the tag and start the read or import sequence from a DK button (enabled by default).
+* :kconfig:option:`CONFIG_MATTER_NFC_COMMISSIONING_SHELL` - ``nfc`` shell commands for tag maintenance and commissioning helpers.
+
+Unpowered commissioning stages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The unpowered flow splits into tag preparation (can happen with the SoC unpowered) and device boot (SoC on, communication with the NFC tag).
+
+.. list-table::
+   :header-rows: 1
+
+   * - Stage
+     - What happens
+   * - 1. Tag provisioning (optional, SoC may be off)
+     - A commissioner or tool writes encrypted commissioning TLV (and related data) to the NFC tag over the NFC field.
+   * - 2. Stack and keystore init
+     - Matter ``Server`` starts and selects the hybrid operational keystore backed by the tag.
+   * - 3. Commissioning gate
+     - If the device is already on a fabric, NFC field access is blocked and the unpowered sequence is skipped.
+   * - 4. Onboarding NDEF publish
+     - The application writes a standard NDEF URI record (setup payload) to the tag and opens the tag commissioning window, then releases the tag for RF use.
+   * - 5. I2C tag session
+     - The backend enables tag power, starts the secure NFC tag session, and reads the decrypted commissioning TLV.
+   * - 6. TLV import to Matter
+     - The TLV is parsed and imported into ``FabricTable``, credentials, and network credentials,
+       NFC-backed fabric and key slots are registered in the hybrid keystore.
+   * - 7. Operational network join
+     - Fail-safe is armed and a ``ConnectToOperationalNetwork`` event is posted with the operational dataset from the tag.
+
+Stages 4 to 7 run automatically on an uncommissioned device shortly after the Matter server is initialized, or when you trigger them with the optional button or shell command.
+
+Sample-specific wiring tables and build commands are documented in the :ref:`matter_light_bulb_sample` advanced configuration section.
+
+For powered-mode sample configuration, see the :ref:`matter_template_sample` advanced configuration section.
+
+Hybrid operational keystore
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The hybrid operational keystore switches between the operational keystore backends based on the NFC tag presence.
+When the Matter commissioning process is started over NFC, the operational keystore backend is switched to the NFC tag module, which acts as a secure element.
+Once the commissioning process is completed, the operational keystore backend is switched back to the Matter stack to reduce the number of interactions with the NFC tag.
+If the Matter commissioning process is started over Bluetooth LE, the operational keystore backend is switched to the Matter stack.
 
 .. _ug_matter_configuring_optional_persistent_subscriptions:
 
 Persistent subscriptions
-========================
+************************
 
 You can configure the Matter protocol to keep Matter subscriptions on the publisher node.
 This allows the device to save information about subscriptions and use it to re-establish the subscriptions immediately when coming back online after being offline for a longer time, for example due to a power outage.
@@ -84,13 +173,13 @@ You can configure how many sessions will be re-established concurrently and what
 .. _ug_matter_configuring_optional_log:
 
 Logging configuration
-=====================
+*********************
 
 Logging is handled with the :kconfig:option:`CONFIG_LOG` option.
 This option enables logging for both the stack and Zephyr's `Logging`_ API.
 
 Logging level configuration
----------------------------
+===========================
 
 Zephyr allows you to configure log levels of different software modules independently.
 To change the log level configuration for the Matter module, set one of the available options:
@@ -104,7 +193,7 @@ To change the log level configuration for the Matter module, set one of the avai
     :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_WRN` is not used in Matter.
 
 Detailed message logging
-------------------------
+========================
 
 You can enable detailed logging of Matter interaction messages using the :kconfig:option:`CONFIG_CHIP_IM_PRETTY_PRINT` Kconfig option.
 
@@ -156,7 +245,7 @@ The following is an example log output showing a ``ConnectNetwork`` command (0x0
 .. _ug_matter_configuring_optional_shell:
 
 Matter shell commands
-=====================
+*********************
 
 You can enable the Matter shell library using the :kconfig:option:`CONFIG_CHIP_LIB_SHELL` Kconfig option.
 This option lets you use the Matter shell commands with :ref:`matter_samples`.
@@ -166,7 +255,7 @@ See `Matter CLI examples guide`_ in the Matter documentation for the list of ava
 .. _ug_matter_configuring_settings_shell:
 
 Matter Settings shell commands
-------------------------------
+==============================
 
 You can enable the Matter Settings shell commands to monitor the current usage of the Zephyr Settings using `NVS (Non-Volatile Storage) <Non-Volatile Storage (NVS)_>`_ or `ZMS (Zephyr Memory Storage)`_ backends.
 These commands are useful for verifying that the ``storage_partition`` partition has the proper size and meets the application requirements.
@@ -184,7 +273,7 @@ You can use the following shell commands:
 .. _ug_matter_configuring_device_identification:
 
 Matter device identification
-============================
+****************************
 
 Matter has many ways to identify a specific device, both mandatory and optional.
 These can be used for various purposes, such as dividing devices into groups (by function, by vendor or by location), device commissioning or vendor-specific cases before the device was commissioned (for example, identifying factory software version or related features).
@@ -207,7 +296,7 @@ Some of these can be configured using the Kconfig options listed below:
 .. _ug_matter_configuring_ffs:
 
 Amazon Frustration-Free Setup support
-=====================================
+*************************************
 
 Frustration-Free Setup (FFS) is Amazon's proprietary technology that uses the user's Amazon account and Alexa services to register an IoT device and provision it to a mesh network.
 It does not replace the default commissioning process, but uses the cloud-based Amazon Device Setup Service to provide commissioning information to the Matter network commissioner, instead of involving the user to provide it.
@@ -234,7 +323,7 @@ To read more about the FFS technology and its compatibility with Matter, see the
 * `Matter Simple Setup for Thread Overview`_
 
 Reaction to the last Matter fabric removal
-==========================================
+******************************************
 
 .. include:: ../end_product/last_fabric_removal_delegate.rst
     :start-after: matter_last_fabric_removal_description_start
@@ -267,7 +356,7 @@ By default this Kconfig option is set to 1 second.
 .. _ug_matter_configuring_read_client:
 
 Read Client functionality
-=========================
+**************************
 
 The Read Client functionality is used for reading attributes from another device in the Matter network.
 This functionality is disabled by default for Matter samples in the |addon|, except for ones that need to read attributes from the bound devices, such as the :ref:`matter_light_switch_sample` and :ref:`matter_thermostat_sample` samples, and the :ref:`matter_bridge_app` application.
@@ -276,7 +365,7 @@ Enable the feature if your device needs to be able to access attributes from a d
 .. _ug_matter_persistent_storage:
 
 Persistent storage
-==================
+******************
 
 The persistent storage module allows for the application data and configuration to survive a device reboot.
 |addon| applications use one generic Persistent Storage API that can be enabled by the :option:`CONFIG_MATTER_PERSISTENT_STORAGE` Kconfig option.
@@ -312,7 +401,7 @@ Additionally, in case of the secure storage backend, the following Kconfig optio
 .. _ug_matter_configuration_diagnostic_logs:
 
 Diagnostic logs
-===============
+****************
 
 The diagnostic logs module implements all functionalities needed for the Matter controller to obtain logs.
 The controller obtains the logs from the connected Matter devices according to the chosen intent.
@@ -329,7 +418,7 @@ Currently, the following intents are defined within the ``IntentEnum`` enumerato
   * ``kCrashLogs`` - Logs created during a device crash, to be obtained from the node.
 
 Crash logs
-----------
+==========
 
 The crash logs module is a part of the diagnostic log module and contains the data of the most recent device crash.
 When a crash occurs, the device saves the crash data to the defined retained RAM partition.
@@ -343,7 +432,7 @@ After the crash data is successfully read, it will be removed and further read a
 To keep the crash log in the memory after reading it, set the :option:`CONFIG_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ` Kconfig option to ``n``.
 
 Network and end-user logs
--------------------------
+=========================
 
 The diagnostic network and end-user logs are saved in the dedicated retained RAM partitions.
 The logs are not removed after reading, but when attempting to write new logs to an already full buffer, the oldest logs are replaced.
@@ -371,7 +460,7 @@ You can then push the network or end-user logs using dedicated API in your appli
 .. _ug_matter_networking_selection:
 
 Networking layer selection
-==========================
+**************************
 
 The |NCS| supports two networking architectures for the Matter protocol:
 

@@ -81,6 +81,7 @@ Advanced configuration options
 .. include:: /includes/configuration/advanced/custom_board.txt
 .. include:: /includes/configuration/advanced/internal_memory.txt
 .. include:: /includes/configuration/advanced/nfc_commissioning.txt
+.. include:: /includes/configuration/advanced/nfc_commissioning_unpowered.txt
 
 User interface
 **************

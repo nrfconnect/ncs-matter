@@ -183,6 +183,7 @@
 .. _`Disable unused pins and peripherals`: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/nrf/test_and_optimize/optimizing/power_general.html#disable-unused-pins-and-peripherals
 .. _`Enable Device Power Management module`: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/nrf/test_and_optimize/optimizing/power_general.html#enable-device-power-management-module
 .. _`Configure radio transmitter power`: https://nrfconnectdocs.nordicsemi.com/ncs/|ncs_version|/nrf/test_and_optimize/optimizing/power_general.html#configure-radio-transmitter-power
+.. _`ST25DA-C`: https://www.st.com/en/nfc/st25da-c.html
 
 .. ### Matter module/platform doc links (sdk-connectedhomeip)
 

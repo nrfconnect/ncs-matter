@@ -108,6 +108,30 @@ The following table lists variants and extensions available out of the box for e
       -
       - ✔
       -
+    * - NFC-based commissioning (powered mode, on-chip NFCT)
+      - ✔
+      - ✔
+      - ✔
+      - ✔
+      - ✔
+      - ✔
+      - ✔
+      - ✔
+      - ✔
+      - ✔
+      - ✔
+    * - NFC-based commissioning (unpowered mode, external ST25DA-C)
+      - ✔
+      -
+      -
+      -
+      -
+      -
+      -
+      -
+      -
+      -
+      -
 
 See the sample documentation pages for instructions about how to enable these variants and extensions.
 

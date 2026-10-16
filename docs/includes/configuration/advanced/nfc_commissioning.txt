@@ -7,9 +7,9 @@ NFC-based commissioning
    The device emulates a Type 4 Tag and exposes both the Matter application and a standard NDEF Tag Application with the onboarding payload.
 
    NFC tags can support either ``powered mode``, in which the device is fully powered on by its own power supply during NFC operation, or ``unpowered mode``, where the tag operates exclusively using energy harvested from the NFC polling device (such as a phone).
-   The NFC-based commissioning feature in Nordic Matter SDK supports only ``powered mode``.
-   The Nordic SoC must be on and running (not only powered by NFC field) for NFC-based commissioning to work.
-   Ensure that your application's power arrangements match this requirement, as many NFC use cases commonly advertise unpowered operation, but this implementation does not.
+   This section describes NFC-based commissioning in ``powered mode`` (on-chip NFCT).
+   For ``unpowered mode`` with an external NFC tag module, see the following configuration section.
+   In powered mode, the Nordic SoC must be on and running (not only powered by the NFC field) for NFC-based commissioning to work.
 
    This feature requires a board with the on-chip NFCT peripheral and an NFC antenna connected.
    It is supported on Nordic DK targets that provide NFCT, such as the nRF52840 DK, nRF5340 DK, nRF54L15 DK, and nRF54LM20 DK.
