@@ -1,0 +1,90 @@
+name: Prepare west workspace
+description: Init west with workspace root outside the add-on repository and update selected projects
+
+inputs:
+  west_topdir:
+    description: West workspace root (parent directory of the add-on repository checkout)
+    required: false
+    default: .
+  manifest_dir:
+    description: Add-on repository directory name inside west_topdir (same as DOC_ADDON_DIR)
+    required: true
+  west_modules:
+    description: Comma-separated west manifest project names (from doc-addon.env WEST_MODULES)
+    required: true
+  west_path_cache:
+    description: Directory passed to west update --path-cache
+    required: false
+    default: west-path-cache
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        INPUT_WEST_TOPDIR: ${{ inputs.west_topdir }}
+        INPUT_MANIFEST_DIR: ${{ inputs.manifest_dir }}
+        INPUT_WEST_MODULES: ${{ inputs.west_modules }}
+        INPUT_WEST_PATH_CACHE: ${{ inputs.west_path_cache }}
+      run: |
+        set -euo pipefail
+
+        if ! [[ "${INPUT_MANIFEST_DIR}" =~ ^[A-Za-z0-9._-]+$ ]]; then
+          echo "::error::Invalid manifest_dir" >&2
+          exit 1
+        fi
+
+        if [ -z "${INPUT_WEST_MODULES}" ]; then
+          echo "::error::west_modules input is empty; set WEST_MODULES in .github/doc-addon.env" >&2
+          exit 1
+        fi
+
+        if ! [[ "${INPUT_WEST_MODULES}" =~ ^[A-Za-z0-9_-]+(,[A-Za-z0-9_-]+)*$ ]]; then
+          echo "::error::Invalid west_modules list" >&2
+          exit 1
+        fi
+
+        if [[ "${INPUT_WEST_PATH_CACHE}" == *$'\n'* || "${INPUT_WEST_PATH_CACHE}" == *'$'* ]]; then
+          echo "::error::Invalid west_path_cache" >&2
+          exit 1
+        fi
+
+        if [ -n "${INPUT_WEST_TOPDIR}" ] && [ "${INPUT_WEST_TOPDIR}" != "." ]; then
+          west_topdir="$(cd "${INPUT_WEST_TOPDIR}" && pwd)"
+        else
+          west_topdir="${GITHUB_WORKSPACE}"
+        fi
+
+        manifest_dir="${INPUT_MANIFEST_DIR}"
+        manifest_path="${west_topdir}/${manifest_dir}"
+
+        if [ ! -f "${manifest_path}/west.yml" ]; then
+          echo "::error::west.yml is missing at ${manifest_path}/west.yml" >&2
+          exit 1
+        fi
+
+        modules="${INPUT_WEST_MODULES}"
+
+        cd "${west_topdir}"
+        rm -rf .west
+        west init -l "${manifest_dir}" --mf west.yml
+
+        filter="-.*"
+        IFS=',' read -ra names <<< "${modules}"
+        for name in "${names[@]}"; do
+          filter="${filter},+${name}"
+        done
+
+        west config manifest.project-filter -- "${filter}"
+
+        cache="${INPUT_WEST_PATH_CACHE}"
+        mkdir -p "${cache}"
+        west update -n -o=--depth=1 --path-cache "${cache}"
+
+        for name in "${names[@]}"; do
+          proj_path="$(west list -f '{path}' "${name}")"
+          if [ ! -d "${proj_path}" ]; then
+            echo "::error::west project '${name}' missing at '${west_topdir}/${proj_path}'" >&2
+            exit 1
+          fi
+        done
