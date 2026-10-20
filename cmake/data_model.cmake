@@ -5,12 +5,12 @@
 #
 
 if(NOT CHIP_ROOT)
-  set(CHIP_ROOT ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR})
+  set(CHIP_ROOT ${CONFIG_MATTER_ROOT_PATH})
 endif()
 
 if(CONFIG_MATTER_ZAP_GENERATION_BUILD_TIME)
   include(${CMAKE_CURRENT_LIST_DIR}/zap_install.cmake)
-  include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/chip_data_model.cmake)
+  include(${CHIP_ROOT}/src/app/chip_data_model.cmake)
 elseif(CONFIG_MATTER_ZAP_GENERATION_STATIC)
   include(${CMAKE_CURRENT_LIST_DIR}/chip_data_model_static.cmake)
 endif()
@@ -31,7 +31,7 @@ function(ncs_configure_data_model)
 
     chip_configure_data_model(matter-data-model
       ZAP_FILE ${zap_file_path}
-      ZCL_PATH ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/src/app/zap-templates/zcl/zcl.json
+      ZCL_PATH ${CHIP_ROOT}/src/app/zap-templates/zcl/zcl.json
       EXTERNAL_CLUSTERS ${ARG_EXTERNAL_CLUSTERS}
     )
 

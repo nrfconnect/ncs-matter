@@ -137,6 +137,16 @@ public:
 	 */
 	void RunLedStateHandler() { mLedStateHandler(); };
 
+	/**
+	 * @brief Dispatch a synthetic button event to board and application handlers.
+	 *
+	 * Used to simulate button presses from test harnesses such as Pigweed RPC.
+	 *
+	 * @param buttonState Bitmask of button states.
+	 * @param hasChanged Bitmask that shows which buttons have changed.
+	 */
+	void DispatchButtonEvent(ButtonState buttonState, ButtonMask hasChanged);
+
 private:
 	Board() = default;
 	friend Board &GetBoard();
