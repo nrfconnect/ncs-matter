@@ -95,6 +95,13 @@ Other NVM columns list the reserved partition size for that region.
             .. memory-board::
                :board: nrf54lm20_nrf7002
 
+         .. group-tab:: nRF7120 DK
+
+            Memory requirements for samples running on the `nrf7120dk`_.
+
+            .. memory-board::
+               :board: nrf7120
+
    .. group-tab:: Tables
 
       .. tabs::
@@ -161,6 +168,13 @@ Other NVM columns list the reserved partition size for that region.
 
             .. memory-table::
                :board: nrf54lm20_nrf7002
+
+         .. group-tab:: nRF7120 DK
+
+            The following table lists memory requirements for samples running on the `nrf7120dk`_.
+
+            .. memory-table::
+               :board: nrf7120
 
 .. note::
 
@@ -261,6 +275,13 @@ For more information about configuration of memory layouts in Matter, see :ref:`
             .. memory-layout-board::
                :board: nrf54lm20_nrf7002
 
+         .. group-tab:: nRF7120 DK
+
+            The following memory map is valid for Matter applications running on the `nrf7120dk`_.
+
+            .. memory-layout-board::
+               :board: nrf7120
+
    .. group-tab:: Tables
 
       .. tabs::
@@ -341,6 +362,13 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
             .. memory-layout-table::
                :board: nrf54lm20_nrf7002
+
+         .. group-tab:: nRF7120 DK
+
+            The following table lists memory partitions for Matter applications running on the `nrf7120dk`_.
+
+            .. memory-layout-table::
+               :board: nrf7120
 
 Diagnostic logs RAM memory requirements
 =======================================

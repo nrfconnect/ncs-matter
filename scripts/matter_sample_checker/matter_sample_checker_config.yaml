@@ -92,6 +92,8 @@ documentation:
       nrf54lm20_internal:
         - nrf54lm20dk_nrf54lm20a_cpuapp_internal
         - nrf54lm20dk_nrf54lm20b_cpuapp_internal
+      nrf7120:
+        - nrf7120dk_nrf7120_cpuapp
     diagnostic_ram:
       path: "docs/memory.rst"
     diagnostic_logs_snippet:
@@ -115,6 +117,7 @@ documentation:
       nrf54l15tag_nrf54l15_cpuapp: "nRF54L15 TAG"
       nrf54lm20dk_nrf54lm20a_cpuapp_internal: "nRF54LM20 DK with internal memory only"
       nrf54lm20dk_nrf54lm20b_cpuapp_internal: "nRF54LM20 DK with internal memory only"
+      nrf7120dk_nrf7120_cpuapp: "nRF7120 DK"
     # board_id -> .. tab:: title under "Reference Matter memory layouts" when it differs from
     # board_mappings
     board_id_to_doc_flash_tab:
