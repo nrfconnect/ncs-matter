@@ -17,4 +17,5 @@ The |addon| provides migration notes for major releases to assist your transitio
 Matter add-on version migration notes
 *************************************
 
+* :ref:`migration_101`
 * :ref:`migration_200`

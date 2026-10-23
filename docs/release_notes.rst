@@ -27,5 +27,6 @@ For detailed list on new features for a specific |addon| release, refer to the f
    :caption: Contents
    :glob:
 
+   release_notes/release_notes_v101.rst
    release_notes/release_notes_v100.rst
    release_notes/release_notes_changelog.rst
