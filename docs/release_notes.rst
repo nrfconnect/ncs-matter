@@ -37,4 +37,5 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
    :caption: Contents
    :glob:
 
+   release_notes/release_notes_v101.rst
    release_notes/release_notes_v100.rst
