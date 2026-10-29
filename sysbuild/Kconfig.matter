@@ -38,3 +38,12 @@ config MATTER_ADD_ON_OTA_IMAGE_FILE_NAME
 	  Provides the file name of the generated Matter OTA image in the build directory.
 
 endif # MATTER_ADD_ON
+
+config MATTER_ROOT_PATH
+	string "Path to the Matter root directory"
+	default "${ZEPHYR_BASE}/../modules/lib/matter"
+	help
+	  Path to the Matter root folder to which all scripts and CMake configuration
+	  will point within the ncs-matter repository.
+	  Change this value to your Matter root directory if the path is different than
+	  the default one: $ZEPHYR_BASE/../modules/lib/matter.

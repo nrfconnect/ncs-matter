@@ -69,6 +69,13 @@ endfunction()
 function(ncs_matter_ensure_zap_cli)
   string(CONFIGURE "${CONFIG_MATTER_ZAP_CLI_INSTALL_PATH}" manual_zap_dir)
 
+  if("${manual_zap_dir}" STREQUAL "")
+    find_program(NCS_MATTER_ZAP_CLI_EXECUTABLE NAMES ${NCS_MATTER_ZAP_CLI_NAME})
+    if(NCS_MATTER_ZAP_CLI_EXECUTABLE)
+      return()
+    endif()
+  endif()
+
   if(NOT "${manual_zap_dir}" STREQUAL "")
     set(zap_dir "${manual_zap_dir}")
   else()

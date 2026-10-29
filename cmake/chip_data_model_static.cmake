@@ -8,7 +8,7 @@
 # out of the upstream Matter tree.
 
 if(NOT CHIP_ROOT)
-  set(CHIP_ROOT ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR})
+  set(CHIP_ROOT ${CONFIG_MATTER_ROOT_PATH})
 endif()
 
 set(CHIP_APP_BASE_DIR ${CHIP_ROOT}/src/app)
