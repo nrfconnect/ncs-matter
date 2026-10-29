@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+if(SB_CONFIG_MATTER_ADD_ON)
+
 #########################################################
 # Actions to be performed before the CMake is run       #
 #########################################################
@@ -62,3 +64,5 @@ endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 # CMAKE Includes                                        #
 #########################################################
 include(${CMAKE_CURRENT_LIST_DIR}/matter.cmake)
+
+endif()
