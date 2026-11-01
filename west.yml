@@ -10,13 +10,13 @@ manifest:
     - name: nrf
       remote: ncs
       repo-path: sdk-nrf
-      revision: v3.4.0
+      revision: b338f2f8548027612c6a94f9379f39d41cf55c37
       import: true
     - name: matter
       remote: ncs
       path: modules/lib/matter
       repo-path: sdk-connectedhomeip
-      revision: 9730c52488d43f21e2b6e75e9219e9f17194278b
+      revision: 9d0183af3cf8dcde9144ee4ae39fb34c6e9ef873
       submodules:
         - name: nlio
           path: third_party/nlio/repo
