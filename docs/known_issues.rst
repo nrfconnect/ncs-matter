@@ -33,6 +33,18 @@ A known issue can list one or both of the following entries:
 List of known issues for |addon|
 ********************************
 
+.. _ncs_matter_known_issue_binding_case_recovery:
+
+.. rst-class:: simple v1-0-0 v1-0-1
+
+KRKNWK-22597: Heap corruption and fault during CASE session recovery in the binding handler
+  The :ref:`light_switch` sample can crash with a heap corruption (double free) and a kernel panic when it sends a bound command through a stale CASE session after the bound peer is reset.
+  The peer drops the message because it no longer knows the session, the command times out, and the binding handler starts the CASE session recovery.
+  During this recovery, the same binding data was passed twice to the Matter Binding Manager, which released it twice.
+  The issue can also affect other applications that use the binding handler, such as the :ref:`matter_bridge` and :ref:`thermostat` samples, and applications that use the :file:`subsys/binding` module.
+
+  **Workaround:**  Manually cherry-pick the following commit from the |addon| main branch: ``TBD``
+
 .. _ncs_matter_known_issue_dac_priv_key_its_kmu:
 
 .. rst-class:: simple v1-0-0
