@@ -10,8 +10,11 @@ For the list of potential issues, see the :ref:`ncs_matter_known_issues` page.
 Changelog
 *********
 
-* Updated the ``Nrf::Matter::IdentifyCluster`` class to use the code-driven Matter SDK Identify cluster implementation directly, instead of the legacy ``Identify`` wrapper.
-  The cluster is registered automatically when you create an ``Nrf::Matter::IdentifyCluster`` object.
+* Updated:
+
+  * The |NCS| version to v3.4.2.
+  * The ``Nrf::Matter::IdentifyCluster`` class to use the code-driven Matter SDK Identify cluster implementation directly, instead of the legacy ``Identify`` wrapper.
+    The cluster is registered automatically when you create an ``Nrf::Matter::IdentifyCluster`` object.
 
 * Fixed the ``TriggerEffect`` command being advertised and accepted when trigger effects are disabled.
   The ``Nrf::Matter::IdentifyCluster`` class now respects the ``IsTriggerEffectEnabled()`` value from ``IdentifyDelegateImplNrf``.
