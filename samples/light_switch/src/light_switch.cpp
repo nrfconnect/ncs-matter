@@ -112,14 +112,15 @@ void LightSwitch::OnOffProcessCommand(CommandId commandId, const Binding::TableE
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;
 
-	auto onSuccess = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
-				 const ConcreteCommandPath &commandPath, const StatusIB &status,
-				 const auto &dataResponse) {
+	Nrf::Matter::BindingHandler::BindingData *dataPointer =
+		device ? Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData) : nullptr;
+
+	auto onSuccess = [dataPointer](const ConcreteCommandPath &commandPath, const StatusIB &status,
+				       const auto &dataResponse) {
 		Nrf::Matter::BindingHandler::OnInvokeCommandSucces(dataPointer);
 	};
 
-	auto onFailure = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
-				 CHIP_ERROR aError) mutable {
+	auto onFailure = [dataPointer](CHIP_ERROR aError) mutable {
 		Nrf::Matter::BindingHandler::OnInvokeCommandFailure(dataPointer, aError);
 	};
 
@@ -170,10 +171,15 @@ void LightSwitch::OnOffProcessCommand(CommandId commandId, const Binding::TableE
 		break;
 	default:
 		LOG_DBG("Invalid binding command data - commandId is not supported");
+		ret = CHIP_ERROR_INVALID_ARGUMENT;
 		break;
 	}
 	if (CHIP_NO_ERROR != ret) {
 		LOG_ERR("Invoke OnOff Command Request ERROR: %s", ErrorStr(ret));
+	}
+
+	if (dataPointer && CHIP_NO_ERROR != ret) {
+		Platform::Delete<Nrf::Matter::BindingHandler::BindingData>(dataPointer);
 	}
 }
 
@@ -181,14 +187,15 @@ void LightSwitch::LevelControlProcessCommand(CommandId commandId, const Binding:
 					     OperationalDeviceProxy *device,
 					     Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
-	auto onSuccess = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
-				 const ConcreteCommandPath &commandPath, const StatusIB &status,
-				 const auto &dataResponse) {
+	Nrf::Matter::BindingHandler::BindingData *dataPointer =
+		device ? Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData) : nullptr;
+
+	auto onSuccess = [dataPointer](const ConcreteCommandPath &commandPath, const StatusIB &status,
+				       const auto &dataResponse) {
 		Nrf::Matter::BindingHandler::OnInvokeCommandSucces(dataPointer);
 	};
 
-	auto onFailure = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
-				 CHIP_ERROR aError) mutable {
+	auto onFailure = [dataPointer](CHIP_ERROR aError) mutable {
 		Nrf::Matter::BindingHandler::OnInvokeCommandFailure(dataPointer, aError);
 	};
 
@@ -217,9 +224,14 @@ void LightSwitch::LevelControlProcessCommand(CommandId commandId, const Binding:
 	} break;
 	default:
 		LOG_DBG("Invalid binding command data - commandId is not supported");
+		ret = CHIP_ERROR_INVALID_ARGUMENT;
 		break;
 	}
 	if (CHIP_NO_ERROR != ret) {
 		LOG_ERR("Invoke Group Command Request ERROR: %s", ErrorStr(ret));
+	}
+
+	if (dataPointer && CHIP_NO_ERROR != ret) {
+		Platform::Delete<Nrf::Matter::BindingHandler::BindingData>(dataPointer);
 	}
 }
