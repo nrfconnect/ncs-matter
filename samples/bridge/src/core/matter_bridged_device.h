@@ -116,7 +116,7 @@ public:
 	bool GetIsReachable() const { return mIsReachable; }
 	const char *GetUniqueID() const { return mUniqueID; }
 	const char *GetNodeLabel() const { return mNodeLabel; }
-	static constexpr uint16_t GetBridgedDeviceBasicInformationClusterRevision() { return 4; }
+	static constexpr uint16_t GetBridgedDeviceBasicInformationClusterRevision() { return 6; }
 	static constexpr uint32_t GetBridgedDeviceBasicInformationFeatureMap() { return 0; }
 	static constexpr uint16_t GetIdentifyClusterRevision() { return 6; }
 	static constexpr uint32_t GetIdentifyClusterFeatureMap() { return 0; }
