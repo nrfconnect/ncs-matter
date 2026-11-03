@@ -41,6 +41,7 @@ public:
 
 	static constexpr uint16_t GetTemperatureMeasurementClusterRevision() { return 6; }
 	static constexpr uint32_t GetTemperatureMeasurementFeatureMap() { return 0; }
+	static constexpr uint8_t GetTemperatureSensorEndpointVersion() { return 3; }
 
 private:
 	CHIP_ERROR SetMeasuredValue(int16_t value);
