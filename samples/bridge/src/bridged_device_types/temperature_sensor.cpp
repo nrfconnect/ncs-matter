@@ -36,11 +36,9 @@ DECLARE_DYNAMIC_CLUSTER(Clusters::TemperatureMeasurement::Id, tempSensorAttrs, Z
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedTemperatureEndpoint, bridgedTemperatureClusters);
 
-static constexpr uint8_t kBridgedTemperatureEndpointVersion = 2;
-
 static constexpr EmberAfDeviceType kBridgedTemperatureDeviceTypes[] = {
 	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::TemperatureSensor),
-	  kBridgedTemperatureEndpointVersion },
+	  TemperatureSensorDevice::GetTemperatureSensorEndpointVersion() },
 	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::BridgedNode),
 	  MatterBridgedDevice::kDefaultDynamicEndpointVersion }
 };

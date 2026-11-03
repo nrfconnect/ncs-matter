@@ -41,6 +41,7 @@ public:
 
 	static constexpr uint16_t GetRelativeHumidityMeasurementClusterRevision() { return 5; }
 	static constexpr uint32_t GetRelativeHumidityMeasurementFeatureMap() { return 0; }
+	static constexpr uint8_t GetHumiditySensorEndpointVersion() { return 3; }
 
 private:
 	CHIP_ERROR SetMeasuredValue(uint16_t value);

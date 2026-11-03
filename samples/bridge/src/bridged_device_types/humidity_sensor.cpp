@@ -38,11 +38,9 @@ DECLARE_DYNAMIC_CLUSTER(Clusters::RelativeHumidityMeasurement::Id, humiSensorAtt
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedHumidityEndpoint, bridgedHumidityClusters);
 
-static constexpr uint8_t kBridgedHumidityEndpointVersion = 2;
-
 static constexpr EmberAfDeviceType kBridgedHumidityDeviceTypes[] = {
 	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::HumiditySensor),
-	  kBridgedHumidityEndpointVersion },
+	  HumiditySensorDevice::GetHumiditySensorEndpointVersion() },
 	{ static_cast<chip::DeviceTypeId>(MatterBridgedDevice::DeviceType::BridgedNode),
 	  MatterBridgedDevice::kDefaultDynamicEndpointVersion }
 };
