@@ -98,8 +98,11 @@ void TemperatureSensor::ExternalTemperatureMeasurementReadHandler(
 	const chip::app::Clusters::Binding::TableEntry &binding, OperationalDeviceProxy *deviceProxy,
 	Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
-	auto onSuccess = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
-				 const ConcreteDataAttributePath &attributePath, const auto &dataResponse) {
+	VerifyOrReturn(deviceProxy != nullptr && deviceProxy->ConnectionReady(), LOG_ERR("Device invalid"));
+
+	auto *dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData);
+
+	auto onSuccess = [dataPointer](const ConcreteDataAttributePath &attributePath, const auto &dataResponse) {
 		ChipLogProgress(NotSpecified, "Read Temperature Sensor attribute succeeded");
 
 		VerifyOrReturn(!(dataResponse.IsNull()), LOG_ERR("Device invalid");
@@ -111,18 +114,19 @@ void TemperatureSensor::ExternalTemperatureMeasurementReadHandler(
 		BindingHandler::OnInvokeCommandSucces(dataPointer);
 	};
 
-	auto onFailure = [](const ConcreteDataAttributePath *attributePath, CHIP_ERROR error) {
+	auto onFailure = [dataPointer](const ConcreteDataAttributePath *attributePath, CHIP_ERROR error) {
 		ChipLogError(NotSpecified, "Read Temperature Sensor attribute failed: %" CHIP_ERROR_FORMAT,
 			     error.Format());
 		TempSensorManager::Instance().ClearOutdoorTemperature();
+		Platform::Delete<Nrf::Matter::BindingHandler::BindingData>(dataPointer);
 	};
-
-	VerifyOrReturn(deviceProxy != nullptr && deviceProxy->ConnectionReady(), LOG_ERR("Device invalid"));
 
 	CHIP_ERROR err = Controller::ReadAttribute<
 		Clusters::TemperatureMeasurement::Attributes::MeasuredValue::TypeInfo>(
 		deviceProxy->GetExchangeManager(), deviceProxy->GetSecureSession().Value(), binding.remote, onSuccess,
 		onFailure);
+
 	VerifyOrReturn(err == CHIP_NO_ERROR,
-		       LOG_ERR("Read Temperature Sensor attribute failed: %" CHIP_ERROR_FORMAT, err.Format()));
+		       LOG_ERR("Read Temperature Sensor attribute failed: %" CHIP_ERROR_FORMAT, err.Format());
+		       Platform::Delete<Nrf::Matter::BindingHandler::BindingData>(dataPointer));
 }

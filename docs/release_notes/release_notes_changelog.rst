@@ -13,8 +13,12 @@ Changelog
 * Updated the ``Nrf::Matter::IdentifyCluster`` class to use the code-driven Matter SDK Identify cluster implementation directly, instead of the legacy ``Identify`` wrapper.
   The cluster is registered automatically when you create an ``Nrf::Matter::IdentifyCluster`` object.
 
-* Fixed the ``TriggerEffect`` command being advertised and accepted when trigger effects are disabled.
-  The ``Nrf::Matter::IdentifyCluster`` class now respects the ``IsTriggerEffectEnabled()`` value from ``IdentifyDelegateImplNrf``.
+* Fixed:
+
+  * The ``TriggerEffect`` command being advertised and accepted when trigger effects are disabled.
+    The ``Nrf::Matter::IdentifyCluster`` class now respects the ``IsTriggerEffectEnabled()`` value from ``IdentifyDelegateImplNrf``.
+
+  * The heap corruption and fault during CASE session recovery in the binding handler.
 
 Matter fork
 ***********
