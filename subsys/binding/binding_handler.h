@@ -51,17 +51,15 @@ public:
 	static void RunBoundClusterAction(BindingData *bindingData);
 	/**
 	 * @brief Method which should be called after proper binding command execution
-	 *
-	 * @param bindingData BindingData structure which contain binding infroamtion
 	 */
-	static void OnInvokeCommandSucces(BindingData *bindingData);
+	static void OnInvokeCommandSucces();
 	/**
 	 * @brief Method which should be called after failed binding command execution
 	 *
 	 * @param bindingData BindingData structure which contain binding infroamtion
 	 * @param error CHIP_ERROR returned by the failed chip binding action
 	 */
-	static void OnInvokeCommandFailure(BindingData *bindingData, CHIP_ERROR error);
+	static void OnInvokeCommandFailure(BindingData &bindingData, CHIP_ERROR error);
 
 private:
 	static void DeviceWorkerHandler(intptr_t context);
