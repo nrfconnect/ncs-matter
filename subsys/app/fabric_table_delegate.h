@@ -6,9 +6,12 @@
 
 #pragma once
 
+#include <cstring>
+
 #include <app/server/Server.h>
 #include <app/util/attribute-storage.h>
 #include <lib/support/logging/CHIPLogging.h>
+#include <platform/ConfigurationManager.h>
 
 #include "app/group_data_provider.h"
 
@@ -56,6 +59,34 @@ private:
 #endif // CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE
 	}
 
+	/**
+	 * Re-create persisted values normally initialized on boot after factory reset.
+	 * Required when factory reset runs without reboot.
+	 */
+	static void ReinitializePersistedBootDefaults()
+	{
+		using chip::DeviceLayer::ConfigurationManager;
+		using chip::DeviceLayer::ConfigurationMgr;
+
+		CHIP_ERROR err = ConfigurationMgr().StoreRebootCount(1);
+
+		if (err != CHIP_NO_ERROR) {
+			ChipLogError(FabricProvisioning, "Failed to store RebootCount: %" CHIP_ERROR_FORMAT, err.Format());
+		}
+
+		char uniqueId[ConfigurationManager::kMaxUniqueIDLength + 1];
+
+		if (ConfigurationMgr().GetUniqueId(uniqueId, sizeof(uniqueId)) != CHIP_NO_ERROR) {
+			if (ConfigurationMgr().GenerateUniqueId(uniqueId, sizeof(uniqueId)) == CHIP_NO_ERROR) {
+				err = ConfigurationMgr().StoreUniqueId(uniqueId, strlen(uniqueId));
+				if (err != CHIP_NO_ERROR) {
+					ChipLogError(FabricProvisioning,
+						     "Failed to store UniqueID: %" CHIP_ERROR_FORMAT, err.Format());
+				}
+			}
+		}
+	}
+
 	static void OnFabricRemovedTimerCallback(k_timer *timer)
 	{
 #ifndef CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE
@@ -71,6 +102,7 @@ private:
 #endif // CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
 				    /* Erase Matter data */
 				    chip::DeviceLayer::PersistedStorage::KeyValueStoreMgrImpl().DoFactoryReset();
+				    ReinitializePersistedBootDefaults();
 				    /* Erase Network credentials and disconnect */
 				    chip::DeviceLayer::ConnectivityMgr().ErasePersistentInfo();
 #ifdef CONFIG_CHIP_WIFI
