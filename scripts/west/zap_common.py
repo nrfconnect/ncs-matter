@@ -361,6 +361,8 @@ def display_zap_message(output: subprocess.CompletedProcess[str]) -> None:
 
 class ZapInstaller:
     INSTALL_DIR = Path('.zap-install')
+    # Held by cmake/zap_install.cmake while installing; must survive cleanup.
+    INSTALL_LOCK_NAME = '.install.lock'
     ZAP_URL_PATTERN = 'https://github.com/project-chip/zap/releases/download/%s/%s.zip'
 
     def __init__(self, matter_path: Path):
@@ -408,6 +410,48 @@ class ZapInstaller:
         Returns ZAP package installation directory.
         """
         return self.install_path
+
+    @staticmethod
+    def _is_link(path: Path) -> bool:
+        """
+        Returns True for symlinks and Windows reparse points, such as directory junctions.
+        """
+        # Path.is_symlink() does not detect junctions, and Path.is_junction() requires Python 3.12.
+        try:
+            st = path.lstat()
+        except FileNotFoundError:
+            return False
+        return stat.S_ISLNK(st.st_mode) or bool(getattr(st, 'st_file_attributes', 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+
+    @staticmethod
+    def _remove_link(path: Path) -> None:
+        """
+        Removes a symlink or a Windows directory junction without touching its target.
+        """
+        try:
+            path.unlink(missing_ok=True)
+        except OSError:
+            # Windows refuses to unlink() a directory junction, but rmdir() removes just the link.
+            path.rmdir()
+
+    def clear_install_path(self) -> None:
+        """
+        Removes the installed ZAP package, keeping the install lock file.
+        """
+        # A linked install directory may point to a shared location with
+        # unrelated content, so its target is never cleared.
+        if ZapInstaller._is_link(self.install_path) or not self.install_path.is_dir():
+            return
+
+        for child in self.install_path.iterdir():
+            if child.name == ZapInstaller.INSTALL_LOCK_NAME:
+                continue
+            if ZapInstaller._is_link(child):
+                ZapInstaller._remove_link(child)
+            elif not child.is_dir():
+                child.unlink(missing_ok=True)
+            else:
+                shutil.rmtree(child, ignore_errors=True)
 
     def get_zap_path(self) -> Path:
         """
@@ -467,7 +511,7 @@ class ZapInstaller:
             # the installation
             def handle_signal(signum, frame):
                 log.inf('\nCancelled by user, cleaning up...')
-                shutil.rmtree(self.install_path, ignore_errors=True)
+                self.clear_install_path()
                 exit()
 
             signal.signal(signal.SIGINT, handle_signal)
@@ -478,7 +522,7 @@ class ZapInstaller:
             except Exception as e:
                 raise RuntimeError(f'Failed to download ZAP package from {url}: {e}')
 
-            shutil.rmtree(self.install_path, ignore_errors=True)
+            self.clear_install_path()
 
             log.inf('')  # Fix console after displaying wget progress bar
             log.inf(f'Unzipping ZAP package to {self.install_path}...')

@@ -74,14 +74,12 @@ function(ncs_matter_ensure_zap_cli)
   else()
     set(zap_dir "${CHIP_ROOT}/.zap-install")
 
-    # CHIP_ROOT (and its .zap-install directory) can be shared by multiple
-    # concurrent builds (e.g. parallel CI jobs/boards reusing one west
-    # workspace checkout). Without this lock, two configures racing to
-    # install/replace .zap-install at the same time can corrupt each
-    # other's download/extract, e.g. failing with EEXIST or ENOENT.
-    file(LOCK "${zap_dir}.lock" TIMEOUT 600 RESULT_VARIABLE lock_result)
+    set(zap_lock_file "${zap_dir}/.install.lock")
+    file(MAKE_DIRECTORY "${zap_dir}")
+
+    file(LOCK "${zap_lock_file}" TIMEOUT 600 RESULT_VARIABLE lock_result)
     if(NOT lock_result EQUAL 0)
-      message(FATAL_ERROR "Failed to acquire ZAP install lock (${zap_dir}.lock): ${lock_result}")
+      message(FATAL_ERROR "Failed to acquire ZAP install lock (${zap_lock_file}): ${lock_result}")
     endif()
 
     execute_process(
@@ -89,7 +87,7 @@ function(ncs_matter_ensure_zap_cli)
       RESULT_VARIABLE zap_install_result
     )
 
-    file(LOCK "${zap_dir}.lock" RELEASE)
+    file(LOCK "${zap_lock_file}" RELEASE)
 
     if(NOT zap_install_result EQUAL 0)
       message(FATAL_ERROR "Failed to install Matter ZAP tool")

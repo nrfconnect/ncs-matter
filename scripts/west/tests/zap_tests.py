@@ -6,7 +6,9 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import sys
+import tempfile
 import unittest
 from argparse import Namespace
 from pathlib import Path
@@ -248,6 +250,82 @@ class TestWestZap(unittest.TestCase):
         installer = self.zap_installer
         expected = self.test_dir / '.zap-install' / installer.zap_cli_exe
         self.assertEqual(installer.get_zap_cli_path(), expected)
+
+    def test_clear_install_path(self):
+        """
+        Checks whether clear_install_path removes the ZAP package but keeps the install lock file.
+
+        We expect:
+            - Package files and directories are removed.
+            - The install lock file is kept.
+        """
+        with tempfile.TemporaryDirectory() as temp_dir:
+            installer = ZapInstaller(Path(temp_dir))
+            install_path = installer.get_install_path()
+            (install_path / 'resources').mkdir(parents=True)
+            (install_path / 'resources' / 'app.asar').touch()
+            (install_path / installer.zap_cli_exe).touch()
+            lock_file = install_path / ZapInstaller.INSTALL_LOCK_NAME
+            lock_file.touch()
+
+            installer.clear_install_path()
+
+            self.assertEqual(list(install_path.iterdir()), [lock_file])
+
+    def check_clear_install_path_links(self, make_link):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            outside = Path(temp_dir) / 'outside'
+            outside.mkdir()
+            (outside / 'keep').touch()
+
+            installer = ZapInstaller(Path(temp_dir) / 'sdk')
+            install_path = installer.get_install_path()
+            install_path.mkdir(parents=True)
+            link = install_path / 'link'
+            make_link(link, outside)
+
+            installer.clear_install_path()
+
+            self.assertFalse(os.path.lexists(link))
+            self.assertTrue((outside / 'keep').exists())
+
+            install_path.rmdir()
+            make_link(install_path, outside)
+
+            installer.clear_install_path()
+
+            self.assertTrue((outside / 'keep').exists())
+
+    def test_clear_install_path_symlinks(self):
+        """
+        Checks whether clear_install_path never follows symlinks.
+
+        We expect:
+            - A symlink inside the install directory is unlinked, not its target.
+            - A symlinked install directory is not cleared.
+        """
+        def make_symlink(link: Path, target: Path):
+            try:
+                link.symlink_to(target, target_is_directory=True)
+            except OSError:
+                self.skipTest('Symlinks are not supported on this host')
+
+        self.check_clear_install_path_links(make_symlink)
+
+    @unittest.skipUnless(sys.platform == 'win32', 'Directory junctions are Windows-specific')
+    def test_clear_install_path_junctions(self):
+        """
+        Checks whether clear_install_path never follows Windows directory junctions.
+
+        We expect:
+            - A junction inside the install directory is unlinked, not its target.
+            - A junctioned install directory is not cleared.
+        """
+        def make_junction(link: Path, target: Path):
+            subprocess.check_call(['cmd', '/c', 'mklink', '/J', str(link), str(target)],
+                                  stdout=subprocess.DEVNULL)
+
+        self.check_clear_install_path_links(make_junction)
 
     def test_version(self):
         """
@@ -646,6 +724,9 @@ def suite():
         'test_post_process_generated_files',
         'test_zap_installer_init',
         'test_get_paths',
+        'test_clear_install_path',
+        'test_clear_install_path_symlinks',
+        'test_clear_install_path_junctions',
         'test_version',
         'test_append_cluster',
         'test_install_zap',
