@@ -34,14 +34,15 @@ void ProcessCommand(const Binding::TableEntry &aBinding, OperationalDeviceProxy 
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;
 
-	auto onSuccess = [dataRef = Platform::New<Nrf::Matter::BindingHandler::BindingData>(aData)](
-				 const ConcreteCommandPath &commandPath, const StatusIB &status,
-				 const auto &dataResponse) { Matter::BindingHandler::OnInvokeCommandSucces(dataRef); };
+	Nrf::Matter::BindingHandler::BindingData *dataRef =
+		aDevice ? Platform::New<Nrf::Matter::BindingHandler::BindingData>(aData) : nullptr;
 
-	auto onFailure =
-		[dataRef = Platform::New<Nrf::Matter::BindingHandler::BindingData>(aData)](CHIP_ERROR aError) mutable {
-			Matter::BindingHandler::OnInvokeCommandFailure(dataRef, aError);
-		};
+	auto onSuccess = [dataRef](const ConcreteCommandPath &commandPath, const StatusIB &status,
+				   const auto &dataResponse) { Matter::BindingHandler::OnInvokeCommandSucces(dataRef); };
+
+	auto onFailure = [dataRef](CHIP_ERROR aError) mutable {
+		Matter::BindingHandler::OnInvokeCommandFailure(dataRef, aError);
+	};
 
 	if (aDevice) {
 		/* We are validating connection is ready once here instead of multiple times in each case statement
@@ -62,6 +63,10 @@ void ProcessCommand(const Binding::TableEntry &aBinding, OperationalDeviceProxy 
 
 	if (CHIP_NO_ERROR != ret) {
 		LOG_ERR("Invoke command request ERROR: %s", ErrorStr(ret));
+	}
+
+	if (dataRef && CHIP_NO_ERROR != ret) {
+		Platform::Delete<Nrf::Matter::BindingHandler::BindingData>(dataRef);
 	}
 }
 #endif
