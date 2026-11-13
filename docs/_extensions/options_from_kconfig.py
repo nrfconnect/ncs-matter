@@ -23,6 +23,20 @@ def _monkey_patch_kconfiglib() -> None:
     kconfiglib._SOURCE_TOKENS = kconfiglib._REL_SOURCE_TOKENS
     kconfiglib.Kconfig._parse_error = lambda self_, msg: None
 
+    tokenize = kconfiglib.Kconfig._tokenize
+    if getattr(tokenize, '_skips_configdefault', False):
+        return
+
+    # PyPI kconfiglib lacks Zephyr's configdefault. It defines no symbols, so
+    # skip its header; the stray default lines are dropped as parse errors.
+    def _tokenize(self_, s):
+        if s.split(None, 1)[:1] == ['configdefault']:
+            return (None,)
+        return tokenize(self_, s)
+
+    _tokenize._skips_configdefault = True
+    kconfiglib.Kconfig._tokenize = _tokenize
+
 
 class OptionsFromKconfig(SphinxDirective):
     has_content = True
