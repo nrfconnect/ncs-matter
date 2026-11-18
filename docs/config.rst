@@ -19,5 +19,25 @@ This option enables the Matter protocol stack and other associated features and 
 Add-on Kconfig options
 **********************
 
+Shared configurations in Matter stack
+#####################################
+
 .. options-from-kconfig:: /../Kconfig
    :show-type:
+
+Zephyr configuration options (inherited by nRF Connect)
+*******************************************************
+
+.. options-from-kconfig:: ../modules/lib/matter/zephyr/Kconfig
+   :show-type:
+
+nRF Connect Configuration
+=========================
+
+.. options-from-kconfig:: ../modules/lib/matter/config/nrfconnect/chip-module/Kconfig
+   :show-type:
+
+Matter features
+===============
+
+.. options-from-kconfig:: ../modules/lib/matter/config/nrfconnect/chip-module/Kconfig.features

@@ -13,8 +13,10 @@ on:
     paths:
       - '.github/doc-addon.env'
       - '.github/actions/load-doc-config/**'
+      - '.github/actions/prepare-west-workspace/**'
       - '.github/workflows/doc_build.yml'
       - 'docs/**'
+      - 'west.yml'
       - 'samples/**/*.rst'
       - 'samples/**/Kconfig'
       - 'samples/**/sample.yaml'
@@ -29,6 +31,7 @@ on:
 
 env:
   DOXYGEN_VERSION: 1.12.0
+  WEST_PATH_CACHE: ${{ github.workspace }}/west-path-cache
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -38,14 +41,25 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout
+      - name: Checkout doc add-on configuration
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          sparse-checkout: |
+            .github/doc-addon.env
+            .github/actions/load-doc-config
+            .github/actions/prepare-west-workspace
+          sparse-checkout-cone-mode: false
+
+      - name: Load doc add-on config
+        uses: ./.github/actions/load-doc-config
+
+      - name: Checkout add-on repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
-
-      - name: Load doc add-on config
-        uses: ./.github/actions/load-doc-config
+          path: ${{ env.DOC_ADDON_DIR }}
 
       - name: Install system dependencies
         run: |
@@ -60,16 +74,36 @@ jobs:
         with:
           python-version: 3.12
           cache: pip
-          cache-dependency-path: docs/requirements-doc.txt
+          cache-dependency-path: ${{ env.DOC_ADDON_DIR }}/docs/requirements-doc.txt
           pip-install: |
-            -r docs/requirements-doc.txt
+            -r ${{ env.DOC_ADDON_DIR }}/docs/requirements-doc.txt
+            west
+
+      - name: Restore west module path cache
+        if: contains(fromJSON('["true","1","yes","on"]'), env.WEST_UPDATE)
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: west-path-cache
+          key: west-path-cache-${{ hashFiles(format('{0}/west.yml', env.DOC_ADDON_DIR), format('{0}/.github/doc-addon.env', env.DOC_ADDON_DIR)) }}
+          restore-keys: |
+            west-path-cache-
+
+      - name: Prepare west workspace
+        if: contains(fromJSON('["true","1","yes","on"]'), env.WEST_UPDATE)
+        uses: ./.github/actions/prepare-west-workspace
+        with:
+          west_topdir: ${{ github.workspace }}
+          manifest_dir: ${{ env.DOC_ADDON_DIR }}
+          west_modules: ${{ env.WEST_MODULES }}
+          west_path_cache: ${{ env.WEST_PATH_CACHE }}
 
       - name: Build
-        working-directory: docs
+        working-directory: ${{ env.DOC_ADDON_DIR }}/docs
         run: |
           make html
 
       - name: Check version
+        working-directory: ${{ env.DOC_ADDON_DIR }}
         run: |
           VERSION_REGEX="^v([0-9a-zA-Z\.\-]+)$"
           PREVIEW_TAG_REGEX="^preview([a-zA-Z0-9\.\-]*)$"
@@ -96,7 +130,7 @@ jobs:
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
 
       - name: Prepare Azure upload
-        working-directory: docs
+        working-directory: ${{ env.DOC_ADDON_DIR }}/docs
         run: |
           PUBLISH="$PWD/publish"
           mkdir -p "$PUBLISH"
@@ -168,4 +202,4 @@ jobs:
           name: docs
           retention-days: 5
           path: |
-            docs/publish/*
+            ${{ env.DOC_ADDON_DIR }}/docs/publish/*
