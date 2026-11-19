@@ -18,6 +18,7 @@ tests:
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -25,6 +26,7 @@ tests:
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
   sample.matter.template.nrf7002eb2.debug:
     sysbuild: true
     build_only: true
@@ -37,16 +39,6 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-  sample.matter.template.nrf7120.debug:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - CONFIG_CHIP_WIFI=y
-      - CONFIG_WIFI_NRF71_PATCH=y
-    integration_platforms:
-      - nrf7120dk/nrf7120/cpuapp
-    platform_allow:
-      - nrf7120dk/nrf7120/cpuapp
   sample.matter.template.release:
     sysbuild: true
     build_only: true
@@ -60,6 +52,7 @@ tests:
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -67,6 +60,7 @@ tests:
       - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
   sample.matter.template.nrf7002eb2.release:
     sysbuild: true
     build_only: true
@@ -80,17 +74,6 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-  sample.matter.template.nrf7120.release:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - FILE_SUFFIX=release
-      - CONFIG_CHIP_WIFI=y
-      - CONFIG_WIFI_NRF71_PATCH=y
-    integration_platforms:
-      - nrf7120dk/nrf7120/cpuapp
-    platform_allow:
-      - nrf7120dk/nrf7120/cpuapp
   sample.matter.template.smp_dfu:
     sysbuild: true
     build_only: true
@@ -152,10 +135,12 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
   sample.matter.template.nrf7002eb2.release.internal:
     sysbuild: true
     build_only: true
@@ -170,18 +155,6 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-  sample.matter.template.nrf7120.release.internal:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - FILE_SUFFIX=internal
-      - template_EXTRA_CONF_FILE=prj_release.conf
-      - CONFIG_CHIP_WIFI=y
-      - CONFIG_WIFI_NRF71_PATCH=y
-    integration_platforms:
-      - nrf7120dk/nrf7120/cpuapp
-    platform_allow:
-      - nrf7120dk/nrf7120/cpuapp
   sample.matter.template.release.internal.smp_dfu:
     sysbuild: true
     build_only: true
