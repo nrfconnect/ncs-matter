@@ -9,7 +9,7 @@
 / {
 	chosen {
 		zephyr,entropy = &psa_rng;
-		// TODO: MRAM is not chosen as the flash controller by default
+		/* TODO: MRAM is not chosen as the flash controller by default */
 		zephyr,flash-controller = &mram_controller;
 	};
 
