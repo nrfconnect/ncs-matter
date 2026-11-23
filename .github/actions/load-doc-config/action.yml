@@ -1,14 +1,72 @@
 name: Load doc add-on config
-description: Load DOC_ADDON_NAME from .github/doc-addon.env into GITHUB_ENV
+description: Load .github/doc-addon.env into GITHUB_ENV (DOC_ADDON_NAME, DOC_ADDON_DIR, WEST_UPDATE, WEST_MODULES)
+
+inputs:
+  config_file:
+    description: Path to doc-addon.env relative to the workspace directory
+    required: false
+    default: .github/doc-addon.env
 
 runs:
   using: composite
   steps:
     - shell: bash
+      env:
+        CONFIG_FILE: ${{ inputs.config_file }}
       run: |
         set -euo pipefail
-        if [ ! -f .github/doc-addon.env ]; then
-          echo "::error::Missing .github/doc-addon.env" >&2
+        config="${CONFIG_FILE}"
+        if [ ! -f "${config}" ]; then
+          echo "::error::Missing ${config}" >&2
           exit 1
         fi
-        grep -E '^DOC_ADDON_NAME=' .github/doc-addon.env >> "$GITHUB_ENV"
+
+        doc_addon_name=""
+        doc_addon_dir=""
+        west_update="false"
+        west_modules=""
+
+        while IFS='=' read -r key value; do
+          value="${value%%#*}"
+          value="$(echo "${value}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+          case "${key}" in
+            DOC_ADDON_NAME) doc_addon_name="${value}" ;;
+            DOC_ADDON_DIR) doc_addon_dir="${value}" ;;
+            WEST_UPDATE) west_update="${value}" ;;
+            WEST_MODULES) west_modules="${value}" ;;
+          esac
+        done < <(grep -E '^(DOC_ADDON_NAME|DOC_ADDON_DIR|WEST_UPDATE|WEST_MODULES)=' "${config}" | tr -d '\r')
+
+        if [ -z "${doc_addon_name}" ]; then
+          echo "::error::DOC_ADDON_NAME is required in ${config}" >&2
+          exit 1
+        fi
+
+        if [ -z "${doc_addon_dir}" ]; then
+          echo "::error::DOC_ADDON_DIR is required in ${config}" >&2
+          exit 1
+        fi
+
+        if ! [[ "${doc_addon_name}" =~ ^[A-Za-z0-9._-]+$ ]]; then
+          echo "::error::Invalid DOC_ADDON_NAME in ${config}" >&2
+          exit 1
+        fi
+
+        if ! [[ "${doc_addon_dir}" =~ ^[A-Za-z0-9._-]+$ ]]; then
+          echo "::error::Invalid DOC_ADDON_DIR in ${config}" >&2
+          exit 1
+        fi
+
+        if [ -n "${west_modules}" ] && ! [[ "${west_modules}" =~ ^[A-Za-z0-9_-]+(,[A-Za-z0-9_-]+)*$ ]]; then
+          echo "::error::Invalid WEST_MODULES in ${config}" >&2
+          exit 1
+        fi
+
+        west_update="$(echo "${west_update}" | tr '[:upper:]' '[:lower:]')"
+
+        {
+          echo "DOC_ADDON_NAME=${doc_addon_name}"
+          echo "DOC_ADDON_DIR=${doc_addon_dir}"
+          echo "WEST_UPDATE=${west_update}"
+          echo "WEST_MODULES=${west_modules}"
+        } >> "$GITHUB_ENV"
