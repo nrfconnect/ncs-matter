@@ -26,6 +26,7 @@ MATTER_MODULE = NCS_ROOT / 'modules' / 'lib' / 'matter'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 sys.path.insert(0, str(DOC_BASE / '_extensions'))
+sys.path.insert(0, str(DOC_BASE / "_utils"))
 
 from west_substitutions import load_west_substitutions
 
@@ -71,6 +72,7 @@ html_theme_options = {
 }
 
 # Copied into the HTML output for the hosted documentation version switcher.
+html_static_path = [str(DOC_BASE / "_static")]
 html_extra_path = ['versions.json']
 
 ## -- Options for Breathe ----------------------------------------------------
@@ -159,3 +161,7 @@ def setup(app):
             )
 
     logging.getLogger('sphinx').addFilter(_FilterDuplicateTargets())
+
+    from kapa import add_kapa_search
+
+    add_kapa_search(app)
